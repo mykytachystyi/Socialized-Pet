@@ -49,7 +49,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAdminManager, AdminManager>();
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddSingleton(builder.Configuration.GetSection("MailSettings").Get<MailSettings>());
 builder.Services.AddScoped<IJwtTokenManager, JwtTokenManager>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminEmailManager, AdminEmailManager>();
@@ -66,7 +66,8 @@ builder.Services.AddScoped<IAutoPostRepository, AutoPostRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IIGAccountRepository, IGAccountRepository>();
 builder.Services.AddScoped<IAutoPostFileManager, AutoPostFileManager>();
-builder.Services.Configure<AwsSettings>(builder.Configuration.GetSection("AwsSettings"));
+builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>());
+
 builder.Services.AddScoped<IFileManager, AwsUploader>();
 builder.Services.AddScoped<IAutoPostFileRepository, AutoPostFileRepository>();
 builder.Services.AddScoped<IAutoPostFileSave, AutoPostFileSave>();

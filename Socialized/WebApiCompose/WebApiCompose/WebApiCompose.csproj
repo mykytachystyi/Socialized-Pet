@@ -19,10 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UseCases\UseCases.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\FfmpegConverter\FfmpegConverter.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\..\UseCases\UseCases.csproj" />
   </ItemGroup>
 
 </Project>
