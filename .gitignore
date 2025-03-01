@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Socialized/WebApiCompose/WebApiCompose/appsettings.json
+Socialized/WebApiCompose/WebApiCompose/appsettings.Development.json
