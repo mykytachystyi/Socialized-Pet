@@ -5,7 +5,7 @@ services:
     image: ${DOCKER_REGISTRY-}webapicompose
     build:
       context: .
-      dockerfile: WebApiCompose/Dockerfile
+      dockerfile: WebApiCompose/WebApiCompose/Dockerfile
   mysql:
     image: mysql:8.0
     environment:
