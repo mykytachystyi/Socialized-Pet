@@ -7,6 +7,7 @@ Stack of main technologies:
 - MySQL database
 - Docker Compose
 - XUnit
+- Swagger build-in
 
 The project build in style of Clean Architechere and divined on parts. 
 - Core - for general utilities.
@@ -16,4 +17,4 @@ The project build in style of Clean Architechere and divined on parts.
 - UseCaseTests - for testing a business logic.
 - The main WebApiCompose - for Web API controllers and build all server parts of project.
    
-For now, to run this project, you need to download it and open from Visual Studio 2022. Select project WebApiCompose and start to run.
+For now, to run this project, you need to download it on the Windows 11 and open from Visual Studio 2022. Select project WebApiCompose and start to run.
