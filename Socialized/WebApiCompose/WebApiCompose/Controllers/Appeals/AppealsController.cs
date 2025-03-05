@@ -19,7 +19,7 @@ namespace WebAPI.Controllers.Appeals
         {
             AppealManager.Create(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpGet]
         [ActionName("GetAppealsByUser")]
@@ -28,7 +28,7 @@ namespace WebAPI.Controllers.Appeals
         {
             var result = AppealManager.GetAppealsByUser(userToken, since, count);
 
-            return new DataResponse(true, result);
+            return Ok(result);
         }
         [HttpGet]
         [Authorize]
@@ -37,7 +37,7 @@ namespace WebAPI.Controllers.Appeals
         {
             var result = AppealManager.GetAppealsByAdmin(since, count);
 
-            return new DataResponse(true, result);
+            return Ok(result);
         }
     }
 }

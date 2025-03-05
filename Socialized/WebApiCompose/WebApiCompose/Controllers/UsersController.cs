@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
         {
             UserManager.Create(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("RegistrationEmail")]
@@ -35,15 +35,15 @@ namespace WebAPI.Controllers
 
             UserManager.RegistrationEmail(email, culture);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("Login")]
         public ActionResult<dynamic> Login(LoginUserCommand command)
         {
             var result = UserLoginManager.Login(command);
-            
-            return new DataResponse(true, result);
+
+            return Ok(result);
         }
         [HttpPost]
         [ActionName("LogOut")]
@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
         {
             UserLoginManager.LogOut(userToken);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("RecoveryPassword")]
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
 
             UserPasswordRecoveryManager.RecoveryPassword(email, culture);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("CheckRecoveryCode")]
@@ -69,7 +69,7 @@ namespace WebAPI.Controllers
         {
             string recoveryToken = UserPasswordRecoveryManager.CheckRecoveryCode(command);
 
-            return new DataResponse(true, new { recovery_token = recoveryToken });
+            return Ok(new { recovery_token = recoveryToken });
         }
         [HttpPost]
         [ActionName("ChangePassword")]
@@ -77,7 +77,7 @@ namespace WebAPI.Controllers
         {
             UserPasswordRecoveryManager.ChangePassword(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("ChangeOldPassword")]
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
         {
             UserPasswordRecoveryManager.ChangeOldPassword(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpGet]
         [ActionName("Activate")]
@@ -93,14 +93,14 @@ namespace WebAPI.Controllers
         {
             UserManager.Activate(hash);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpDelete]
         public ActionResult<dynamic> Delete([FromBody] string userToken)
         {
             UserManager.Delete(userToken);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
     }
 }

@@ -21,21 +21,21 @@ namespace WebAPI.Controllers.Appeals
 
             AppealMessageManager.Create(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPut]
         public ActionResult<SuccessResponse> Update(UpdateAppealMessageCommand command)
         {
             AppealMessageManager.Update(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpDelete]
         public ActionResult<SuccessResponse> Delete(DeleteAppealMessageCommand command)
         {
             AppealMessageManager.Delete(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
     }
 }

@@ -3,8 +3,8 @@ using Core;
 using Domain.Users;
 using Serilog;
 using UseCases.Exceptions;
+using UseCases.Response;
 using UseCases.Users.Commands;
-using UseCases.Users.Response;
 
 namespace UseCases.Users
 {

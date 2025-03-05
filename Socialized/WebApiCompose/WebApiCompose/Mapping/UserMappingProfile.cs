@@ -1,6 +1,6 @@
 ﻿using Domain.Users;
-using UseCases.Users.Response;
 using AutoMapper;
+using UseCases.Response;
 
 namespace WebApi.Mapping
 {

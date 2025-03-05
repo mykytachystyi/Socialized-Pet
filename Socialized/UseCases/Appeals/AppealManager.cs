@@ -1,11 +1,12 @@
 using Serilog;
 using System.Web;
 using Domain.Admins;
-using Domain.AutoPosting;
 using Domain.Users;
 using UseCases.Exceptions;
 using UseCases.Appeals.Commands;
 using Domain.Appeals;
+using AutoMapper;
+using UseCases.Response.Appeals;
 
 namespace UseCases.Appeals
 {
@@ -13,21 +14,18 @@ namespace UseCases.Appeals
     {
         private IAppealRepository AppealRepository;
         private IUserRepository UserRepository;
-        private IAppealMessageRepository AppealMessageRepository;
-        private ICategoryRepository CategoryRepository;
         private ILogger Logger;
+        private IMapper Mapper;
 
         public AppealManager(ILogger logger,
             IAppealRepository appealRepository,
             IUserRepository userRepository,
-            IAppealMessageRepository appealMessageRepository,
-            ICategoryRepository categoryRepository)
+            IMapper mapper)
         {
             Logger = logger;
             AppealRepository = appealRepository;
             UserRepository = userRepository;
-            AppealMessageRepository = appealMessageRepository;
-            CategoryRepository = categoryRepository;
+            Mapper = mapper;
         }
         public Appeal Create(CreateAppealCommand command)
         {
@@ -48,15 +46,17 @@ namespace UseCases.Appeals
             Logger.Information($"Було створенно нова заява, id={appeal.Id}.");
             return appeal;
         }
-        public ICollection<Appeal> GetAppealsByUser(string userToken, int since, int count)
+        public ICollection<AppealResponse> GetAppealsByUser(string userToken, int since, int count)
         {
             Logger.Information($"Отримано список користувачем, з={since} по={count}.");
-            return AppealRepository.GetAppealsBy(userToken, since, count);
+            var appeals = AppealRepository.GetAppealsBy(userToken, since, count);
+            return Mapper.Map<List<AppealResponse>>(appeals);
         }
-        public ICollection<Appeal> GetAppealsByAdmin(int since, int count)
+        public ICollection<AppealResponse> GetAppealsByAdmin(int since, int count)
         {
             Logger.Information($"Отримано список адміном, з={since} по={count}.");
-            return AppealRepository.GetAppealsBy(since, count);
+            var appeals = AppealRepository.GetAppealsBy(since, count);
+            return Mapper.Map<List<AppealResponse>>(appeals);
         }
         public void UpdateAppealToClosed(long appealId)
         {

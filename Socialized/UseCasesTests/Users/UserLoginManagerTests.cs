@@ -7,7 +7,7 @@ using UseCases.Users;
 using UseCases.Users.Commands;
 using UseCases.Exceptions;
 using NSubstitute.ReturnsExtensions;
-using UseCases.Users.Response;
+using UseCases.Response;
 
 namespace UseCasesTests.Users
 {

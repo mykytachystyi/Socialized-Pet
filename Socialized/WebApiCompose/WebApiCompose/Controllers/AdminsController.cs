@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
         [Authorize]
         public ActionResult<DataResponse> Create(CreateAdminCommand command)
         {
-            var admin = AdminManager.Create(command);
+            var result = AdminManager.Create(command);
 
-            return new DataResponse(true, admin);
+            return Ok(result);
         }
         [HttpPost]
         [ActionName("Authentication")]
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
 
             var token = JwtTokenManager.Authenticate(result);
 
-            return new DataResponse(true, new { AdminToken = token });
+            return Ok(new { AdminToken = token });
         }
         [HttpPost]
         [ActionName("SetupPassword")]
@@ -41,7 +41,7 @@ namespace WebAPI.Controllers
         {
             AdminManager.SetupPassword(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpDelete]
         [Authorize]
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
         {
             AdminManager.Delete(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("RecoveryPassword")]
@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
         {
             AdminManager.CreateCodeForRecoveryPassword(adminEmail);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpPost]
         [ActionName("ChangePassword")]
@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
         {
             AdminManager.ChangePassword(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpGet]
         [Authorize]
@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
 
             var result = AdminManager.GetAdmins(adminId, since, count);
 
-            return new DataResponse(true, result);
+            return Ok(result);
         }
         [HttpGet]
         [Authorize]
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
         {
             var result = AdminManager.GetUsers(since, count);
 
-            return new DataResponse(true, result);
+            return Ok(result);
         }
     }
 }

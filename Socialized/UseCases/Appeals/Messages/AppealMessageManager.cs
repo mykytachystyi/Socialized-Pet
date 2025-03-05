@@ -1,9 +1,9 @@
 ﻿using Serilog;
 using System.Web;
 using Domain.Admins;
+using Domain.Appeals;
 using UseCases.Exceptions;
 using UseCases.Appeals.Messages.Commands;
-using Domain.Appeals;
 
 namespace UseCases.Appeals.Messages
 {

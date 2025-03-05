@@ -7,7 +7,7 @@ using WebAPI.Responses;
 
 namespace WebAPI.Controllers.Appeals
 {
-    public class AppealMessageReplyController
+    public class AppealMessageReplyController : ControllerResponseBase
     {
         private IAppealMessageReplyManager AppealMessageReplyManager;
 
@@ -21,7 +21,7 @@ namespace WebAPI.Controllers.Appeals
         {
             var result = AppealMessageReplyManager.Create(command);
 
-            return new DataResponse(true, result);
+            return Ok();
         }
         [HttpPut]
         [Authorize]
@@ -29,7 +29,7 @@ namespace WebAPI.Controllers.Appeals
         {
             AppealMessageReplyManager.Update(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         [HttpDelete]
         [Authorize]
@@ -37,7 +37,7 @@ namespace WebAPI.Controllers.Appeals
         {
             AppealMessageReplyManager.Delete(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
     }
 }

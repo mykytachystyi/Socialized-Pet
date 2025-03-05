@@ -17,13 +17,17 @@ namespace WebAPI.Controllers
         [ActionName("AccessPackages")]
         public ActionResult<DataResponse> AccessPackages()
         {
-            return new DataResponse(true, new { Packages =  PackageManager.GetPackageAccess() });
+            var packages = PackageManager.GetPackageAccess();
+
+            return Ok(packages);
         }
         [HttpGet]
         [ActionName("Discounts")]
         public ActionResult<DataResponse> Discounts()
         {
-            return new DataResponse(true, new { Discounts = PackageManager.GetDiscountPackageAccess() });
+            var discounts = PackageManager.GetDiscountPackageAccess();
+
+            return Ok(discounts);
         }
         [HttpPost]
         [ActionName("GetClientToken")]
@@ -31,7 +35,7 @@ namespace WebAPI.Controllers
         {            
             var result = PackageManager.GetClientTokenForPay(command);
 
-            return new DataResponse(true, new { ClientToken = result });
+            return Ok(new { ClientToken = result });
         }
         [HttpPost]
         [ActionName("PackagePay")]
@@ -39,7 +43,7 @@ namespace WebAPI.Controllers
         {
             PackageManager.PayForPackage(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
     }
 }

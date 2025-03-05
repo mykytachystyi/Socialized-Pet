@@ -1,5 +1,5 @@
-﻿using UseCases.Users.Response;
-using UseCases.Users.Commands;
+﻿using UseCases.Users.Commands;
+using UseCases.Response;
 
 namespace UseCases.Users
 {

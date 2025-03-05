@@ -1,25 +1,27 @@
 using Core;
 using Serilog;
+using AutoMapper;
 using System.Web;
+using Domain.Admins;
+using UseCases.Response;
 using UseCases.Exceptions;
 using UseCases.Admins.Commands;
-using Domain.Users;
-using Domain.Admins;
 
 namespace UseCases.Admins
 {
     public class AdminManager : BaseManager, IAdminManager
     {
+        private IMapper Mapper;
         private IAdminRepository AdminRepository;
         private IAdminEmailManager AdminEmailManager;
         private ProfileCondition ProfileCondition = new ProfileCondition();
         
-        public AdminManager(ILogger logger, 
-            IAdminRepository adminRepository,
-            IAdminEmailManager adminEmailManager) : base(logger)
+        public AdminManager(ILogger logger, IAdminRepository adminRepository,
+            IAdminEmailManager adminEmailManager, IMapper mapper) : base(logger)
         {
             AdminRepository = adminRepository;
             AdminEmailManager = adminEmailManager;
+            Mapper = mapper;
         }
         public Admin Create(CreateAdminCommand command)
         {
@@ -81,15 +83,21 @@ namespace UseCases.Admins
             AdminRepository.Update(admin);
             Logger.Information($"Адмін був видалений, id={admin.Id}.");
         }
-        public ICollection<Admin> GetAdmins(long adminId, int since, int count)
+        public ICollection<AdminResponse> GetAdmins(long adminId, int since, int count)
         {
             Logger.Information($"Отримано список адмінів, з={since} по={count} адміном id={adminId}.");
-            return AdminRepository.GetActiveAdmins(adminId, since, count);
+
+            var admins = AdminRepository.GetActiveAdmins(adminId, since, count);
+
+            return Mapper.Map<List<AdminResponse>>(admins);
         }
-        public ICollection<User> GetUsers(int since, int count)
+        public ICollection<UserResponse> GetUsers(int since, int count)
         {
             Logger.Information($"Отримано список користувачів, з={since} по={count}.");
-            return AdminRepository.GetUsers(since, count);
+
+            var users = AdminRepository.GetUsers(since, count);
+
+            return Mapper.Map<List<UserResponse>>(users);
         }
         public void CreateCodeForRecoveryPassword(string adminEmail)
         {

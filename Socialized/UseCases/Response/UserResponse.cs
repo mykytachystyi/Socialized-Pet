@@ -1,4 +1,4 @@
-﻿namespace UseCases.Users.Response
+﻿namespace UseCases.Response
 {
     public class UserResponse
     {

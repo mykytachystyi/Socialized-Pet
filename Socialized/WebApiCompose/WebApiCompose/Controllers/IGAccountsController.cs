@@ -1,6 +1,4 @@
-﻿/*using Serilog;
-using Serilog.Core;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UseCases.InstagramAccounts;
 using UseCases.InstagramAccounts.Commands;
 using WebAPI.Responses;
@@ -26,23 +24,22 @@ namespace WebAPI.Controllers
         {
             var result = AccountManager.Create(command);
             
-            return new DataResponse(true, result);
+            return Ok(result);
         }   
         [HttpDelete]
         public ActionResult<SuccessResponse> Delete(DeleteIgAccountCommand command)
         {
             DeleteIgAccountManager.Delete(command.AccountId);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
-        
         [HttpPost]
         [ActionName("SmsVerify")]
         public ActionResult<SuccessResponse> SmsVerify(SmsVefiryIgAccountCommand command)
         {
             SmsVerifyAccountManager.SmsVerifySession(command);
 
-            return new SuccessResponse(true);
+            return Ok();
         }
         /*
         [HttpPost]
@@ -101,6 +98,6 @@ namespace WebAPI.Controllers
                     data = new { sessions = SelectSessionsToResponce(user.userId) }
                 };
             return Return500Error(message);
-        }
+        }*/
     }
-} */
+}

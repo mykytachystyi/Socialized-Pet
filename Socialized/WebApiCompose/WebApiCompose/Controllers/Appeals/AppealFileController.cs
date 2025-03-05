@@ -20,7 +20,7 @@ namespace WebAPI.Controllers.Appeals
 
             var result = AppealFileManager.Create(filesDto, messageId);
             
-            return new DataResponse(true, result);
+            return Ok(result);
         }
     }
 }
