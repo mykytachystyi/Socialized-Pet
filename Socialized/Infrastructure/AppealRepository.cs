@@ -1,5 +1,6 @@
 ﻿using Domain.Admins;
 using Domain.Appeals;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
@@ -28,24 +29,27 @@ namespace Infrastructure
         public Appeal[] GetAppealsBy(string userToken, int since = 0, int count = 10, bool IsUserDeleted = false)
         {
             return _context.Appeals
-                .Join(_context.Users,
-                    appeal => appeal.UserId,
-                    user => user.Id,
-                    (appeal, user) => new { appeal, user })
-                .Where(au => au.user.TokenForUse == userToken
-                    && au.user.IsDeleted == IsUserDeleted)
-                .OrderBy(au => au.appeal.State)
-                .OrderByDescending(au => au.appeal.CreatedAt)
-                .Select(au => au.appeal)
-                .Skip(since * count).Take(count).ToArray();
+                .Include(appeal => appeal.Messages)
+                    .ThenInclude(message => message.Files)
+                .Include(appeal => appeal.Messages)
+                    .ThenInclude(message => message.AppealMessageReplies)
+                .Include(appeal => appeal.User)
+                .Where(appeal => appeal.User.TokenForUse == userToken
+                    && !appeal.User.IsDeleted == IsUserDeleted)
+                .OrderBy(appeal => appeal.State)
+                .ThenByDescending(appeal => appeal.CreatedAt)
+                .Skip(since * count)
+                .Take(count)
+                .ToArray();
         }
         public Appeal[] GetAppealsBy(int since, int count)
         {
-            return (from appeal in _context.Appeals
-                    orderby appeal.State
-                    orderby appeal.CreatedAt descending
-                    select appeal)
-            .Skip(since * count).Take(count).ToArray();
+            return _context.Appeals
+                .OrderBy(appeal => appeal.State)
+                .ThenByDescending(appeal => appeal.CreatedAt)
+                .Skip(since * count)
+                .Take(count)
+                .ToArray();
         }
         public void Create(Appeal appeal)
         {
@@ -75,12 +79,17 @@ namespace Infrastructure
         public Appeal[] GetAppealsBy(string userToken, int since = 0, int count = 10)
         {
             return _context.Appeals
-                .Join(_context.Users,
-                    appeal => appeal.UserId,
-                    user => user.Id,
-                    (appeal, user) => new { appeal, user })
-                .Where(au => au.user.TokenForUse == userToken)
-                .Select(au => au.appeal)
+                .Include(appeal => appeal.Messages)
+                    .ThenInclude(message => message.Files)
+                .Include(appeal => appeal.Messages)
+                    .ThenInclude(message => message.AppealMessageReplies)
+                .Include(appeal => appeal.User)
+                .Where(appeal => appeal.User.TokenForUse == userToken
+                    && !appeal.User.IsDeleted)
+                .OrderBy(appeal => appeal.State)
+                .ThenByDescending(appeal => appeal.CreatedAt)
+                .Skip(since * count)
+                .Take(count)
                 .ToArray();
         }
     }
