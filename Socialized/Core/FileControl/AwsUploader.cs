@@ -23,14 +23,14 @@ namespace Core.FileControl
         public async override Task<string> SaveFileAsync(Stream file, string relativePath)
         {
             Logger.Information("Запит на збереження файлу на сервісі AWS S3 Bucket.");
-            string fileName = Guid.NewGuid().ToString();
             ChangeDailyPath();
-            string fullPath = "/" + relativePath + dailyFolder;
+            var fileName = Guid.NewGuid().ToString();
+            var fullPath = "/" + relativePath + dailyFolder;
             var result = await SaveToAsync(file, fullPath, fileName);
             if (result)
             {
                 Logger.Information("Файл був збережений на сервісі AWS S3 Bucket.");
-                return relativePath;
+                return fullPath + fileName;
             }
             Logger.Error("Файл не був збережений на сервісі AWS S3 Bucket.");
             return string.Empty;
@@ -46,7 +46,7 @@ namespace Core.FileControl
                     InputStream = stream,
                     StorageClass = S3StorageClass.StandardInfrequentAccess,
                     PartSize = stream.Length,
-                    Key = relativeFilePath,
+                    Key = relativeFilePath + fileName,
                     CannedACL = S3CannedACL.PublicRead
                 };
                 fileTransferUtilityRequest.Metadata.Add("param1", "Value1");
