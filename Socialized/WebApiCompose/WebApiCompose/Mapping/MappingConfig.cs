@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Admins;
+using Domain.Appeals;
 using Domain.Users;
 using UseCases.Response;
 using UseCases.Response.Appeals;

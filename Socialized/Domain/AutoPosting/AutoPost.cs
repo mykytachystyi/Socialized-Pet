@@ -1,16 +1,13 @@
 using Domain.InstagramAccounts;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.AutoPosting
 {
-    [Table("AutoPosts")]
-    public partial class AutoPost : BaseEntity
+    public class AutoPost : BaseEntity
     {
         public AutoPost()
         {
-            files = new HashSet<AutoPostFile>();
+            Files = new HashSet<AutoPostFile>();
         }
-        [ForeignKey("Account")]
         public long AccountId { get; set; }
         public bool Type { get; set; }
         public bool Executed { get; set; }
@@ -20,13 +17,13 @@ namespace Domain.AutoPosting
         public bool AutoDeleted { get; set; }
         public DateTime ExecuteAt { get; set; }
         public DateTime DeleteAfter { get; set; }
-        public string Location { get; set; }
-        public string Description { get; set; }
-        public string Comment { get; set; }
+        public string Location { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string Comment { get; set; } = null!;
         public int TimeZone { get; set; }
         public long CategoryId { get; set; }
-        public virtual Category category { get; set; }
-        public virtual IGAccount account { get; set; }
-        public virtual ICollection<AutoPostFile> files { get; set; }
+        public virtual Category Category { get; set; } = null!;
+        public virtual IGAccount Account { get; set; } = null!;
+        public virtual ICollection<AutoPostFile> Files { get; set; }
     }
 }

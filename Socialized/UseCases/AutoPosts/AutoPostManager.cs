@@ -66,7 +66,7 @@ namespace UseCases.AutoPosts
                 TimeZone = command.TimeZone,
                 CategoryId = command.CategoryId
             };
-            post.files = AutoPostFileManager.Create(command.Files, post, 1);
+            post.Files = AutoPostFileManager.Create(command.Files, post, 1);
             AutoPostRepository.Add(post);
             Logger.Information($"Був створений новий автопост, id={post.Id}.");
             return post;
@@ -102,7 +102,7 @@ namespace UseCases.AutoPosts
             post.Comment = HttpUtility.UrlDecode(command.Comment ?? "");
             if (command.Files != null)
             {
-                AutoPostFileManager.Update(command.Files, post.files);
+                AutoPostFileManager.Update(command.Files, post.Files);
             }
             AutoPostRepository.Update(post);
         }

@@ -1,14 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain
+﻿namespace Domain
 {
     public class BaseEntity
     {
-        [Key]
         public long Id { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }

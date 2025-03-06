@@ -100,11 +100,11 @@ namespace Infrastructure
                     ps => ps.s.UserId, 
                     u => u.Id, (ps, u) => new { ps.p, ps.s, u })
                 .Where(post => post.p.IsDeleted == postDeleted 
-                    && post.p.files.Any(f => f.Id == autoPostFileId))
+                    && post.p.Files.Any(f => f.Id == autoPostFileId))
                 .Select(post => post.p)
-                .Include(p => p.account)
+                .Include(p => p.Account)
                 .ThenInclude(a => a.User)
-                .Include(p => p.files)
+                .Include(p => p.Files)
                 .FirstOrDefault();
         }
 
@@ -123,9 +123,9 @@ namespace Infrastructure
                            psu => psu.p.Id,
                            f => f.PostId,
                            (psu, files) => new { psu.p, psu.s, psu.u, files })
-                .Include(post => post.p.account)
-                .Include(post => post.p.account.User)
-                .Include(post => post.p.files)
+                .Include(post => post.p.Account)
+                .Include(post => post.p.Account.User)
+                .Include(post => post.p.Files)
                 .Where(post => post.p.Id == autoPostId
                     && post.u.TokenForUse == userToken
                     && post.p.IsDeleted == postDeleted)

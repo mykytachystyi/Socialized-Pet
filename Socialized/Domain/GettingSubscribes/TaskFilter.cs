@@ -1,8 +1,5 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Domain.GettingSubscribes
 {
-    [Table("TaskFilters")]
     public partial class TaskFilter : BaseEntity
     {
         public TaskFilter()
@@ -22,7 +19,7 @@ namespace Domain.GettingSubscribes
         public bool Ukrainian { get; set; }
         public bool Russian { get; set; }
         public bool Arabian { get; set; }
-        public virtual TaskGS Task { get; set; }
+        public virtual TaskGS Task { get; set; } = null!;
         public ICollection<WordFilter> words { get; set; }
     };
 }

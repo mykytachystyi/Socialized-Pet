@@ -1,13 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Admins
+namespace Domain.Appeals
 {
-    [Table("AppealFiles")]
-    public partial class AppealFile : BaseEntity
+    public class AppealFile : BaseEntity
     {
-        [ForeignKey("Message")]
         public long MessageId { get; set; }
-        public required string RelativePath { get; set; }
+        public string RelativePath { get; set; } = null!;
         public virtual AppealMessage Message { get; set; }
     }
 }

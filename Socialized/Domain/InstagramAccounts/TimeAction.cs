@@ -1,13 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Domain.InstagramAccounts
 {
-    [Table("TimeAction")]
-    public partial class TimeAction : BaseEntity
+    public class TimeAction : BaseEntity
     {
-        [ForeignKey("Account")]
-        public long AccountId { get; set; }
-        public bool AccountOld { get; set; }
+        public long SessionId { get; set; }
+        public bool SessionOld { get; set; }
         public int FollowCount  { get; set; } 
 	    public int UnfollowCount  { get; set; }
         public int LikeCount  { get; set; } 
@@ -26,6 +22,6 @@ namespace Domain.InstagramAccounts
         public DateTime PublicationLastAt { get; set; }
         public DateTime MessageDirectLastAt { get; set; }
         public DateTime WatchingStoriesLastAt { get; set; }
-        public virtual IGAccount Account { get; set; }   
+        public virtual SessionState SessionState { get; set; } = null!;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Domain.Admins;
+﻿using Domain.Appeals;
 using UseCases.Base;
 
 namespace UseCases.Appeals.Messages

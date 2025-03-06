@@ -1,16 +1,13 @@
 using Domain.Users;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Admins
+namespace Domain.Appeals
 {
-    [Table("Appeals")]
-    public partial class Appeal : BaseEntity
+    public class Appeal : BaseEntity
     {
         public Appeal()
         {
             Messages = new HashSet<AppealMessage>();
         }
-        [ForeignKey("User")]
         public long UserId { get; set; }
         public string Subject { get; set; }
         public int State { get; set; }

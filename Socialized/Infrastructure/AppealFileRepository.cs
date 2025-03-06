@@ -1,4 +1,4 @@
-﻿using Domain.Admins;
+﻿using Domain.Appeals;
 using Domain.Appeals.Messages;
 
 namespace Infrastructure

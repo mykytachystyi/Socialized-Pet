@@ -1,11 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Domain.Packages
 {
-    [Table("PackageAccess")]
     public class PackageAccess : BaseEntity
     {
-        public required string Name { get; set; }
+        public string Name { get; set; } = null!;
         public double Price { get; set; }
         public int IGAccounts { get; set; }
         public int Posts { get; set; }

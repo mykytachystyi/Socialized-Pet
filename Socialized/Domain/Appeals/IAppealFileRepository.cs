@@ -1,6 +1,4 @@
-﻿using Domain.Admins;
-
-namespace Domain.Appeals.Messages
+﻿namespace Domain.Appeals.Messages
 {
     public interface IAppealFileRepository
     {

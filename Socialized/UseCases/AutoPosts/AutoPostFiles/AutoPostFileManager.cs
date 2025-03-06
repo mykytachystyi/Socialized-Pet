@@ -33,11 +33,11 @@ namespace UseCases.AutoPosts.AutoPostFiles
             {
             //    return null;
             }
-            if ((post.files.Count() + command.Files.Count) > 10)
+            if ((post.Files.Count() + command.Files.Count) > 10)
             {
                 throw new ValidationException("Для автопосту дозволено лише 10 файлів.");
             }
-            var postFiles = Create(command.Files, post, (sbyte)(post.files.Count() + 1));
+            var postFiles = Create(command.Files, post, (sbyte)(post.Files.Count() + 1));
             foreach (var file in postFiles)
             {
                 file.PostId = post.Id;
@@ -67,16 +67,16 @@ namespace UseCases.AutoPosts.AutoPostFiles
             {
                 throw new NotFoundException($"Сервер не визначив файл по id={command.AutoPostId} для видалення.");
             }
-            if (post.files.Count == 1)
+            if (post.Files.Count == 1)
             {
                 post.Deleted = true;
                 AutoPostRepository.Update(post);
                 Logger.Information($"Авто пост був видалений id={post.Id}, тому що були видалені всі файли.");
                 return;
             }
-            var file = post.files.Where(f => f.Id == command.AutoPostId).First();
+            var file = post.Files.Where(f => f.Id == command.AutoPostId).First();
             file.IsDeleted = true;
-            foreach (var oldFile in post.files)
+            foreach (var oldFile in post.Files)
             {
                 if (oldFile.Order > file.Order)
                 {
@@ -84,7 +84,7 @@ namespace UseCases.AutoPosts.AutoPostFiles
                 }
             }
             AutoPostFileRepository.Update(file);
-            AutoPostFileRepository.Update(post.files);
+            AutoPostFileRepository.Update(post.Files);
             Logger.Information($"Файл був видалений з автопосту, файл id={file.Id}.");
         }
         public ICollection<AutoPostFile> Create(ICollection<CreateAutoPostFileCommand> files, AutoPost post , sbyte startOrder)
@@ -98,7 +98,7 @@ namespace UseCases.AutoPosts.AutoPostFiles
                     Path = "",
                     MediaId = "",
                     VideoThumbnail = "",
-                    post = post,
+                    Post = post,
                     Type = file.FormFile.ContentType.Contains("video"),
                     Order = startOrder++,
                     CreatedAt = DateTime.UtcNow

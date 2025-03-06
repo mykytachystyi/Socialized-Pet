@@ -1,17 +1,13 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Domain.AutoPosting
 {
-    [Table("AutoPostFiles")]
-    public partial class AutoPostFile : BaseEntity
+    public class AutoPostFile : BaseEntity
     {
-        [ForeignKey("post")]
         public long PostId { get; set; }
-        public required string Path { get; set; }
+        public string Path { get; set; } = null!;
         public sbyte Order { get; set; }
         public bool Type { get; set; }
-        public required string MediaId { get; set; }
-        public required string VideoThumbnail { get; set; }
-        public virtual required AutoPost post { get; set; }
+        public string MediaId { get; set; } = null!;
+        public string VideoThumbnail { get; set; } = null!;
+        public virtual AutoPost Post { get; set; } = null!;
     }
 }

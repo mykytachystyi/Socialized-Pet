@@ -1,4 +1,4 @@
-﻿using Domain.Admins;
+﻿using Domain.Appeals;
 using UseCases.Appeals.Replies.Commands;
 
 namespace UseCases.Appeals.Replies

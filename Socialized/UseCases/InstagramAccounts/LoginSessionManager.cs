@@ -24,11 +24,14 @@ namespace UseCases.InstagramAccounts
             var state = new SessionState
             {
                 SessionSave = "",
-                Account = account,
-                TimeAction = new TimeAction { Account = account }
+                Account = account
             };
+            var timeAction = new TimeAction
+            {
+                SessionState = state
+            };
+            state.TimeAction = timeAction;
             account.State = state;
-
             var result = Api.Do(ref account, accountRequirements);
             switch (result)
             {

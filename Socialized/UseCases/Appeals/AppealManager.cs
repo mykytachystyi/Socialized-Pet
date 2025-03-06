@@ -1,10 +1,9 @@
 using Serilog;
 using System.Web;
-using Domain.Admins;
+using Domain.Appeals;
 using Domain.Users;
 using UseCases.Exceptions;
 using UseCases.Appeals.Commands;
-using Domain.Appeals;
 using AutoMapper;
 using UseCases.Response.Appeals;
 
