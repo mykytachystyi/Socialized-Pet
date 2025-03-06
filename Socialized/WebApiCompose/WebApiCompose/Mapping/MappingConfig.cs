@@ -1,13 +1,21 @@
 ﻿using AutoMapper;
 using Domain.Admins;
+using Domain.Users;
+using UseCases.Response;
 using UseCases.Response.Appeals;
 
 namespace WebApiCompose.Mapping
 {
-    public class AppealMappingProfile : Profile
+    public class MappingConfig : Profile
     {
-        public AppealMappingProfile()
+        public MappingConfig()
         {
+            CreateMap<Admin, AdminResponse>();
+            CreateMap<AdminResponse, Admin>();
+
+            CreateMap<User, UserResponse>();
+            CreateMap<UserResponse, User>();
+
             CreateMap<Appeal, AppealResponse>();
             CreateMap<AppealResponse, Appeal>();
 
