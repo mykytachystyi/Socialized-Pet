@@ -1,15 +1,15 @@
 using System.Text;
 using Core;
 using Core.FileControl;
+using Domain.Users;
 using Domain.Admins;
 using Domain.Appeals.Repositories;
-using Domain.Users;
 using Infrastructure;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 using UseCases.Admins;
 using UseCases.Appeals;
@@ -18,12 +18,11 @@ using UseCases.Appeals.Replies;
 using UseCases.Users;
 using WebAPI.Middleware;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<Context>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -123,7 +122,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 using (var scopeDatabase  = app.Services.CreateScope())
 {
-    var dbContext = scopeDatabase.ServiceProvider.GetRequiredService<Context>();
+    var dbContext = scopeDatabase.ServiceProvider.GetRequiredService<AppDbContext>();
 
     dbContext.Database.EnsureCreated();
 }
@@ -142,5 +141,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.ApplyMigrationsAsync();
 
 app.Run();

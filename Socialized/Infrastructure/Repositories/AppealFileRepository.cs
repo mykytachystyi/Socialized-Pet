@@ -5,8 +5,8 @@ namespace Infrastructure.Repositories
 {
     public class AppealFileRepository : IAppealFileRepository
     {
-        private Context Context;
-        public AppealFileRepository(Context context)
+        private AppDbContext Context;
+        public AppealFileRepository(AppDbContext context)
         {
             Context = context;
         }

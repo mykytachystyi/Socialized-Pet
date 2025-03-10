@@ -7,8 +7,8 @@ namespace Infrastructure.Repositories
 {
     public class AppealRepository : IAppealRepository
     {
-        private Context _context;
-        public AppealRepository(Context context)
+        private AppDbContext _context;
+        public AppealRepository(AppDbContext context)
         {
             _context = context;
         }

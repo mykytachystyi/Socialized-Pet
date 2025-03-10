@@ -4,8 +4,8 @@ namespace Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private Context Context;
-        public UserRepository(Context context) => Context = context;
+        private AppDbContext Context;
+        public UserRepository(AppDbContext context) => Context = context;
 
         public User? GetBy(long userId)
         {

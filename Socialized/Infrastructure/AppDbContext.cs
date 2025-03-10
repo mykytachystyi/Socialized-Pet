@@ -7,7 +7,7 @@ using Infrastructure.EntityTypeConfiguration;
 
 namespace Infrastructure
 {
-    public partial class Context : DbContext
+    public partial class AppDbContext : DbContext
     {
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<AppealFile> AppealFiles { get; set; }
@@ -19,7 +19,7 @@ namespace Infrastructure
         public virtual DbSet<UserProfile> UserProfile { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-        public Context(DbContextOptions<Context> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 
         }
@@ -48,7 +48,7 @@ namespace Infrastructure
                     Role = "default",
                     Password = new ProfileCondition().HashPassword("Pass1234!"),
                     CreatedAt = DateTime.Now,
-                    TokenForStart = ""
+                    TokenForStart = new ProfileCondition().CreateHash(10)
                 }
             );
 

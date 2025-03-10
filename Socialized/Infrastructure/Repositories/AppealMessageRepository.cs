@@ -6,8 +6,8 @@ namespace Infrastructure.Repositories
 {
     public class AppealMessageRepository : IAppealMessageRepository
     {
-        public Context _context;
-        public AppealMessageRepository(Context context)
+        public AppDbContext _context;
+        public AppealMessageRepository(AppDbContext context)
         {
             _context = context;
         }

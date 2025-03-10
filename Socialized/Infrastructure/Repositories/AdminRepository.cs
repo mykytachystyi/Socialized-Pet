@@ -5,8 +5,8 @@ namespace Infrastructure.Repositories
 {
     public class AdminRepository : IAdminRepository
     {
-        private Context _context;
-        public AdminRepository(Context context)
+        private AppDbContext _context;
+        public AdminRepository(AppDbContext context)
         {
             _context = context;
         }
