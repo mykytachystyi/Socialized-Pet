@@ -28,13 +28,13 @@ namespace UseCases.InstagramAccounts
                 UserId = user.Id,
                 Username = userName,
                 CreatedAt = DateTime.UtcNow,
-            };
-            account.State = new SessionState
-            {
-                SessionSave = "",
-                TimeAction = new TimeAction(),
-                Challenger = challengeRequired,
-                Usable = challengeRequired ? false : true
+                State = new SessionState
+                {
+                    SessionSave = "",
+                    TimeAction = new TimeAction(),
+                    Challenger = challengeRequired,
+                    Usable = challengeRequired ? false : true
+                }
             };
             AccountRepository.Create(account);
             var stateData = Api.AsString(account);

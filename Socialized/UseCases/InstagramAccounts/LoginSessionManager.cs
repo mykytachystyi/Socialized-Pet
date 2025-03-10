@@ -20,18 +20,14 @@ namespace UseCases.InstagramAccounts
         {
             string message = "";
 
-            var account = new IGAccount();
-            var state = new SessionState
+            var account = new IGAccount
             {
-                SessionSave = "",
-                Account = account
+                State = new SessionState
+                {
+                    SessionSave = "",
+                    TimeAction = new TimeAction()
+                }
             };
-            var timeAction = new TimeAction
-            {
-                SessionState = state
-            };
-            state.TimeAction = timeAction;
-            account.State = state;
             var result = Api.Do(ref account, accountRequirements);
             switch (result)
             {

@@ -7,6 +7,7 @@ using Domain.Packages;
 using Domain.InstagramAccounts;
 using Core;
 using Domain.Appeals;
+using Infrastructure.EntityTypeConfiguration;
 
 namespace Infrastructure
 {
@@ -47,125 +48,15 @@ namespace Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>(entity =>
-            {
-                entity.HasKey(e => e.Id);
+            modelBuilder.ApplyConfiguration(new AdminConfiguration());
+            modelBuilder.ApplyConfiguration(new AppealConfiguration());
+            modelBuilder.ApplyConfiguration(new AppealFileConfiguration());
+            modelBuilder.ApplyConfiguration(new AppealMessageConfiguration());
+            modelBuilder.ApplyConfiguration(new AppealMessageReplyConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            
 
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(320);
 
-                entity.Property(e => e.FirstName)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.LastName)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.Role)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.TokenForStart)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.LastLoginAt)
-                    .IsRequired();
-
-            });
-            modelBuilder.Entity<Appeal>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                
-                entity.Property(e => e.UserId).IsRequired();
-                entity.Property(e => e.Subject).IsRequired();
-                entity.Property(e => e.State).IsRequired();
-                entity.Property(e => e.LastActivity).IsRequired();
-
-                entity.HasOne(e => e.User)
-                      .WithMany(u => u.Appeals)
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.Messages)
-                      .WithOne(m => m.Appeal)
-                      .HasForeignKey(m => m.AppealId);
-            });
-            modelBuilder.Entity<AppealFile>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                
-                entity.Property(e => e.MessageId).IsRequired();
-                entity.Property(e => e.RelativePath).IsRequired();
-
-                entity.HasOne(e => e.Message)
-                      .WithMany(m => m.Files)
-                      .HasForeignKey(e => e.MessageId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.TokenForUse).IsRequired();
-                entity.Property(e => e.Email).IsRequired().HasMaxLength(320);
-                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.LastLoginAt).IsRequired();
-                entity.Property(e => e.HashForActivate).IsRequired();
-                entity.Property(e => e.Activate).IsRequired();
-                entity.Property(e => e.RecoveryCode);
-                entity.Property(e => e.RecoveryToken).IsRequired(false);
-
-                entity.HasMany(e => e.IGAccounts)
-                      .WithOne(iga => iga.User)
-                      .HasForeignKey(iga => iga.UserId);
-
-                entity.HasMany(e => e.Appeals)
-                      .WithOne(a => a.User)
-                      .HasForeignKey(a => a.UserId);
-            });
-            modelBuilder.Entity<AppealMessage>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.AppealId).IsRequired();
-                entity.Property(e => e.Message).IsRequired();
-                entity.Property(e => e.UpdatedAt).IsRequired();
-
-                entity.HasOne(e => e.Appeal)
-                      .WithMany(a => a.Messages)
-                      .HasForeignKey(e => e.AppealId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.Files)
-                      .WithOne(f => f.Message)
-                      .HasForeignKey(f => f.MessageId);
-
-                entity.HasMany(e => e.AppealMessageReplies)
-                      .WithOne(r => r.Message)
-                      .HasForeignKey(r => r.AppealMessageId);
-            });
-            modelBuilder.Entity<AppealMessageReply>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.Property(e => e.AppealMessageId).IsRequired();
-                entity.Property(e => e.Reply).IsRequired();
-                entity.Property(e => e.UpdatedAt).IsRequired();
-
-                entity.HasOne(e => e.Message)
-                      .WithMany(m => m.AppealMessageReplies)
-                      .HasForeignKey(e => e.AppealMessageId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
             modelBuilder.Entity<AutoPost>(entity =>
             {
                 entity.HasKey(e => e.Id);
