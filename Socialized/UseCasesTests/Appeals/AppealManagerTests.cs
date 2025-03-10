@@ -1,5 +1,6 @@
 ﻿using Domain.Admins;
 using Domain.Appeals;
+using Domain.Appeals.Repositories;
 using Domain.AutoPosting;
 using Domain.Users;
 using NSubstitute;

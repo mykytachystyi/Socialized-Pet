@@ -1,4 +1,4 @@
-﻿namespace Domain.Appeals.Messages
+﻿namespace Domain.Appeals.Repositories
 {
     public interface IAppealFileRepository
     {

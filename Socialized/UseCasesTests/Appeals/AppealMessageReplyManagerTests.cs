@@ -4,10 +4,10 @@ using Domain.Admins;
 using UseCases.Exceptions;
 using UseCases.Appeals.Replies.Commands;
 using Domain.Appeals;
-using Domain.Appeals.Replies;
 using UseCases.Appeals.Replies;
 using UseCases.Appeals;
 using NSubstitute.ReturnsExtensions;
+using Domain.Appeals.Repositories;
 
 namespace UseCasesTests.Appeals.Replies
 {

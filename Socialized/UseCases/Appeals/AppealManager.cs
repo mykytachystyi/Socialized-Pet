@@ -6,6 +6,7 @@ using UseCases.Exceptions;
 using UseCases.Appeals.Commands;
 using AutoMapper;
 using UseCases.Response.Appeals;
+using Domain.Appeals.Repositories;
 
 namespace UseCases.Appeals
 {

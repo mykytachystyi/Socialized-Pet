@@ -1,5 +1,6 @@
 ﻿using Domain.Admins;
 using Domain.Appeals;
+using Domain.Appeals.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories

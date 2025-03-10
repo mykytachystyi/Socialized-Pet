@@ -20,11 +20,6 @@ namespace Infrastructure.EntityTypeConfiguration
             builder.Property(e => e.Activate).IsRequired();
             builder.Property(e => e.RecoveryCode);
             builder.Property(e => e.RecoveryToken).IsRequired(false);
-
-            
-            builder.HasMany(e => e.Appeals)
-                  .WithOne(a => a.User)
-                  .HasForeignKey(a => a.UserId);
         }
     }
 }

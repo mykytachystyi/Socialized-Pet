@@ -1,6 +1,6 @@
 ﻿using Core.FileControl;
 using Domain.Admins;
-using Domain.Appeals.Messages;
+using Domain.Appeals.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;

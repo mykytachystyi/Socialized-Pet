@@ -3,6 +3,7 @@ using System.Web;
 using Domain.Appeals;
 using UseCases.Exceptions;
 using UseCases.Appeals.Messages.Commands;
+using Domain.Appeals.Repositories;
 
 namespace UseCases.Appeals.Messages
 {

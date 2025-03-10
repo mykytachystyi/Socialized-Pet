@@ -1,9 +1,9 @@
 ﻿using Serilog;
 using Core.FileControl;
-using Domain.Appeals.Messages;
 using UseCases.Exceptions;
 using UseCases.Base;
 using Domain.Appeals;
+using Domain.Appeals.Repositories;
 
 namespace UseCases.Appeals.Messages
 {

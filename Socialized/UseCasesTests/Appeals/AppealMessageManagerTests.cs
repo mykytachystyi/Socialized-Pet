@@ -1,4 +1,4 @@
-﻿using Domain.Appeals;
+﻿using Domain.Appeals.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;

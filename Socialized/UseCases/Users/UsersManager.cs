@@ -2,7 +2,6 @@ using Core;
 using Serilog;
 using System.Web;
 using Domain.Users;
-using UseCases.Packages;
 using UseCases.Users.Commands;
 using UseCases.Exceptions;
 
@@ -13,17 +12,14 @@ namespace UseCases.Users
         private IUserRepository UserRepository;
         
         public ProfileCondition ProfileCondition = new ProfileCondition();
-        public IPackageManager PackageCondition;
         private IEmailMessanger EmailMessanger;
 
         public UsersManager(ILogger logger,
             IUserRepository userRepository,
-            IEmailMessanger emailMessager,
-            IPackageManager packageManager) : base(logger) 
+            IEmailMessanger emailMessager) : base(logger) 
         {
             UserRepository = userRepository;
             EmailMessanger = emailMessager;
-            PackageCondition = packageManager;
         }
         public void Create(CreateUserCommand command)
         {
@@ -54,7 +50,6 @@ namespace UseCases.Users
                 RecoveryToken = ""
             };            
             UserRepository.Create(user);
-            PackageCondition.CreateDefaultServiceAccess(user);
             EmailMessanger.SendConfirmEmail(user.Email, command.Culture, user.HashForActivate);
             Logger.Information($"Новий користувач був створений, id={user.Id}.");
         }

@@ -1,5 +1,6 @@
 ﻿using Domain.Admins;
 using Domain.Appeals;
+using Domain.Appeals.Repositories;
 
 namespace Infrastructure.Repositories
 {

@@ -1,5 +1,5 @@
 ﻿using Domain.Appeals;
-using Domain.Appeals.Messages;
+using Domain.Appeals.Repositories;
 
 namespace Infrastructure.Repositories
 {

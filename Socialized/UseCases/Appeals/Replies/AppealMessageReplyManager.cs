@@ -3,10 +3,10 @@ using Domain.Admins;
 using UseCases.Exceptions;
 using UseCases.Appeals.Replies.Commands;
 using Domain.Appeals;
-using Domain.Appeals.Replies;
+using Domain.Appeals.Repositories;
 
 namespace UseCases.Appeals.Replies
-{    
+{
     public class AppealMessageReplyManager : BaseManager, IAppealMessageReplyManager
     {
         private IAppealManager AppealManager;

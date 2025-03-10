@@ -15,11 +15,6 @@ namespace Infrastructure.EntityTypeConfiguration
             builder.Property(e => e.State).IsRequired();
             builder.Property(e => e.LastActivity).IsRequired();
 
-            builder.HasOne(e => e.User)
-                .WithMany(u => u.Appeals)
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(e => e.Messages)
                 .WithOne(m => m.Appeal)
                 .HasForeignKey(m => m.AppealId);
