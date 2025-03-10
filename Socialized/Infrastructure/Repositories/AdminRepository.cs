@@ -1,12 +1,12 @@
 ﻿using Domain.Admins;
 using Domain.Users;
 
-namespace Infrastructure
+namespace Infrastructure.Repositories
 {
     public class AdminRepository : IAdminRepository
     {
         private Context _context;
-        public AdminRepository(Context context) 
+        public AdminRepository(Context context)
         {
             _context = context;
         }

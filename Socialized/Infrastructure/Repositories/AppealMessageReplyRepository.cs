@@ -1,7 +1,7 @@
 ﻿using Domain.Appeals;
 using Domain.Appeals.Replies;
 
-namespace Infrastructure
+namespace Infrastructure.Repositories
 {
     public class AppealMessageReplyRepository : IAppealMessageReplyRepository
     {

@@ -2,12 +2,12 @@
 using Domain.Appeals;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure
+namespace Infrastructure.Repositories
 {
     public class AppealRepository : IAppealRepository
     {
         private Context _context;
-        public AppealRepository(Context context) 
+        public AppealRepository(Context context)
         {
             _context = context;
         }
@@ -15,7 +15,7 @@ namespace Infrastructure
         {
             return _context.Appeals.Where(a => a.Id == appealId).FirstOrDefault();
         }
-        public Appeal GetBy(long appealId, string userToken, int appealStateIsNot = 4) 
+        public Appeal GetBy(long appealId, string userToken, int appealStateIsNot = 4)
             => _context.Appeals.Join(_context.Users,
                     appeal => appeal.UserId,
                     user => user.Id,

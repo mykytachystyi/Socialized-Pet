@@ -1,6 +1,6 @@
 ﻿using Domain.Users;
 
-namespace Infrastructure
+namespace Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {

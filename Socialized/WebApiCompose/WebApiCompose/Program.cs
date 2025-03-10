@@ -5,13 +5,9 @@ using Domain.Admins;
 using Domain.Appeals;
 using Domain.Appeals.Messages;
 using Domain.Appeals.Replies;
-using Domain.AutoPosting;
-using Domain.GettingSubscribes;
-using Domain.InstagramAccounts;
-using Domain.Packages;
 using Domain.Users;
-using FfmpegConverter;
 using Infrastructure;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -21,12 +17,6 @@ using UseCases.Admins;
 using UseCases.Appeals;
 using UseCases.Appeals.Messages;
 using UseCases.Appeals.Replies;
-using UseCases.AutoPosts;
-using UseCases.AutoPosts.AutoPostFiles;
-using UseCases.InstagramAccounts;
-using UseCases.InstagramApi;
-using UseCases.InstagramApi.MockingApi;
-using UseCases.Packages;
 using UseCases.Users;
 using WebAPI.Middleware;
 
@@ -55,39 +45,10 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminEmailManager, AdminEmailManager>();
 builder.Services.AddScoped<ISmtpSender, SmtpOauthSender>(); 
 
-builder.Services.AddScoped<IPackageManager, PackageManager>();
-builder.Services.AddScoped<IServiceAccessRepository, ServiceAccessRepository>();
-builder.Services.AddScoped<IPackageAccessRepository, PackageAccessRepository>();
-builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
-builder.Services.AddScoped<IForServerAccessCountingRepository, IGAccountRepository>();
-
-builder.Services.AddScoped<IAutoPostManager, AutoPostManager>();
-builder.Services.AddScoped<IAutoPostRepository, AutoPostRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IIGAccountRepository, IGAccountRepository>();
-builder.Services.AddScoped<IAutoPostFileManager, AutoPostFileManager>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>());
 
 builder.Services.AddScoped<IFileManager, AwsUploader>();
-builder.Services.AddScoped<IAutoPostFileRepository, AutoPostFileRepository>();
-builder.Services.AddScoped<IAutoPostFileSave, AutoPostFileSave>();
-builder.Services.AddScoped<IFileConverter, FileConverterMocking>();
-builder.Services.AddScoped<IFileMover, FileMover>();
-
-builder.Services.AddScoped<IIGAccountManager, CreateIGAccountManager>();
-builder.Services.AddScoped<ILoginApi, LoginApi>();
-builder.Services.AddScoped<IChallengeRequiredAccount, ChallengeRequiredAccount>();
-builder.Services.AddScoped<IGetChallengeRequireVerifyMethod, GetChallengeRequireVerifyMethod>();
-builder.Services.AddScoped<IVerifyCodeForChallengeRequire, VerifyCodeForChallengeRequire>();
-builder.Services.AddScoped<ILoginSessionManager, LoginSessionManager>();
-builder.Services.AddScoped<IRecoverySessionManager, RecoverySessionManager>();
 builder.Services.AddScoped<ProfileCondition>();
-builder.Services.AddScoped<IGetChallengeRequireVerifyMethod, GetChallengeRequireVerifyMethod>();
-builder.Services.AddScoped<IGetStateData, GetStateData>();
-builder.Services.AddScoped<ISaveSessionManager, SaveSessionManager>();
-builder.Services.AddScoped<IDeleteIgAccountManager, DeleteIgAccountManager>();
-builder.Services.AddScoped<ITaskGettingSubscribesRepository, TaskGsRepository>();
-builder.Services.AddScoped<ISmsVerifyIgAccountManager, SmsVerifyIgAccountManager>();
 
 builder.Services.AddScoped<IUsersManager, UsersManager>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
