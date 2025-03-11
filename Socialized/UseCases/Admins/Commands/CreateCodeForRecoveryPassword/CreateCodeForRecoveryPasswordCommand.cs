@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace UseCases.Admins.Commands.CreateCodeForeRecoveryPassword;
+namespace UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 
 public class CreateCodeForRecoveryPasswordCommand : IRequest<CreateCodeForRecoveryPasswordResponse>
 {

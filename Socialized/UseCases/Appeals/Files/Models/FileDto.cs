@@ -1,4 +1,4 @@
-﻿namespace UseCases.Base
+﻿namespace UseCases.Appeals.Files.Models
 {
     public class FileDto
     {

@@ -13,7 +13,7 @@ namespace UseCases.Admins.Commands.CreateAdmin;
 public class CreateAdminCommandHandler(
     IAdminRepository adminRepository,
     ProfileCondition profileCondition,
-    AdminEmailManager adminEmailManager,
+    IAdminEmailManager adminEmailManager,
     ILogger logger,
     IMapper mapper
     ) : IRequestHandler<CreateAdminCommand, AdminResponse>

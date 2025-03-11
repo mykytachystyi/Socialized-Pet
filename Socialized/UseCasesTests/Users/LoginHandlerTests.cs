@@ -3,23 +3,22 @@ using Serilog;
 using AutoMapper;
 using NSubstitute;
 using Domain.Users;
-using UseCases.Users;
-using UseCases.Users.Commands;
 using UseCases.Exceptions;
 using NSubstitute.ReturnsExtensions;
 using UseCases.Users.Models;
+using UseCases.Users.Commands.LoginUser;
 
 namespace UseCasesTests.Users
 {
-    public class UserLoginManagerTests
+    public class LoginHandlerTests
     {
         private ILogger logger = Substitute.For<ILogger>();
         private IUserRepository userRepository = Substitute.For<IUserRepository>();
         private IMapper mapper = Substitute.For<IMapper>();
-
         private ProfileCondition profileCondition = new ProfileCondition();
+
         [Fact]
-        public void Login_WhenUserPasswordValidAndEmailIsFound_ReturnUser()
+        public async Task Login_WhenUserPasswordValidAndEmailIsFound_ReturnUser()
         {
             var command = new LoginUserCommand
             {
@@ -29,15 +28,15 @@ namespace UseCasesTests.Users
             var hashedPassword = profileCondition.HashPassword(command.Password);
             var user = new User { Email = command.Email, Password = hashedPassword };
             userRepository.GetByEmail(command.Email).Returns(user);
-            var userLoginManager = new UserLoginManager(logger, userRepository, mapper);
+            var handler = new LoginUserCommandHandler(userRepository, profileCondition, mapper, logger);
             mapper.Map<UserResponse>(user).Returns(new UserResponse { Email = command.Email, FirstName = "", LastName = "", TokenForUse = "" });
 
-            var result = userLoginManager.Login(command);
+            var result = await handler.Handle(command, CancellationToken.None);
 
             Assert.Equal(command.Email, result.Email);
         }
         [Fact]
-        public void Login_WhenUserPasswordIsNotValid_ThrowValidationException()
+        public async Task Login_WhenUserPasswordIsNotValid_ThrowValidationException()
         {
             var command = new LoginUserCommand
             {
@@ -47,12 +46,12 @@ namespace UseCasesTests.Users
             var hashedPassword = profileCondition.HashPassword("different_password");
             var user = new User { Email = command.Email, Password = hashedPassword };
             userRepository.GetByEmail(command.Email).Returns(user);
-            var userLoginManager = new UserLoginManager(logger, userRepository, mapper);
+            var handler = new LoginUserCommandHandler(userRepository, profileCondition, mapper, logger);
 
-            Assert.Throws<ValidationException>(() => userLoginManager.Login(command));
+            await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
         }
         [Fact]
-        public void Login_WhenUserEmailIsNotFound_ThrowNotFoundException()
+        public async Task Login_WhenUserEmailIsNotFound_ThrowNotFoundException()
         {
             var command = new LoginUserCommand
             {
@@ -62,29 +61,9 @@ namespace UseCasesTests.Users
             var hashedPassword = profileCondition.HashPassword("different_password");
             var user = new User { Email = command.Email, Password = hashedPassword };
             userRepository.GetByEmail(command.Email).ReturnsNull();
-            var userLoginManager = new UserLoginManager(logger, userRepository, mapper);
+            var handler = new LoginUserCommandHandler(userRepository, profileCondition, mapper, logger);
 
-            Assert.Throws<NotFoundException>(() => userLoginManager.Login(command));
-        }
-        [Fact]
-        public void Logout_WhenUserTokenIsFound_Return()
-        {
-            var tokenForUse = "1234567890";
-            var user = new User { TokenForUse = tokenForUse };
-            userRepository.GetByUserTokenNotDeleted(tokenForUse).Returns(user);
-            var userLoginManager = new UserLoginManager(logger, userRepository, mapper);
-
-            userLoginManager.LogOut(tokenForUse);
-        }
-        [Fact]
-        public void Logout_WhenUserTokenIsNotFound_ThrowNotFoundException()
-        {
-            var tokenForUse = "1234567890";
-            var user = new User { TokenForUse = tokenForUse };
-            userRepository.GetByUserTokenNotDeleted(tokenForUse).ReturnsNull();
-            var userLoginManager = new UserLoginManager(logger, userRepository, mapper);
-
-            Assert.Throws<NotFoundException>(() => userLoginManager.LogOut(tokenForUse));
+            await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
         }
     }
 }

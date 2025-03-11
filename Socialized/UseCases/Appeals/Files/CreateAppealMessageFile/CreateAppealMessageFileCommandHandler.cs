@@ -10,7 +10,7 @@ using UseCases.Exceptions;
 namespace UseCases.Appeals.Files.CreateAppealMessageFile;
 
 public class CreateAppealMessageFileCommandHandler (
-    FileManager fileManager,
+    IFileManager fileManager,
     ILogger logger,
     IAppealFileRepository AppealFilesRepository,
     IMapper mapper
