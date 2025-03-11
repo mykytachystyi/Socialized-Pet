@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals.Messages;
+using UseCases.Appeals.Files;
 using WebAPI.Responses;
 
 namespace WebAPI.Controllers.Appeals

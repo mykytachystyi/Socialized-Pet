@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UseCases.Appeals.Replies;
-using UseCases.Appeals.Replies.Commands;
+using UseCases.Appeals.Replies.Commands.CreateAppealMessageReply;
+using UseCases.Appeals.Replies.Commands.DeleteAppealMessageReply;
+using UseCases.Appeals.Replies.Commands.UpdateAppealMessageReply;
 using WebAPI.Responses;
 
 namespace WebAPI.Controllers.Appeals

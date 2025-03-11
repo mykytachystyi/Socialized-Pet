@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UseCases.Appeals;
-using UseCases.Appeals.Commands;
+using UseCases.Appeals.Commands.CreateAppeal;
 using WebAPI.Responses;
 
 namespace WebAPI.Controllers.Appeals

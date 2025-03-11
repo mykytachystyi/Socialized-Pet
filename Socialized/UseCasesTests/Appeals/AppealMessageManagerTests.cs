@@ -2,7 +2,7 @@
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
-using UseCases.Appeals.Messages;
+using UseCases.Appeals.Files;
 using UseCases.Appeals.Messages.Commands;
 using UseCases.Base;
 using UseCases.Exceptions;

@@ -1,0 +1,10 @@
+﻿using MediatR;
+
+namespace UseCases.Appeals.Messages.UpdateAppealMessage;
+
+public record class UpdateAppealMessageCommand : IRequest<UpdateAppealMessageCommandResponse>
+{
+    public long MessageId { get; set; }
+    public required string Message { get; set; }
+}
+public record class UpdateAppealMessageCommandResponse(bool Success, string Message);

@@ -13,10 +13,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 using UseCases.Admins;
 using UseCases.Appeals;
-using UseCases.Appeals.Messages;
 using UseCases.Appeals.Replies;
 using UseCases.Users;
 using WebAPI.Middleware;
+using UseCases.Appeals.Files;
 
 var builder = WebApplication.CreateBuilder(args);
 

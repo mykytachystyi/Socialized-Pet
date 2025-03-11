@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals.Messages.Commands;
 using UseCases.Appeals.Messages;
 using WebAPI.Responses;
+using UseCases.Appeals.Messages.CreateAppealMessage;
+using UseCases.Appeals.Messages.DeleteAppealMessage;
+using UseCases.Appeals.Messages.UpdateAppealMessage;
 
 namespace WebAPI.Controllers.Appeals
 {
