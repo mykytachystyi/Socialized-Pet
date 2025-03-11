@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using UseCases.Base;
 using UseCases.Appeals.Messages.Models;
+using UseCases.Appeals.Files.Models;
 
 namespace UseCases.Appeals.Messages.CreateAppealMessage;
 

@@ -2,7 +2,7 @@
 using Domain.Admins;
 using MediatR;
 using Serilog;
-using UseCases.Response;
+using UseCases.Users.Models;
 
 namespace UseCases.Admins.Queries.GetUsers;
 

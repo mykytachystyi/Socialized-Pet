@@ -5,7 +5,6 @@ using Domain.Appeals.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Appeals.Files.Models;
-using UseCases.Base;
 using UseCases.Exceptions;
 
 namespace UseCases.Appeals.Files.CreateAppealMessageFile;

@@ -3,8 +3,8 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using UseCases.Appeals.Files;
+using UseCases.Appeals.Files.Models;
 using UseCases.Appeals.Messages.Commands;
-using UseCases.Base;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals

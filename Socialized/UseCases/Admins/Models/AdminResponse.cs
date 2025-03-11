@@ -1,4 +1,4 @@
-﻿namespace UseCases.Response
+﻿namespace UseCases.Admins.Models
 {
     public class AdminResponse
     {

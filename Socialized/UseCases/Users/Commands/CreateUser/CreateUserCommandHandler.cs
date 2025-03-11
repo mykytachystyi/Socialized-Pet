@@ -1,0 +1,52 @@
+﻿using Core;
+using Domain.Users;
+using MediatR;
+using Serilog;
+using System.Web;
+using UseCases.Exceptions;
+using UseCases.Users.Emails;
+
+namespace UseCases.Users.Commands.CreateUser
+{
+    public class CreateUserCommandHandler (
+        IUserRepository userRepository,
+        IEmailMessanger emailMessanger,
+        ProfileCondition profileCondition,
+        ILogger logger
+        ) : IRequestHandler<CreateUserCommand, CreateUserResponse>
+    {
+        public async Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        {
+            logger.Information("Початок створення нового користувача.");
+            var user = userRepository.GetByEmail(request.Email);
+            if (user != null && user.IsDeleted)
+            {
+                user.IsDeleted = false;
+                user.TokenForUse = Guid.NewGuid().ToString();
+                userRepository.Update(user);
+                logger.Information($"Був востановлен видалений аккаунт, id={user.Id}.");
+                return new CreateUserResponse(true, $"Був востановлен видалений аккаунт, id={user.Id}.");
+            }
+            if (user != null && !user.IsDeleted)
+            {
+                throw new NotFoundException("Користувач з таким email-адресом вже існує.");
+            }
+            user = new User
+            {
+                Email = request.Email,
+                FirstName = HttpUtility.UrlDecode(request.FirstName),
+                LastName = HttpUtility.UrlDecode(request.LastName),
+                Password = profileCondition.HashPassword(request.Password),
+                HashForActivate = profileCondition.CreateHash(100),
+                CreatedAt = DateTime.UtcNow,
+                LastLoginAt = DateTime.UtcNow,
+                TokenForUse = profileCondition.CreateHash(40),
+                RecoveryToken = ""
+            };
+            userRepository.Create(user);
+            emailMessanger.SendConfirmEmail(user.Email, request.Culture, user.HashForActivate);
+            logger.Information($"Новий користувач був створений, id={user.Id}.");
+            return new CreateUserResponse(true, $"Новий користувач був створений, id={user.Id}.");
+        }
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using Core;
 using Serilog;
 using NSubstitute;
-using UseCases.Admins;
+using UseCases.Admins.Emails;
 
 namespace UseCasesTests.Admins
 {

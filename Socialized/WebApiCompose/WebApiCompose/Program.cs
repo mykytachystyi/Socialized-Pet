@@ -11,12 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
-using UseCases.Admins;
 using UseCases.Appeals;
 using UseCases.Appeals.Replies;
 using UseCases.Users;
 using WebAPI.Middleware;
 using UseCases.Appeals.Files;
+using UseCases.Admins.Emails;
+using UseCases.Users.Emails;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 using WebAPI.response;
 using Microsoft.AspNetCore.Mvc;
-using UseCases.Base;
+using UseCases.Appeals.Files.Models;
 
 namespace WebAPI.Controllers
 {

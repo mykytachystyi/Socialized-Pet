@@ -1,4 +1,4 @@
-﻿namespace UseCases.Users
+﻿namespace UseCases.Users.Emails
 {
     public interface IEmailMessanger
     {

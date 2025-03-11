@@ -1,12 +1,12 @@
 ﻿using Core;
 
-namespace UseCases.Users
+namespace UseCases.Users.Emails
 {
     public class EmailMessanger : IEmailMessanger
     {
         private ISmtpSender SmtpSender;
 
-        public EmailMessanger(ISmtpSender smtpSender) 
+        public EmailMessanger(ISmtpSender smtpSender)
         {
             SmtpSender = smtpSender;
         }

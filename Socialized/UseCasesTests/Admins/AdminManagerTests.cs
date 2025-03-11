@@ -3,8 +3,8 @@ using Domain.Admins;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
-using UseCases.Admins;
 using UseCases.Admins.Commands;
+using UseCases.Admins.Emails;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Admins

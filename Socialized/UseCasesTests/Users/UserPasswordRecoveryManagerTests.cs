@@ -5,6 +5,7 @@ using Serilog;
 using UseCases.Exceptions;
 using UseCases.Users;
 using UseCases.Users.Commands;
+using UseCases.Users.Emails;
 
 namespace UseCasesTests.Users
 {

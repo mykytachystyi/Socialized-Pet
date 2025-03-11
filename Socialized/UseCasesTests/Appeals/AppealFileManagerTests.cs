@@ -4,8 +4,8 @@ using Domain.Appeals.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using UseCases.Appeals.Files.Models;
 using UseCases.Appeals.Messages;
-using UseCases.Base;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals

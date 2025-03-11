@@ -1,14 +1,16 @@
 ﻿using Core;
 using Serilog;
 
-namespace UseCases.Admins;
+namespace UseCases.Admins.Emails;
 
-public class AdminEmailManager : BaseManager, IAdminEmailManager
+public class AdminEmailManager : IAdminEmailManager
 {
     private ISmtpSender SmtpSender;
-    public AdminEmailManager(ISmtpSender smtpSender, ILogger logger) : base(logger)
+    private ILogger Logger;
+    public AdminEmailManager(ISmtpSender smtpSender, ILogger logger)
     {
         SmtpSender = smtpSender;
+        Logger = logger;
     }
     public void SetupPassword(string tokenForStart, string email)
     {

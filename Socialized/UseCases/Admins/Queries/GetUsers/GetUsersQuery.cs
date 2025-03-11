@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using UseCases.Response;
+using UseCases.Users.Models;
 
 namespace UseCases.Admins.Queries.GetUsers;
 

@@ -1,4 +1,4 @@
-﻿namespace UseCases.Admins
+﻿namespace UseCases.Admins.Emails
 {
     public interface IAdminEmailManager
     {

@@ -2,10 +2,11 @@
 using Domain.Admins;
 using Domain.Appeals;
 using Domain.Users;
+using UseCases.Admins.Models;
 using UseCases.Appeals.Files.Models;
 using UseCases.Appeals.Messages.Models;
 using UseCases.Appeals.Replies.Models;
-using UseCases.Response;
+using UseCases.Users.Models;
 
 namespace WebApiCompose.Mapping
 {

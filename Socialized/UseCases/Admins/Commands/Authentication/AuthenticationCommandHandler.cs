@@ -3,8 +3,8 @@ using Core;
 using Domain.Admins;
 using MediatR;
 using Serilog;
+using UseCases.Admins.Models;
 using UseCases.Exceptions;
-using UseCases.Response;
 
 namespace UseCases.Admins.Commands.Authentication;
 

@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UseCases.Users;
-using UseCases.Users.Commands;
+using UseCases.Users.Commands.ChangeOldPassword;
+using UseCases.Users.Commands.ChangePassword;
+using UseCases.Users.Commands.CheckRecoveryCode;
+using UseCases.Users.Commands.CreateUser;
+using UseCases.Users.Commands.LoginUser;
 using WebAPI.Responses;
 
 namespace WebAPI.Controllers
