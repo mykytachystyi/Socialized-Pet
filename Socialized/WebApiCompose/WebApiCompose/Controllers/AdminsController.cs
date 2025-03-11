@@ -2,8 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebAPI.Responses;
 using UseCases.Admins;
-using UseCases.Admins.Commands;
 using WebAPI.Middleware;
+using UseCases.Admins.Commands.Authentication;
+using UseCases.Admins.Commands.ChangePassword;
+using UseCases.Admins.Commands.CreateAdmin;
+using UseCases.Admins.Commands.Delete;
+using UseCases.Admins.Commands.SetupPassword;
 
 namespace WebAPI.Controllers
 {
