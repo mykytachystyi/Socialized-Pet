@@ -1,45 +1,37 @@
-﻿using Domain.Admins;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals.Replies;
 using UseCases.Appeals.Replies.Commands.CreateAppealMessageReply;
 using UseCases.Appeals.Replies.Commands.DeleteAppealMessageReply;
 using UseCases.Appeals.Replies.Commands.UpdateAppealMessageReply;
-using WebAPI.Responses;
 
 namespace WebAPI.Controllers.Appeals
 {
     public class AppealMessageReplyController : ControllerResponseBase
     {
-        private IAppealMessageReplyManager AppealMessageReplyManager;
+        private ISender Sender;
 
-        public AppealMessageReplyController(IAppealMessageReplyManager appealMessageReplyManager)
+        public AppealMessageReplyController(ISender sender)
         {
-            AppealMessageReplyManager = appealMessageReplyManager;
+            Sender = sender;
         }
         [HttpPost]
         [Authorize]
-        public ActionResult<DataResponse> Create(CreateAppealMessageReplyCommand command)
+        public async Task<ActionResult> Create(CreateAppealMessageReplyCommand command)
         {
-            var result = AppealMessageReplyManager.Create(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpPut]
         [Authorize]
-        public ActionResult<SuccessResponse> Update(UpdateAppealMessageReplyCommand command)
+        public async Task<ActionResult> Update(UpdateAppealMessageReplyCommand command)
         {
-            AppealMessageReplyManager.Update(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpDelete]
         [Authorize]
-        public ActionResult<SuccessResponse> Delete(DeleteAppealMessageReplyCommand command)
+        public async Task<ActionResult> Delete(DeleteAppealMessageReplyCommand command)
         {
-            AppealMessageReplyManager.Delete(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
     }
 }

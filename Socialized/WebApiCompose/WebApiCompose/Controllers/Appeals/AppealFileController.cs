@@ -1,26 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals.Files;
-using WebAPI.Responses;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using UseCases.Appeals.Files.CreateAppealMessageFile;
 
 namespace WebAPI.Controllers.Appeals
 {
     public class AppealFileController : ControllerResponseBase
     {
-        private IAppealFileManager AppealFileManager;
+        private ISender Sender;
 
-        public AppealFileController(IAppealFileManager appealFileManager)
+        public AppealFileController(ISender sender)
         {
-            AppealFileManager = appealFileManager;
+            Sender = sender;
         }
         [HttpPost]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
-        public ActionResult<DataResponse> Create([FromQuery] long messageId, ICollection<IFormFile> files)
+        public async Task<ActionResult> Create([FromQuery] long messageId, ICollection<IFormFile> files)
         {
             var filesDto = Map(files);
 
-            var result = AppealFileManager.Create(filesDto, messageId);
-            
-            return Ok(result);
+            return Ok(await Sender.Send(new CreateAppealMessageFileCommand { MessageId = messageId, Upload = filesDto }));
         }
     }
 }

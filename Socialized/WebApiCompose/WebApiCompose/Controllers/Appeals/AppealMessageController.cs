@@ -1,43 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals.Messages;
-using WebAPI.Responses;
 using UseCases.Appeals.Messages.CreateAppealMessage;
 using UseCases.Appeals.Messages.DeleteAppealMessage;
 using UseCases.Appeals.Messages.UpdateAppealMessage;
+using MediatR;
 
 namespace WebAPI.Controllers.Appeals
 {
     public class AppealMessageController : ControllerResponseBase
     {
-        private IAppealMessageManager AppealMessageManager;
+        private ISender Sender;
 
-        public AppealMessageController(IAppealMessageManager appealMessageManager)
+        public AppealMessageController(ISender sender)
         {
-            AppealMessageManager = appealMessageManager;
+            Sender = sender;
         }
         [HttpPost]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
-        public ActionResult<SuccessResponse> Create([FromForm] ICollection<IFormFile> files, [FromForm] CreateAppealMessageCommand command)
+        public async Task<ActionResult> Create([FromForm] ICollection<IFormFile> files, [FromForm] CreateAppealMessageCommand command)
         {
             command.Files = Map(files);
 
-            AppealMessageManager.Create(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpPut]
-        public ActionResult<SuccessResponse> Update(UpdateAppealMessageCommand command)
+        public async Task<ActionResult> Update(UpdateAppealMessageCommand command)
         {
-            AppealMessageManager.Update(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpDelete]
-        public ActionResult<SuccessResponse> Delete(DeleteAppealMessageCommand command)
+        public async Task<ActionResult> Delete(DeleteAppealMessageCommand command)
         {
-            AppealMessageManager.Delete(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
     }
 }

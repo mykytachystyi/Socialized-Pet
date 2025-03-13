@@ -1,110 +1,88 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UseCases.Users;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using UseCases.Users.Commands.Activate;
 using UseCases.Users.Commands.ChangeOldPassword;
 using UseCases.Users.Commands.ChangePassword;
 using UseCases.Users.Commands.CheckRecoveryCode;
 using UseCases.Users.Commands.CreateUser;
+using UseCases.Users.Commands.Delete;
 using UseCases.Users.Commands.LoginUser;
-using WebAPI.Responses;
+using UseCases.Users.Commands.LogOut;
+using UseCases.Users.Commands.RecoveryPassword;
+using UseCases.Users.Commands.RegistrationEmail;
 
 namespace WebAPI.Controllers
 {
     public class UsersController : ControllerResponseBase
     {
-        private IUsersManager UserManager;
-        private IUserLoginManager UserLoginManager;
-        private IUserPasswordRecoveryManager UserPasswordRecoveryManager;
+        private ISender Sender;
 
-        public UsersController(IUsersManager usersManager, 
-            IUserLoginManager userLoginManager,
-            IUserPasswordRecoveryManager userPasswordRecoveryManager)
+        public UsersController(ISender sender)
         {
-            UserManager = usersManager;
-            UserLoginManager = userLoginManager;
-            UserPasswordRecoveryManager = userPasswordRecoveryManager;
+            Sender = sender;
         }
         [HttpPost]
         [ActionName("Registration")]
-        public ActionResult<dynamic> Registration(CreateUserCommand command)
+        public async Task<ActionResult> Registration(CreateUserCommand command)
         {
-            UserManager.Create(command);
-
-            return Ok();
+            return Ok( await Sender.Send(command));
         }
         [HttpPost]
         [ActionName("RegistrationEmail")]
-        public ActionResult<dynamic> RegistrationEmail([FromQuery] string email)
+        public async Task<ActionResult> RegistrationEmail([FromQuery] string email)
         {
             var culture = GetCulture();
 
-            UserManager.RegistrationEmail(email, culture);
-
-            return Ok();
+            return Ok(await Sender.Send(new RegistrationEmailCommand { Culture = culture, UserEmail = email }));
         }
         [HttpPost]
         [ActionName("Login")]
-        public ActionResult<dynamic> Login(LoginUserCommand command)
+        public async Task<ActionResult> Login(LoginUserCommand command)
         {
-            var result = UserLoginManager.Login(command);
-
-            return Ok(result);
+            return Ok(await Sender.Send(command));
         }
         [HttpPost]
         [ActionName("LogOut")]
-        public ActionResult<dynamic> LogOut([FromBody] string userToken)
+        public async Task<ActionResult> LogOut([FromBody] string userToken)
         {
-            UserLoginManager.LogOut(userToken);
-
-            return Ok();
+            return Ok(await Sender.Send(new LogOutCommand { UserToken = userToken }));
         }
         [HttpPost]
         [ActionName("RecoveryPassword")]
-        public ActionResult<dynamic> RecoveryPassword([FromQuery] string email)
+        public async Task<ActionResult> RecoveryPassword([FromQuery] string email)
         {
             var culture = GetCulture();
 
-            UserPasswordRecoveryManager.RecoveryPassword(email, culture);
-
-            return Ok();
+            return Ok(await Sender.Send(new RecoveryPasswordCommand { UserEmail = email, Culture = culture }));
         }
         [HttpPost]
         [ActionName("CheckRecoveryCode")]
-        public ActionResult<dynamic> CheckRecoveryCode(CheckRecoveryCodeCommand command)
+        public async Task<ActionResult> CheckRecoveryCode(CheckRecoveryCodeCommand command)
         {
-            string recoveryToken = UserPasswordRecoveryManager.CheckRecoveryCode(command);
-
-            return Ok(new { recovery_token = recoveryToken });
+            return Ok(await Sender.Send(command));
         }
         [HttpPost]
         [ActionName("ChangePassword")]
-        public ActionResult<dynamic> ChangePassword(ChangeUserPasswordCommand command)
+        public async Task<ActionResult> ChangePassword(ChangeUserPasswordCommand command)
         {
-            UserPasswordRecoveryManager.ChangePassword(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpPost]
         [ActionName("ChangeOldPassword")]
-        public ActionResult<dynamic> ChangeOldPassword(ChangeOldPasswordCommand command)
+        public async Task<ActionResult> ChangeOldPassword(ChangeOldPasswordCommand command)
         {
-            UserPasswordRecoveryManager.ChangeOldPassword(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpGet]
         [ActionName("Activate")]
-        public ActionResult<dynamic> Activate([FromQuery] string hash)
+        public async Task<ActionResult> Activate([FromQuery] string hash)
         {
-            UserManager.Activate(hash);
-
-            return Ok();
+            return Ok(await Sender.Send(new ActivateCommand { Hash = hash }));
         }
         [HttpDelete]
-        public ActionResult<dynamic> Delete([FromBody] string userToken)
+        public async Task<ActionResult> Delete([FromBody] string userToken)
         {
-            UserManager.Delete(userToken);
-
-            return Ok();
+            return Ok(await Sender.Send(new DeleteCommand { UserToken = userToken }));
         }
     }
 }

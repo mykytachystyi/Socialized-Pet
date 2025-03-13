@@ -1,43 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UseCases.Appeals;
 using UseCases.Appeals.Commands.CreateAppeal;
-using WebAPI.Responses;
+using UseCases.Appeals.Queries.GetAppealsByAdmin;
+using UseCases.Appeals.Queries.GetAppealsByUser;
 
 namespace WebAPI.Controllers.Appeals
 {
     public class AppealsController : ControllerResponseBase
     {
-        private IAppealManager AppealManager;
+        private ISender Sender;
 
-        public AppealsController(IAppealManager appealManager)
+        public AppealsController(ISender sender)
         {
-            AppealManager = appealManager;
+            Sender = sender;
         }
         [HttpPost]
-        public ActionResult<SuccessResponse> Create(CreateAppealCommand command)
+        public async Task<ActionResult> Create(CreateAppealCommand command)
         {
-            AppealManager.Create(command);
-
-            return Ok();
+            return Ok(await Sender.Send(command));
         }
         [HttpGet]
         [ActionName("GetAppealsByUser")]
-        public ActionResult<DataResponse> GetAppealsByUser([FromQuery] string userToken, 
+        public async Task<ActionResult> GetAppealsByUser([FromQuery] string userToken, 
             [FromQuery] int since = 0, [FromQuery] int count = 10)
         {
-            var result = AppealManager.GetAppealsByUser(userToken, since, count);
-
-            return Ok(result);
+            return Ok(await Sender.Send(new GetAppealsByUserQuery { UserToken = userToken, Since = since, Count = count}));
         }
         [HttpGet]
         [Authorize]
         [ActionName("GetAppealsByAdmin")]
-        public ActionResult<DataResponse> GetAppealsByAdmin([FromQuery] int since = 0, [FromQuery] int count = 10)
+        public async Task<ActionResult> GetAppealsByAdmin([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
-            var result = AppealManager.GetAppealsByAdmin(since, count);
-
-            return Ok(result);
+            return Ok(await Sender.Send(new GetAppealsByAdminQuery { Since = since, Count = count }));
         }
     }
 }

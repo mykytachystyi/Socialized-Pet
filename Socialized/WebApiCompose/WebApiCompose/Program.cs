@@ -11,11 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
-using UseCases.Appeals;
-using UseCases.Appeals.Replies;
-using UseCases.Users;
 using WebAPI.Middleware;
-using UseCases.Appeals.Files;
 using UseCases.Admins.Emails;
 using UseCases.Users.Emails;
 
@@ -36,7 +32,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IAdminManager, AdminManager>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("MailSettings").Get<MailSettings>());
 builder.Services.AddScoped<IJwtTokenManager, JwtTokenManager>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -48,22 +43,14 @@ builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Ge
 builder.Services.AddScoped<IFileManager, AwsUploader>();
 builder.Services.AddScoped<ProfileCondition>();
 
-builder.Services.AddScoped<IUsersManager, UsersManager>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmailMessanger, EmailMessanger>();
-builder.Services.AddScoped<IUserLoginManager, UserLoginManager>();
-builder.Services.AddScoped<IUserPasswordRecoveryManager, UserPasswordRecoveryManager>();
 
-builder.Services.AddScoped<IAppealManager, AppealManager>();
 builder.Services.AddScoped<IAppealRepository, AppealRepository>();
 builder.Services.AddScoped<IAppealMessageRepository, AppealMessageRepository>();
 
-builder.Services.AddScoped<IAppealFileManager, AppealFileManager>();
 builder.Services.AddScoped<IAppealFileRepository, AppealFileRepository>();
 
-builder.Services.AddScoped<IAppealMessageManager, AppealMessageManager>();
-
-builder.Services.AddScoped<IAppealMessageReplyManager, AppealMessageReplyManager>();
 builder.Services.AddScoped<IAppealMessageReplyRepository, AppealMessageReplyRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
