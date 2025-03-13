@@ -38,7 +38,7 @@ namespace UseCasesTests.Admins
 
             adminEmailManager.RecoveryPassword(code, email);
 
-            smtpSender.Received().SendEmail(email, "Вілновлення паролю", $"Code: {code}");
+            smtpSender.Received().SendEmail(email, "Відновлення паролю", $"Code: {code}");
             logger.Received().Information("Був відправлений 6 знаковий код для відновлення паролю.");
         }
     }

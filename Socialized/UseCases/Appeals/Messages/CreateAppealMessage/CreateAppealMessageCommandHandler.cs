@@ -4,6 +4,7 @@ using Domain.Appeals.Repositories;
 using MediatR;
 using Serilog;
 using System.Web;
+using UseCases.Appeals.Files.CreateAppealMessageFile;
 using UseCases.Appeals.Messages.Models;
 using UseCases.Exceptions;
 
@@ -13,7 +14,9 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
         IAppealRepository appealRepository,
         IAppealMessageRepository appealMessageRepository,
         ILogger logger,
-        IMapper mapper) : IRequestHandler<CreateAppealMessageCommand, AppealMessageResponse>
+        IMapper mapper,
+        ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage
+        ) : IRequestHandler<CreateAppealMessageCommand, AppealMessageResponse>
     {
         public async Task<AppealMessageResponse> Handle(CreateAppealMessageCommand request, 
             CancellationToken cancellationToken)
@@ -34,7 +37,7 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
 
             if (request.Files != null)
             {
-                message.Files = appealFileManager.Create(command.Files, message.Id);
+                message.Files = filesAdditionalToMessage.Create(request.Files, message);
             }
             return mapper.Map<AppealMessageResponse>(message);
         }

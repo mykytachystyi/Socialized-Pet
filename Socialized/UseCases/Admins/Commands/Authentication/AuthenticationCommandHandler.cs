@@ -1,20 +1,17 @@
-﻿using AutoMapper;
-using Core;
+﻿using Core;
 using Domain.Admins;
 using MediatR;
 using Serilog;
-using UseCases.Admins.Models;
 using UseCases.Exceptions;
 
 namespace UseCases.Admins.Commands.Authentication;
 
 public class AuthenticationCommandHandler(IAdminRepository adminRepository,
     ILogger logger,
-    ProfileCondition profileCondition,
-    IMapper mapper
-    ) : IRequestHandler<AuthenticationCommand, AdminResponse>
+    ProfileCondition profileCondition
+    ) : IRequestHandler<AuthenticationCommand, Admin>
 {
-    public async Task<AdminResponse> Handle(AuthenticationCommand request, CancellationToken cancellationToken)
+    public async Task<Admin> Handle(AuthenticationCommand request, CancellationToken cancellationToken)
     {
         var admin = adminRepository.GetByEmail(request.Email);
         if (admin == null)
@@ -26,6 +23,6 @@ public class AuthenticationCommandHandler(IAdminRepository adminRepository,
             throw new ValidationException("Невірний пароль.");
         }
         logger.Information($"Був аутентифікований адмін id={admin.Id}.");
-        return mapper.Map<AdminResponse>(admin);
+        return admin;
     }
 }

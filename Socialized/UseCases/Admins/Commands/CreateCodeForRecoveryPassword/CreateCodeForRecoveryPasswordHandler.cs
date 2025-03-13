@@ -3,7 +3,6 @@ using MediatR;
 using Serilog;
 using Domain.Admins;
 using UseCases.Exceptions;
-using UseCases.Admins.Commands.CreateCodeForeRecoveryPassword;
 using UseCases.Admins.Emails;
 
 namespace UseCases.Admins.Commands.CreateCodeForRecoveryPassword;

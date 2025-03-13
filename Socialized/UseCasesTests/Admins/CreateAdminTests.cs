@@ -6,6 +6,7 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using UseCases.Admins.Commands.CreateAdmin;
 using UseCases.Admins.Emails;
+using UseCases.Admins.Models;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Admins;
@@ -35,7 +36,8 @@ public class CreateAdminTests
             Password = "password"
         };
         repository.GetByEmail(command.Email, false).ReturnsNull();
-
+        var admin = new AdminResponse { Email = command.Email, FirstName = command.FirstName, LastName = command.LastName, Role = "default" };
+        mapper.Map<AdminResponse>(null).ReturnsForAnyArgs(admin);
         var handler = new CreateAdminCommandHandler(repository, profileCondition, emailManager, logger, mapper);
 
         var result = await handler.Handle(command, CancellationToken.None);

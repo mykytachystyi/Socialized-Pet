@@ -49,6 +49,8 @@ namespace UseCasesTests.Appeals
         public async Task Create_WhenFilesIsExist_ReturnFilesCollection()
         {
             appealFileRepository.GetById(messageId).Returns(new AppealMessage());
+            var appealFile = new AppealFileResponse { Id = 1, MessageId = 1, RelativePath = "" };
+            mapper.Map<IEnumerable<AppealFileResponse>>(null).ReturnsForAnyArgs(new List<AppealFileResponse> { appealFile });
 
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, appealFileRepository, mapper);
 

@@ -5,6 +5,7 @@ using Domain.Users;
 using UseCases.Admins.Models;
 using UseCases.Appeals.Files.Models;
 using UseCases.Appeals.Messages.Models;
+using UseCases.Appeals.Models;
 using UseCases.Appeals.Replies.Models;
 using UseCases.Users.Models;
 

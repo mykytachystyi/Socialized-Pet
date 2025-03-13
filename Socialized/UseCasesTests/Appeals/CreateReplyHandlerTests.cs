@@ -5,6 +5,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using UseCases.Appeals.Replies.Commands.CreateAppealMessageReply;
+using UseCases.Appeals.Replies.Models;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals;
@@ -31,8 +32,12 @@ public class CreateReplyHandlerTests
     public async Task Create_WhenMessageIsFound_CreatesReply()
     {
         var command = new CreateAppealMessageReplyCommand { AppealMessageId = 1, Reply = "Test Reply" };
-        var message = new AppealMessage { Id = 1, AppealId = 1 };
+        var appeal = new Appeal { Id = 1 };
+        var message = new AppealMessage { Id = 1, AppealId = appeal.Id };
+        var response = new AppealReplyResponse { Reply = command.Reply };
+        mapper.Map<AppealReplyResponse>(null).ReturnsForAnyArgs(response);
         messageRepository.GetBy(command.AppealMessageId).Returns(message);
+        appealRepository.GetBy(appeal.Id).Returns(appeal);
 
         var handler = new CreateAppealMessageReplyCommandHandler(messageRepository, appealRepository, replyRepository, logger, mapper);
 

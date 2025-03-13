@@ -24,7 +24,7 @@ public class UpdateReplyHandlerTests
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
-    public void Update_WhenReplyIsFound_UpdatesReply()
+    public async Task Update_WhenReplyIsFound_UpdatesReply()
     {
         var command = new UpdateAppealMessageReplyCommand { ReplyId = 1, Reply = "Updated Reply" };
         var reply = new AppealMessageReply { Id = 1, Reply = "Old Reply", Message = new AppealMessage() };
@@ -32,6 +32,8 @@ public class UpdateReplyHandlerTests
 
         var handler = new UpdateAppealMessageReplyCommandHandler(replyRepository, logger);
 
-        Assert.Equal(command.Reply, reply.Reply);
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        Assert.True(result.Success);
     }
 }

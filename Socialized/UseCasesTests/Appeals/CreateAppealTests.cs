@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Domain.Appeals;
 using Domain.Appeals.Repositories;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using UseCases.Appeals.Commands.CreateAppeal;
+using UseCases.Appeals.Models;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals
@@ -20,6 +22,8 @@ namespace UseCasesTests.Appeals
         public async Task Create_WhenUserTokenAndIdIsValid_ReturnMessage()
         {
             var command = new CreateAppealCommand { Subject = "Test", UserToken = "1234567890" };
+            var response = new AppealResponse { Subject = command.Subject, State = 1 };
+            mapper.Map<AppealResponse>(null).ReturnsForAnyArgs(response);
             userRepository.GetByUserTokenNotDeleted(command.UserToken).Returns(new User { Id = 1 });
             var handler = new CreateAppealCommandHandler(userRepository, appealRepository, logger, mapper);
             var result = await handler.Handle(command, CancellationToken.None);

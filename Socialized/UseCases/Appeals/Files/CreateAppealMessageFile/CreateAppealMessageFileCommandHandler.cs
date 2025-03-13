@@ -14,7 +14,7 @@ public class CreateAppealMessageFileCommandHandler (
     ILogger logger,
     IAppealFileRepository AppealFilesRepository,
     IMapper mapper
-    ) : IRequestHandler<CreateAppealMessageFileCommand, IEnumerable<AppealFileResponse>>
+    ) : IRequestHandler<CreateAppealMessageFileCommand, IEnumerable<AppealFileResponse>>, ICreateAppealFilesAdditionalToMessage
 {
     public async Task<IEnumerable<AppealFileResponse>> Handle(
         CreateAppealMessageFileCommand request, 
