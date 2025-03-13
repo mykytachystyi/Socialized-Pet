@@ -14,6 +14,11 @@ using Serilog;
 using WebAPI.Middleware;
 using UseCases.Admins.Emails;
 using UseCases.Users.Emails;
+using FluentValidation;
+using DPuchkovTestTask.Application.Common.Behaviors;
+using MediatR;
+using UseCases.Admins.Commands.Authentication;
+using UseCases.Appeals.Files.CreateAppealMessageFile;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +32,12 @@ Log.Logger = new LoggerConfiguration()
 // Add services to the container.
 builder.Services.AddSerilog();
 builder.Services.AddSingleton(Log.Logger);
+builder.Services.AddMediatR(cfg => 
+{
+    cfg.RegisterServicesFromAssembly(typeof(AuthenticationCommand).Assembly);
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+});
+builder.Services.AddValidatorsFromAssembly(typeof(AuthenticationCommand).Assembly);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +63,8 @@ builder.Services.AddScoped<IAppealMessageRepository, AppealMessageRepository>();
 builder.Services.AddScoped<IAppealFileRepository, AppealFileRepository>();
 
 builder.Services.AddScoped<IAppealMessageReplyRepository, AppealMessageReplyRepository>();
+
+builder.Services.AddScoped<ICreateAppealFilesAdditionalToMessage, CreateAppealMessageFileCommandHandler>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
