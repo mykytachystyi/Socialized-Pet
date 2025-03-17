@@ -15,7 +15,7 @@ using WebAPI.Middleware;
 using UseCases.Admins.Emails;
 using UseCases.Users.Emails;
 using FluentValidation;
-using DPuchkovTestTask.Application.Common.Behaviors;
+using UseCases.Behaviors;
 using MediatR;
 using UseCases.Admins.Commands.Authentication;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
@@ -24,7 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
