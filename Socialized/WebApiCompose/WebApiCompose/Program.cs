@@ -54,7 +54,7 @@ builder.Services.AddScoped<ISmtpSender, SmtpOauthSender>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>());
 
 builder.Services.AddScoped<IFileManager, AwsUploader>();
-builder.Services.AddScoped<ProfileCondition>();
+builder.Services.AddScoped<TextEncryptionProvider>();
 builder.Services.AddScoped<IEncryptionProvider, HmacSha256Provider>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

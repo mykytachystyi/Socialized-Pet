@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.Providers;
+namespace Core.Providers.Hmac;
 
 public class HmacSha256Provider : IEncryptionProvider
 {

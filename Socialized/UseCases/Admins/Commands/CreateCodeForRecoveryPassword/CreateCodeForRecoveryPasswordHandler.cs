@@ -1,9 +1,9 @@
-﻿using Core;
-using MediatR;
+﻿using MediatR;
 using Serilog;
 using Domain.Admins;
 using UseCases.Exceptions;
 using UseCases.Admins.Emails;
+using Core.Providers.TextEncrypt;
 
 namespace UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 
@@ -11,7 +11,7 @@ public class CreateCodeForRecoveryPasswordHandler(
     IAdminRepository adminRepository,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
-    ProfileCondition profileCondition
+    TextEncryptionProvider profileCondition
     ) : IRequestHandler<CreateCodeForRecoveryPasswordCommand, CreateCodeForRecoveryPasswordResponse>
 {
     public async Task<CreateCodeForRecoveryPasswordResponse> Handle(

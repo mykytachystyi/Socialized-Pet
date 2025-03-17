@@ -7,7 +7,7 @@ using UseCases.Exceptions;
 using NSubstitute.ReturnsExtensions;
 using UseCases.Users.Models;
 using UseCases.Users.Commands.LoginUser;
-using Core.Providers;
+using Core.Providers.Hmac;
 
 namespace UseCasesTests.Users
 {

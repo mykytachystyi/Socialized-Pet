@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers.TextEncrypt;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -9,7 +9,7 @@ namespace UseCases.Users.Commands.CheckRecoveryCode;
 public class CheckRecoveryCodeCommandHandler (
     ILogger logger,
     IUserRepository userRepository,
-    ProfileCondition profileCondition
+    TextEncryptionProvider profileCondition
     ) : IRequestHandler<CheckRecoveryCodeCommand, CheckRecoveryCodeResponse>
 {
     public async Task<CheckRecoveryCodeResponse> Handle(CheckRecoveryCodeCommand request, 

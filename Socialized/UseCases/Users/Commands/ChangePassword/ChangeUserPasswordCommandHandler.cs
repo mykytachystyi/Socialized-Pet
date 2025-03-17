@@ -3,7 +3,7 @@ using MediatR;
 using Serilog;
 using Domain.Users;
 using UseCases.Exceptions;
-using Core.Providers;
+using Core.Providers.Hmac;
 
 namespace UseCases.Users.Commands.ChangePassword;
 

@@ -1,4 +1,4 @@
-﻿namespace Core.FileControl
+﻿namespace Core.FileControl.Aws
 {
     public class AwsSettings
     {

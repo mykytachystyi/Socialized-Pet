@@ -1,5 +1,5 @@
-﻿using Core;
-using Core.Providers;
+﻿using Core.Providers.Hmac;
+using Core.Providers.TextEncrypt;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -13,7 +13,7 @@ namespace UseCases.Users.Commands.CreateUser
         IUserRepository userRepository,
         IEmailMessanger emailMessanger,
         IEncryptionProvider encryptionProvider,
-        ProfileCondition profileCondition,
+        TextEncryptionProvider profileCondition,
         ILogger logger
         ) : IRequestHandler<CreateUserCommand, CreateUserResponse>
     {

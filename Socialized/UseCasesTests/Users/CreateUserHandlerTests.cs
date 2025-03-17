@@ -1,12 +1,12 @@
-﻿using Core;
-using Domain.Users;
+﻿using Domain.Users;
 using NSubstitute;
 using Serilog;
 using UseCases.Exceptions;
 using UseCases.Users.Emails;
 using UseCases.Users.Commands.CreateUser;
 using NSubstitute.ReturnsExtensions;
-using Core.Providers;
+using Core.Providers.Hmac;
+using Core.Providers.TextEncrypt;
 
 namespace UseCasesTests.Users;
 
@@ -16,7 +16,7 @@ public class CreateUserHandlerTests
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
     private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
-    private ProfileCondition profileCondition = Substitute.For<ProfileCondition>();
+    private TextEncryptionProvider profileCondition = Substitute.For<TextEncryptionProvider>();
 
     [Fact]
     public async Task Create_WhenUserIsAlreadyExistAndNotDeleted_ThrowNotFoundException()

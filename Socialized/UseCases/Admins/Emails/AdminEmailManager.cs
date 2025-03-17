@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.SmtpMailing;
 using Serilog;
 
 namespace UseCases.Admins.Emails;

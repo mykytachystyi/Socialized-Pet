@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers.TextEncrypt;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -8,7 +8,7 @@ namespace UseCases.Users.Commands.LogOut;
 
 public class LogOutCommandHandler (
     IUserRepository userRepository,
-    ProfileCondition profileCondition,
+    TextEncryptionProvider profileCondition,
     ILogger logger) : IRequestHandler<LogOutCommand, LogOutResponse>
 {
     public async Task<LogOutResponse> Handle(LogOutCommand request, CancellationToken cancellationToken)

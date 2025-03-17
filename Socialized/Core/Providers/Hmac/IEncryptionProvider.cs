@@ -1,4 +1,4 @@
-﻿namespace Core.Providers;
+﻿namespace Core.Providers.Hmac;
 
 public interface IEncryptionProvider
 {

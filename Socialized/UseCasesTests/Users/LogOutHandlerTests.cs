@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers.TextEncrypt;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -12,7 +12,7 @@ public class LogOutHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
-    private ProfileCondition profileCondition = new ProfileCondition();
+    private TextEncryptionProvider profileCondition = new TextEncryptionProvider();
 
     [Fact]
     public async Task Logout_WhenUserTokenIsFound_Return()

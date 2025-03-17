@@ -53,7 +53,7 @@ namespace Infrastructure
                     HashedPassword = hashedPassword.Hash,
                     HashedSalt = hashedPassword.Salt,
                     CreatedAt = DateTime.Now,
-                    TokenForStart = new ProfileCondition().CreateHash(10)
+                    TokenForStart = new TextEncryptionProvider().CreateHash(10)
                 }
             );
 

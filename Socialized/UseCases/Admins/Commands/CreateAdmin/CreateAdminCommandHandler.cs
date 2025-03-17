@@ -1,5 +1,4 @@
-﻿using Core;
-using Serilog;
+﻿using Serilog;
 using System.Web;
 using Domain.Admins;
 using UseCases.Exceptions;
@@ -7,7 +6,8 @@ using MediatR;
 using AutoMapper;
 using UseCases.Admins.Models;
 using UseCases.Admins.Emails;
-using Core.Providers;
+using Core.Providers.Hmac;
+using Core.Providers.TextEncrypt;
 
 namespace UseCases.Admins.Commands.CreateAdmin;
 
@@ -16,7 +16,7 @@ public class CreateAdminCommandHandler(
     IEncryptionProvider encryptionProvider,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
-    ProfileCondition profileCondition,
+    TextEncryptionProvider profileCondition,
     IMapper mapper
     ) : IRequestHandler<CreateAdminCommand, AdminResponse>
 {

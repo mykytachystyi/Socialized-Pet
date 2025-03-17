@@ -2,8 +2,9 @@ using Serilog;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Transfer;
+using Core.FileControl.CurrentFileSystem;
 
-namespace Core.FileControl
+namespace Core.FileControl.Aws
 {
     public class AwsUploader : FileManager, IFileManager
     {

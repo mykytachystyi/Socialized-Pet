@@ -3,7 +3,7 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using MailKit.Security;
 
-namespace Core
+namespace Core.SmtpMailing
 {
     public class SmtpOauthSender : ISmtpSender
     {

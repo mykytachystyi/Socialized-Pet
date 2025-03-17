@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace Core.SmtpMailing
 {
     public class MailSettings
     {

@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers.TextEncrypt;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -14,7 +14,7 @@ public class RecoveryPasswordHandlerTests
     private ILogger logger = Substitute.For<ILogger>();
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
-    private ProfileCondition profileCondition = new ProfileCondition();
+    private TextEncryptionProvider profileCondition = new TextEncryptionProvider();
 
     [Fact]
     public async Task RecoveryPassword_WhenEmailIsFound_Return()

@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers.TextEncrypt;
 using Domain.Admins;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -14,7 +14,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
     private readonly ILogger logger = Substitute.For<ILogger>();
     private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
-    private readonly ProfileCondition profileCondition = new ProfileCondition();
+    private readonly TextEncryptionProvider profileCondition = new TextEncryptionProvider();
     private readonly Admin admin = new Admin
     {
         Email = "",

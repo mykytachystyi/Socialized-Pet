@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.SmtpMailing;
 
 namespace UseCases.Users.Emails
 {

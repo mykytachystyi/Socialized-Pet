@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace Core.FileControl
+namespace Core.FileControl.CurrentFileSystem
 {
     public class FileManager(ILogger logger) : IFileManager
     {

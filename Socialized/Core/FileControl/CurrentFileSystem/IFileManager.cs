@@ -1,4 +1,4 @@
-﻿namespace Core.FileControl
+﻿namespace Core.FileControl.CurrentFileSystem
 {
     public interface IFileManager
     {

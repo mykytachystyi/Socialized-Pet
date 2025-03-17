@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Core;
-using Core.Providers;
+using Core.Providers.Hmac;
+using Core.Providers.TextEncrypt;
 using Domain.Admins;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -19,7 +19,7 @@ public class CreateAdminTests
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
     private readonly IMapper mapper = Substitute.For<IMapper>();
     private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
-    private readonly ProfileCondition profileCondition = new ProfileCondition();
+    private readonly TextEncryptionProvider profileCondition = new TextEncryptionProvider();
     private readonly Admin admin = new Admin
     { 
         Email = "", FirstName = "", 
