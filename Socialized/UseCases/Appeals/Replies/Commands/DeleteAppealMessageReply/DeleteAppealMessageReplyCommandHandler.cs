@@ -1,4 +1,5 @@
-﻿using Domain.Appeals.Repositories;
+﻿using Domain.Appeals;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -6,7 +7,7 @@ using UseCases.Exceptions;
 namespace UseCases.Appeals.Replies.Commands.DeleteAppealMessageReply;
 
 public class DeleteAppealMessageReplyCommandHandler(
-    IAppealMessageReplyRepository replyRepository,
+    IRepository<AppealMessageReply> replyRepository,
     ILogger logger) : IRequestHandler<DeleteAppealMessageReplyCommand,
     DeleteAppealMessageReplyResponse>
 {
@@ -14,7 +15,7 @@ public class DeleteAppealMessageReplyCommandHandler(
         CancellationToken cancellationToken)
     {
         logger.Information("Початок видалення відповіді на повідомлення.");
-        var reply = replyRepository.Get(request.ReplyId);
+        var reply = await replyRepository.FirstOrDefaultAsync(r => r.Id == request.ReplyId);
         if (reply == null)
         {
             throw new NotFoundException("Відповідь не була знайдена по id.");

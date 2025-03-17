@@ -1,9 +1,11 @@
 ﻿using Core;
 using Core.Providers.Hmac;
 using Domain.Users;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Exceptions;
 using UseCases.Users.Commands.ChangePassword;
 
@@ -12,7 +14,7 @@ namespace UseCasesTests.Users
     public class ChangeUserPasswordHandlerTests
     {
         private ILogger logger = Substitute.For<ILogger>();
-        private IUserRepository userRepository = Substitute.For<IUserRepository>();
+        private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
         private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
 
         [Fact]
@@ -25,7 +27,7 @@ namespace UseCasesTests.Users
                 UserConfirmPassword = "Pass1234!"
             };
             var user = new User { IsDeleted = false, RecoveryToken = command.RecoveryToken };
-            userRepository.GetByRecoveryToken(command.RecoveryToken, false).Returns(user);
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
             var handler = new ChangeUserPasswordCommandHandler(userRepository, encryptionProvider, logger);
             var result = await handler.Handle(command, CancellationToken.None);
 
@@ -40,7 +42,7 @@ namespace UseCasesTests.Users
                 UserPassword = "Pass1234!",
                 UserConfirmPassword = "Pass1234!"
             };
-            userRepository.GetByRecoveryToken(command.RecoveryToken, false).ReturnsNull();
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
             var handler = new ChangeUserPasswordCommandHandler(userRepository, encryptionProvider, logger);
 
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -55,7 +57,7 @@ namespace UseCasesTests.Users
                 UserConfirmPassword = ""
             };
             var user = new User { IsDeleted = false, RecoveryToken = command.RecoveryToken };
-            userRepository.GetByRecoveryToken(command.RecoveryToken, false).Returns(user);
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
             var handler = new ChangeUserPasswordCommandHandler(userRepository, encryptionProvider, logger);
 
             await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));

@@ -1,9 +1,10 @@
 ﻿using Core.Providers.Rand;
-using Core.Providers.TextEncrypt;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 using UseCases.Admins.Emails;
 using UseCases.Exceptions;
@@ -13,7 +14,7 @@ namespace UseCasesTests.Admins;
 public class CreateCodeForRecoveryPasswordHandlerTests
 {
     private readonly ILogger logger = Substitute.For<ILogger>();
-    private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
+    private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
     private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
     private readonly Admin admin = new Admin
@@ -35,7 +36,8 @@ public class CreateCodeForRecoveryPasswordHandlerTests
             AdminEmail = "test@test.com"
         };
         admin.Email = command.AdminEmail;
-        repository.GetByEmail(command.AdminEmail, false).Returns(admin);
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(admin);
+
         var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -49,7 +51,8 @@ public class CreateCodeForRecoveryPasswordHandlerTests
         {
             AdminEmail = "test@test.com"
         };
-        repository.GetByEmail(command.AdminEmail, false).ReturnsNull();
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
+
         var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));

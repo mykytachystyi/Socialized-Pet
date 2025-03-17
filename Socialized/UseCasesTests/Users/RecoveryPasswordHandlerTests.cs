@@ -1,8 +1,10 @@
 ﻿using Core.Providers.Rand;
 using Domain.Users;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Exceptions;
 using UseCases.Users.Commands.RecoveryPassword;
 using UseCases.Users.Emails;
@@ -12,7 +14,7 @@ namespace UseCasesTests.Users;
 public class RecoveryPasswordHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IUserRepository userRepository = Substitute.For<IUserRepository>();
+    private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
     private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
 
@@ -21,7 +23,7 @@ public class RecoveryPasswordHandlerTests
     {
         var command = new RecoveryPasswordCommand { UserEmail = "test@test.com", Culture = "en_EN" };
         var user = new User { Email = command.UserEmail, IsDeleted = false };
-        userRepository.GetByEmail(command.UserEmail, false, true).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new RecoveryPasswordCommandHandler(userRepository, randomizer, emailMessanger, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -32,7 +34,7 @@ public class RecoveryPasswordHandlerTests
     public async Task RecoveryPassword_WhenEmailIsNotFound_ThrowNotFoundException()
     {
         var command = new RecoveryPasswordCommand { UserEmail = "test@test.com", Culture = "en_EN" };
-        userRepository.GetByEmail(command.UserEmail, false, true).ReturnsNull();
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new RecoveryPasswordCommandHandler(userRepository, randomizer, emailMessanger, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));

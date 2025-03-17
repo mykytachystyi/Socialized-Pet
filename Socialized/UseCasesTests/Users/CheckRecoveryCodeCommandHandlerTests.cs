@@ -1,8 +1,10 @@
 ﻿using Core.Providers.Rand;
 using Domain.Users;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Exceptions;
 using UseCases.Users.Commands.CheckRecoveryCode;
 
@@ -11,7 +13,7 @@ namespace UseCasesTests.Users;
 public class CheckRecoveryCodeCommandHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IUserRepository userRepository = Substitute.For<IUserRepository>();
+    private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
     private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
 
     [Fact]
@@ -24,7 +26,7 @@ public class CheckRecoveryCodeCommandHandlerTests
             IsDeleted = false,
             RecoveryCode = command.RecoveryCode
         };
-        userRepository.GetByEmail(command.UserEmail).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         randomizer.CreateHash(40).Returns("1234567890123456789012345678901234567890");
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
@@ -36,7 +38,7 @@ public class CheckRecoveryCodeCommandHandlerTests
     public async Task CheckRecoveryCode_WhenEmailIsNotFound_ThrowNotFoundException()
     {
         var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
-        userRepository.GetByEmail(command.UserEmail).ReturnsNull();
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -51,7 +53,7 @@ public class CheckRecoveryCodeCommandHandlerTests
             IsDeleted = false,
             RecoveryCode = 2222
         };
-        userRepository.GetByEmail(command.UserEmail).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));

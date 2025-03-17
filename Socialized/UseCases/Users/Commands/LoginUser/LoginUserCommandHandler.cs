@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Providers.Hmac;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -9,7 +10,7 @@ using UseCases.Users.Models;
 namespace UseCases.Users.Commands.LoginUser;
 
 public class LoginUserCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IEncryptionProvider encryptionProvider,
     IMapper mapper,
     ILogger logger
@@ -19,7 +20,7 @@ public class LoginUserCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information($"Початок входу(логіну) користувача, email={request.Email}.");
-        var user = userRepository.GetByEmail(request.Email);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.Email == request.Email && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по email для логіну.");

@@ -1,8 +1,9 @@
 ﻿using Domain.Appeals;
-using Domain.Appeals.Repositories;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Appeals.Messages.UpdateAppealMessage;
 using UseCases.Exceptions;
 
@@ -11,7 +12,7 @@ namespace UseCasesTests.Appeals;
 public class UpdateAppealMessageHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IAppealMessageRepository appealMessageRepository = Substitute.For<IAppealMessageRepository>();
+    private IRepository<AppealMessage> appealMessageRepository = Substitute.For<IRepository<AppealMessage>>();
     
     [Fact]
     public async Task Update_WhenAppealIdIsNotFound_ThrowNotFoundException()
@@ -21,7 +22,7 @@ public class UpdateAppealMessageHandlerTests
             MessageId = 1,
             Message = "update test",
         };
-        appealMessageRepository.GetBy(command.MessageId).ReturnsNull();
+        appealMessageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>()).ReturnsNull();
         var handler = new UpdateAppealMessageCommandHandler(appealMessageRepository, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -34,7 +35,7 @@ public class UpdateAppealMessageHandlerTests
             MessageId = 1,
             Message = "update test",
         };
-        appealMessageRepository.GetBy(command.MessageId)
+        appealMessageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
             .Returns(new AppealMessage { Id = command.MessageId, Message = "text" });
         var handler = new UpdateAppealMessageCommandHandler(appealMessageRepository, logger);
 

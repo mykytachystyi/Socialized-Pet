@@ -4,11 +4,12 @@ using Domain.Admins;
 using UseCases.Exceptions;
 using UseCases.Admins.Emails;
 using Core.Providers.Rand;
+using Infrastructure.Repositories;
 
 namespace UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 
 public class CreateCodeForRecoveryPasswordHandler(
-    IAdminRepository adminRepository,
+    IRepository<Admin> adminRepository,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
     IRandomizer randomizer
@@ -17,7 +18,7 @@ public class CreateCodeForRecoveryPasswordHandler(
     public async Task<CreateCodeForRecoveryPasswordResponse> Handle(
         CreateCodeForRecoveryPasswordCommand request, CancellationToken cancellationToken)
     {
-        var admin = adminRepository.GetByEmail(request.AdminEmail);
+        var admin = await adminRepository.FirstOrDefaultAsync(a => a.Email == request.AdminEmail && !a.IsDeleted);
         if (admin == null)
         {
             throw new NotFoundException("Не було знайдено адміна по email-адресі.");

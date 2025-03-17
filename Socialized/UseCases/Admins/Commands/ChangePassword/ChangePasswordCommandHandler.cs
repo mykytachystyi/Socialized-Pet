@@ -1,18 +1,19 @@
 ﻿using Core.Providers.Hmac;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 
 namespace UseCases.Admins.Commands.ChangePassword;
 
 public class ChangePasswordCommandHandler(
-    IAdminRepository adminRepository,
+    IRepository<Admin> adminRepository,
     IEncryptionProvider encryptionProvider,
     ILogger logger) : IRequestHandler<ChangePasswordCommand, ChangePasswordResponse>
 {
     public async Task<ChangePasswordResponse> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        var admin = adminRepository.GetByRecoveryCode(request.RecoveryCode);
+        var admin = await adminRepository.FirstOrDefaultAsync(a => a.RecoveryCode == request.RecoveryCode && !a.IsDeleted);
         if (admin == null)
         {
             throw new ArgumentNullException("Сервер не визначив адміна по коду. Неправильний код.");

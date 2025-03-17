@@ -1,9 +1,11 @@
 ﻿using Core;
 using Core.Providers.Hmac;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Admins.Commands.SetupPassword;
 using UseCases.Exceptions;
 
@@ -12,7 +14,7 @@ namespace UseCasesTests.Admins
     public class SetupPasswordTests
     {
         private readonly ILogger logger = Substitute.For<ILogger>();
-        private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
+        private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
         private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
         private readonly Admin admin = new Admin
         {
@@ -28,7 +30,7 @@ namespace UseCasesTests.Admins
         public async Task SetupPassword_WhenAdminTokenIsFound_Return()
         {
             var command = new SetupPasswordCommand { Token = "1234567890", Password = "password" };
-            repository.GetByPasswordToken(command.Token, false).Returns(admin);
+            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(admin);
             var handler = new SetupPasswordCommandHandler(logger, repository, encryptionProvider);
 
             await handler.Handle(command, CancellationToken.None);
@@ -37,7 +39,7 @@ namespace UseCasesTests.Admins
         public async Task SetupPassword_WhenTokenIsNotFound_ThrowNotFoundException()
         {
             var command = new SetupPasswordCommand { Token = "1234567890", Password = "password" };
-            repository.GetByPasswordToken(command.Token, false).ReturnsNull();
+            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
             var handler = new SetupPasswordCommandHandler(logger, repository, encryptionProvider);
 
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));

@@ -5,6 +5,8 @@ using Domain.Appeals;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.EntityTypeConfiguration;
 using Core.Providers;
+using Core.Providers.Hmac;
+using Core.Providers.Rand;
 
 namespace Infrastructure
 {
@@ -53,7 +55,7 @@ namespace Infrastructure
                     HashedPassword = hashedPassword.Hash,
                     HashedSalt = hashedPassword.Salt,
                     CreatedAt = DateTime.Now,
-                    TokenForStart = new TextEncryptionProvider().CreateHash(10)
+                    TokenForStart = new Randomizer().CreateHash(10)
                 }
             );
 

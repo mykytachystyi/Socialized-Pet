@@ -2,17 +2,18 @@
 using Domain.Admins;
 using MediatR;
 using UseCases.Exceptions;
+using Infrastructure.Repositories;
 
 namespace UseCases.Admins.Commands.Delete;
 
 public class DeleteAdminCommandHandler(
-    IAdminRepository adminRepository,
+    IRepository<Admin> adminRepository,
     ILogger logger
     ) : IRequestHandler<DeleteAdminCommand, DeleteAdminResponse>
 {
     public async Task<DeleteAdminResponse> Handle(DeleteAdminCommand request, CancellationToken cancellationToken)
     {
-        var admin = adminRepository.GetByAdminId(request.AdminId);
+        var admin = await adminRepository.GetByIdAsync((int) request.AdminId);
         if (admin == null)
         {
             throw new NotFoundException("Не було знайдено адміна по id.");

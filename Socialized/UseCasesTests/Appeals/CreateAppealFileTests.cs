@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Core.FileControl.CurrentFileSystem;
 using Domain.Appeals;
-using Domain.Appeals.Repositories;
+using Domain.Users;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
 using UseCases.Appeals.Files.Models;
 using UseCases.Exceptions;
@@ -17,8 +19,8 @@ namespace UseCasesTests.Appeals
         private IMapper mapper = Substitute.For<IMapper>();
         private ILogger logger = Substitute.For<ILogger>();
         private IFileManager fileManager = Substitute.For<IFileManager>();
-        private IAppealFileRepository appealFileRepository = Substitute.For<IAppealFileRepository>();
-
+        private IRepository<AppealFile> appealFileRepository = Substitute.For<IRepository<AppealFile>>();
+        private IRepository<AppealMessage> messageRepository = Substitute.For<IRepository<AppealMessage>>();
         private FileDto File = new FileDto
         {
             FileName = "test",
@@ -33,8 +35,10 @@ namespace UseCasesTests.Appeals
         [Fact]
         public async Task Create_WhenFilesIsEmpty_ReturnEmptyCollection()
         {
-            appealFileRepository.GetById(messageId).Returns(new AppealMessage());
-            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, appealFileRepository, mapper);
+            messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
+                .Returns(new AppealMessage());
+            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
+                appealFileRepository, mapper);
             var command = new CreateAppealMessageFileCommand
             {
                 MessageId = messageId,
@@ -48,12 +52,12 @@ namespace UseCasesTests.Appeals
         [Fact]
         public async Task Create_WhenFilesIsExist_ReturnFilesCollection()
         {
-            appealFileRepository.GetById(messageId).Returns(new AppealMessage());
+            messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
+                .Returns(new AppealMessage());
             var appealFile = new AppealFileResponse { Id = 1, MessageId = 1, RelativePath = "" };
             mapper.Map<IEnumerable<AppealFileResponse>>(null).ReturnsForAnyArgs(new List<AppealFileResponse> { appealFile });
-
-            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, appealFileRepository, mapper);
-
+            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
+                appealFileRepository, mapper);
             var command = new CreateAppealMessageFileCommand
             {
                 MessageId = messageId,
@@ -67,10 +71,10 @@ namespace UseCasesTests.Appeals
         [Fact]
         public async Task Create_WhenFilesIsExist_ThrowNotFoundException()
         {
-            appealFileRepository.GetById(messageId).ReturnsNull();
-
-            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, appealFileRepository, mapper);
-
+            messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
+                .ReturnsNull();
+            var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
+                appealFileRepository, mapper);
 
             var command = new CreateAppealMessageFileCommand
             {

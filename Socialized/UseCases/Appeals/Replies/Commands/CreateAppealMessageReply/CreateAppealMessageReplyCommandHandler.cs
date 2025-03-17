@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
 using Domain.Admins;
 using Domain.Appeals;
-using Domain.Appeals.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
 using UseCases.Appeals.Replies.Models;
+using Infrastructure.Repositories;
 
 namespace UseCases.Appeals.Replies.Commands.CreateAppealMessageReply;
 
 public class CreateAppealMessageReplyCommandHandler (
-    IAppealMessageRepository messageRepository,
-    IAppealRepository appealRepository,
-    IAppealMessageReplyRepository replyRepository,
+    IRepository<AppealMessage> messageRepository,
+    IRepository<Appeal> appealRepository,
+    IRepository<AppealMessageReply> replyRepository,
     ILogger logger,
     IMapper mapper
     ) : IRequestHandler<CreateAppealMessageReplyCommand, AppealReplyResponse>
@@ -21,13 +21,13 @@ public class CreateAppealMessageReplyCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information("Початок створення відповіді на повідомлення.");
-        var message = messageRepository.GetBy(request.AppealMessageId);
+        var message = await messageRepository.FirstOrDefaultAsync(m => m.Id == request.AppealMessageId);
         if (message == null)
         {
             throw new NotFoundException("Повідомлення не було визначенно сервером по id.");
         }
 
-        var appeal = appealRepository.GetBy(message.AppealId);
+        var appeal = await appealRepository.FirstOrDefaultAsync(a => a.Id == message.AppealId);
         appeal.State = (int) AppealState.Answered;    
         logger.Information("Звернення було оновленно, статус завернення - опрацьовано.");
 
@@ -38,7 +38,7 @@ public class CreateAppealMessageReplyCommandHandler (
             Message = message,
             CreatedAt = DateTime.UtcNow,
         };
-        replyRepository.Create(reply);
+        await replyRepository.AddAsync(reply);
         logger.Information($"Було створенно відповідь на повідомлення, id={reply.Id}.");
         return mapper.Map<AppealReplyResponse>(reply);
     }

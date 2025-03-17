@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Appeals;
-using Domain.Appeals.Repositories;
+using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using System.Web;
@@ -11,8 +12,9 @@ using UseCases.Exceptions;
 namespace UseCases.Appeals.Messages.CreateAppealMessage
 {
     public class CreateAppealMessageCommandHandler(
-        IAppealRepository appealRepository,
-        IAppealMessageRepository appealMessageRepository,
+        IRepository<User> userRepository,
+        IRepository<Appeal> appealRepository,
+        IRepository<AppealMessage> appealMessageRepository,
         ILogger logger,
         IMapper mapper,
         ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage
@@ -21,7 +23,13 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
         public async Task<AppealMessageResponse> Handle(CreateAppealMessageCommand request, 
             CancellationToken cancellationToken)
         {
-            var appeal = appealRepository.GetBy(request.AppealId, request.UserToken);
+            var user = await userRepository.FirstOrDefaultAsync(u => u.TokenForUse == request.UserToken && !u.IsDeleted);
+
+            if (user == null)
+            {
+                throw new NotFoundException("Користувач не був визначений по токену.");
+            }
+            var appeal = await appealRepository.FirstOrDefaultAsync(a => a.Id == request.AppealId && a.UserId == user.Id);
             if (appeal == null)
             {
                 throw new NotFoundException("Звернення не було визначенно сервером по id.");
@@ -32,7 +40,7 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
                 Message = string.IsNullOrEmpty(request.Message) ? "" : HttpUtility.UrlDecode(request.Message),
                 CreatedAt = DateTime.UtcNow,
             };
-            appealMessageRepository.Create(message);
+            await appealMessageRepository.AddAsync(message);
             logger.Information($"Створено було повідомлення в зверненні, id={message.Id}.");
 
             if (request.Files != null)

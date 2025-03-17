@@ -1,6 +1,7 @@
 ﻿using Core.Providers.Hmac;
 using Core.Providers.Rand;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using System.Web;
@@ -10,7 +11,7 @@ using UseCases.Users.Emails;
 namespace UseCases.Users.Commands.CreateUser
 {
     public class CreateUserCommandHandler (
-        IUserRepository userRepository,
+        IRepository<User> userRepository,
         IEmailMessanger emailMessanger,
         IEncryptionProvider encryptionProvider,
         IRandomizer randomizer,
@@ -20,7 +21,7 @@ namespace UseCases.Users.Commands.CreateUser
         public async Task<CreateUserResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             logger.Information("Початок створення нового користувача.");
-            var user = userRepository.GetByEmail(request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user != null && user.IsDeleted)
             {
                 user.IsDeleted = false;
@@ -47,7 +48,7 @@ namespace UseCases.Users.Commands.CreateUser
                 TokenForUse = randomizer.CreateHash(40),
                 RecoveryToken = ""
             };
-            userRepository.Create(user);
+            await userRepository.AddAsync(user);
             emailMessanger.SendConfirmEmail(user.Email, request.Culture, user.HashForActivate);
             logger.Information($"Новий користувач був створений, id={user.Id}.");
             return new CreateUserResponse(true, $"Новий користувач був створений, id={user.Id}.");

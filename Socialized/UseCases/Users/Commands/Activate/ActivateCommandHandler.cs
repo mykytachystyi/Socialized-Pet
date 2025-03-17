@@ -1,4 +1,5 @@
 ﻿using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -6,14 +7,15 @@ using UseCases.Exceptions;
 namespace UseCases.Users.Commands.Activate;
 
 public class ActivateCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     ILogger logger
     ) : IRequestHandler<ActivateCommand, ActivateResponse>
 {
     public async Task<ActivateResponse> Handle(ActivateCommand request, CancellationToken cancellationToken)
     {
         logger.Information("Початок активації аккаунту користувача за допомогою хешу.");
-        var user = userRepository.GetByHash(request.Hash, false, false);
+        var user = await userRepository.FirstOrDefaultAsync(
+            u => u.HashForActivate == request.Hash && !u.Activate && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по хешу для активації аккаунту.");

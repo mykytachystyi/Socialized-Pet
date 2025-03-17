@@ -1,14 +1,14 @@
-﻿using Core;
-using MediatR;
+﻿using MediatR;
 using Serilog;
 using Domain.Users;
 using UseCases.Exceptions;
 using Core.Providers.Hmac;
+using Infrastructure.Repositories;
 
 namespace UseCases.Users.Commands.ChangePassword;
 
 public class ChangeUserPasswordCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IEncryptionProvider encryptionProvider,
     ILogger logger) : IRequestHandler<ChangeUserPasswordCommand, 
     ChangeUserPasswordResponse>
@@ -17,7 +17,7 @@ public class ChangeUserPasswordCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information($"Початок зміни паролю для користувача.");
-        var user = userRepository.GetByRecoveryToken(request.RecoveryToken, false);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.RecoveryToken == request.RecoveryToken && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по токену востановлення для зміни паролю.");

@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using Serilog;
 using UseCases.Exceptions;
-using Domain.Appeals.Repositories;
+using Domain.Appeals;
+using Infrastructure.Repositories;
 
 namespace UseCases.Appeals.Messages.DeleteAppealMessage;
 
 public class DeleteAppealMessageCommandHandler(
-    IAppealMessageRepository appealMessageRepository,
+    IRepository<AppealMessage> appealMessageRepository,
     ILogger logger
     ) : IRequestHandler<DeleteAppealMessageCommand, DeleteAppealMessageResponse>
 {
@@ -14,7 +15,7 @@ public class DeleteAppealMessageCommandHandler(
         DeleteAppealMessageCommand request, 
         CancellationToken cancellationToken)
     {
-        var message = appealMessageRepository.GetBy(request.MessageId);
+        var message = await appealMessageRepository.FirstOrDefaultAsync(m => m.Id == request.MessageId);
         if (message == null)
         {
             throw new NotFoundException("Повідомлення не було визначенно сервером по id.");

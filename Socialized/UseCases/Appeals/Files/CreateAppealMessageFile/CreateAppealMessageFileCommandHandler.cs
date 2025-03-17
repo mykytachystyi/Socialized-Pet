@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Core.FileControl.CurrentFileSystem;
 using Domain.Appeals;
-using Domain.Appeals.Repositories;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Appeals.Files.Models;
@@ -12,17 +12,18 @@ namespace UseCases.Appeals.Files.CreateAppealMessageFile;
 public class CreateAppealMessageFileCommandHandler (
     IFileManager fileManager,
     ILogger logger,
-    IAppealFileRepository AppealFilesRepository,
+    IRepository<AppealMessage> messagesRepository,
+    IRepository<AppealFile> appealFilesRepository,
     IMapper mapper
-    ) : IRequestHandler<CreateAppealMessageFileCommand, IEnumerable<AppealFileResponse>>, ICreateAppealFilesAdditionalToMessage
+    ) : IRequestHandler<CreateAppealMessageFileCommand, IEnumerable<AppealFileResponse>>, 
+    ICreateAppealFilesAdditionalToMessage
 {
     public async Task<IEnumerable<AppealFileResponse>> Handle(
-        CreateAppealMessageFileCommand request, 
-        CancellationToken cancellationToken)
+        CreateAppealMessageFileCommand request, CancellationToken cancellationToken)
     {
         logger.Information("Початок обробки команди створення файлів для повідомлення в зверненні.");
 
-        var message = AppealFilesRepository.GetById(request.MessageId);
+        var message = await messagesRepository.FirstOrDefaultAsync(m => m.Id == request.MessageId);
 
         if (message == null)
         {
@@ -47,9 +48,9 @@ public class CreateAppealMessageFileCommandHandler (
                     RelativePath = savedFile.Result,
                     Message = message
                 };
+                appealFilesRepository.AddAsync(saved);
                 files.Add(saved);
             }
-            AppealFilesRepository.Create(files);
             logger.Information("Були створені файли для повідомлення в зверненні.");
         }
         else

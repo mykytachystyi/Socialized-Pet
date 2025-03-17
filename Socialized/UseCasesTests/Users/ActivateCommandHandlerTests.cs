@@ -4,18 +4,21 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using UseCases.Exceptions;
 using UseCases.Users.Commands.Activate;
+using Infrastructure.Repositories;
+using Domain.Admins;
+using System.Linq.Expressions;
 
 namespace UseCasesTests.Users;
 
 public class ActivateCommandHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IUserRepository userRepository = Substitute.For<IUserRepository>();
+    private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
     [Fact]
     public async Task Activate_WhenUserIsNotFoundByToken_ThrowNotFoundException()
     {
         var command = new ActivateCommand { Hash = "1234567890" };
-        userRepository.GetByHash(command.Hash, false, false).ReturnsNull();
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new ActivateCommandHandler(userRepository, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -25,7 +28,7 @@ public class ActivateCommandHandlerTests
     {
         var command = new ActivateCommand { Hash = "1234567890" };
         var user = new User { Email = "test@test.com", IsDeleted = true };
-        userRepository.GetByHash(command.Hash, false, false).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new ActivateCommandHandler(userRepository, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);

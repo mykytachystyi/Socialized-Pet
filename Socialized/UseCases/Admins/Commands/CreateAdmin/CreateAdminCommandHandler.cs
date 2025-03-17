@@ -8,11 +8,12 @@ using UseCases.Admins.Models;
 using UseCases.Admins.Emails;
 using Core.Providers.Hmac;
 using Core.Providers.Rand;
+using Infrastructure.Repositories;
 
 namespace UseCases.Admins.Commands.CreateAdmin;
 
 public class CreateAdminCommandHandler(
-    IAdminRepository adminRepository,
+    IRepository<Admin> adminRepository,
     IEncryptionProvider encryptionProvider,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
@@ -20,9 +21,9 @@ public class CreateAdminCommandHandler(
     IMapper mapper
     ) : IRequestHandler<CreateAdminCommand, AdminResponse>
 {
-    public async Task<AdminResponse> Handle(CreateAdminCommand command, CancellationToken cancellationToken)
+    public async Task<AdminResponse> Handle(CreateAdminCommand command, CancellationToken cancellationToken = default)
     {
-        if (adminRepository.GetByEmail(command.Email) != null)
+        if (await adminRepository.AnyAsync(a => a.Email == command.Email && !a.IsDeleted))
         {
             throw new NotFoundException($"Admin with email={command.Email} is already exist.");
         }
@@ -39,7 +40,7 @@ public class CreateAdminCommandHandler(
             CreatedAt = DateTime.UtcNow,
             LastLoginAt = DateTime.UtcNow
         };
-        adminRepository.Create(admin);
+        await adminRepository.AddAsync(admin, cancellationToken);
         adminEmailManager.SetupPassword(admin.TokenForStart, admin.Email);
         logger.Information($"Був створений новий адмін, id={admin.Id}.");
         return mapper.Map<AdminResponse>(admin);

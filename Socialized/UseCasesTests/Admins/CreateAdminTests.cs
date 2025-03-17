@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Core.Providers.Hmac;
 using Core.Providers.Rand;
-using Core.Providers.TextEncrypt;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Admins.Commands.CreateAdmin;
 using UseCases.Admins.Emails;
 using UseCases.Admins.Models;
@@ -16,7 +17,7 @@ namespace UseCasesTests.Admins;
 public class CreateAdminTests
 {
     private readonly ILogger logger = Substitute.For<ILogger>();
-    private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
+    private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
     private readonly IMapper mapper = Substitute.For<IMapper>();
     private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
@@ -39,7 +40,7 @@ public class CreateAdminTests
             LastName = "Dolton",
             Password = "password"
         };
-        repository.GetByEmail(command.Email, false).ReturnsNull();
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
         var admin = new AdminResponse { Email = command.Email, FirstName = command.FirstName, LastName = command.LastName, Role = "default" };
         mapper.Map<AdminResponse>(null).ReturnsForAnyArgs(admin);
         var handler = new CreateAdminCommandHandler(repository, 
@@ -61,7 +62,7 @@ public class CreateAdminTests
             LastName = "Dolton",
             Password = "password"
         };
-        repository.GetByEmail(command.Email, false).Returns(admin);
+        repository.AnyAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(true);
         var handler = new CreateAdminCommandHandler(repository, encryptionProvider,
             emailManager, logger, randomizer, mapper);
 

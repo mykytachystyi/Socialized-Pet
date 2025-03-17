@@ -22,6 +22,8 @@ using Core.Providers.TextEncrypt;
 using Core.FileControl.Aws;
 using Core.FileControl.CurrentFileSystem;
 using Core.SmtpMailing;
+using Core.Providers.Rand;
+using Domain.Appeals;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,25 +51,27 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton(builder.Configuration.GetSection("MailSettings").Get<MailSettings>());
 builder.Services.AddScoped<IJwtTokenManager, JwtTokenManager>();
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminEmailManager, AdminEmailManager>();
 builder.Services.AddScoped<ISmtpSender, SmtpOauthSender>(); 
 
 builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>());
 
 builder.Services.AddScoped<IFileManager, AwsUploader>();
-builder.Services.AddScoped<TextEncryptionProvider>();
+builder.Services.AddScoped<ITextEncryptionProvider, TextEncryptionProvider>();
 builder.Services.AddScoped<IEncryptionProvider, HmacSha256Provider>();
+builder.Services.AddScoped<IRandomizer,  Randomizer>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+builder.Services.AddScoped<IRepository<Admin>, Repository<Admin>>();
+builder.Services.AddScoped<IRepository<Appeal>, Repository<Appeal>>();
+builder.Services.AddScoped<IRepository<AppealFile>, Repository<AppealFile>>();
+builder.Services.AddScoped<IRepository<AppealMessage>, Repository<AppealMessage>>();
+builder.Services.AddScoped<IRepository<AppealMessageReply>, Repository<AppealMessageReply>>();
+builder.Services.AddScoped<IAppealQueryRepository, AppealQueryRepository>();
+
 builder.Services.AddScoped<IEmailMessanger, EmailMessanger>();
 
-builder.Services.AddScoped<IAppealRepository, AppealRepository>();
-builder.Services.AddScoped<IAppealMessageRepository, AppealMessageRepository>();
-
-builder.Services.AddScoped<IAppealFileRepository, AppealFileRepository>();
-
-builder.Services.AddScoped<IAppealMessageReplyRepository, AppealMessageReplyRepository>();
+builder.Services.AddScoped<IAppealQueryRepository, AppealQueryRepository>();
 
 builder.Services.AddScoped<ICreateAppealFilesAdditionalToMessage, CreateAppealMessageFileCommandHandler>();
 

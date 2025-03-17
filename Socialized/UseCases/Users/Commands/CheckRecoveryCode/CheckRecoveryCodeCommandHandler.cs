@@ -1,7 +1,6 @@
-﻿using Core.Providers;
-using Core.Providers.Rand;
-using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -10,7 +9,7 @@ namespace UseCases.Users.Commands.CheckRecoveryCode;
 
 public class CheckRecoveryCodeCommandHandler (
     ILogger logger,
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IRandomizer randomizer
     ) : IRequestHandler<CheckRecoveryCodeCommand, CheckRecoveryCodeResponse>
 {
@@ -18,7 +17,7 @@ public class CheckRecoveryCodeCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information($"Початок перевірки коду для зміни паролю, email={request.UserEmail}.");
-        var user = userRepository.GetByEmail(request.UserEmail);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.Email == request.UserEmail && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по email для перевірки коду востановлення паролю.");

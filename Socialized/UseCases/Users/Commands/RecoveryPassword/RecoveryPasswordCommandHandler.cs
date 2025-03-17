@@ -1,5 +1,6 @@
 ﻿using Core.Providers.Rand;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -8,7 +9,7 @@ using UseCases.Users.Emails;
 namespace UseCases.Users.Commands.RecoveryPassword;
 
 public class RecoveryPasswordCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IRandomizer randomizer,
     IEmailMessanger emailMessanger,
     ILogger logger) : IRequestHandler<RecoveryPasswordCommand, RecoveryPasswordResponse>
@@ -17,7 +18,7 @@ public class RecoveryPasswordCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information($"Початок відновлення паролю, email={request.UserEmail}.");
-        var user = userRepository.GetByEmail(request.UserEmail, false, true);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.Email == request.UserEmail && u.Activate && !u.IsDeleted);
 
         if (user == null)
         {

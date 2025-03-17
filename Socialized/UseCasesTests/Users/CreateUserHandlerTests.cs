@@ -7,13 +7,15 @@ using UseCases.Users.Commands.CreateUser;
 using NSubstitute.ReturnsExtensions;
 using Core.Providers.Hmac;
 using Core.Providers.Rand;
+using Infrastructure.Repositories;
+using System.Linq.Expressions;
 
 namespace UseCasesTests.Users;
 
 public class CreateUserHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IUserRepository userRepository = Substitute.For<IUserRepository>();
+    private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
     private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
     private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
@@ -33,7 +35,7 @@ public class CreateUserHandlerTests
             Culture = "en_EN"
         };
         var user = new User { Email = command.Email, IsDeleted = false };
-        userRepository.GetByEmail(command.Email).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -52,7 +54,7 @@ public class CreateUserHandlerTests
             Culture = "en_EN"
         };
         var user = new User { Email = command.Email, IsDeleted = true };
-        userRepository.GetByEmail(command.Email).Returns(user);
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -72,7 +74,7 @@ public class CreateUserHandlerTests
             TimeZone = 6,
             Culture = "en_EN"
         };
-        userRepository.GetByEmail(command.Email).ReturnsNull();
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);

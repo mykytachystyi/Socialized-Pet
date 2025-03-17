@@ -8,7 +8,7 @@ namespace UseCases.Appeals.Queries.GetAppealsByUser;
 
 public class GetAppealsByUserQueryHandler(
     ILogger logger,
-    IAppealRepository appealRepository,
+    IAppealQueryRepository appealRepository,
     IMapper mapper) : IRequestHandler<GetAppealsByUserQuery, IEnumerable<AppealResponse>>
 {
     public async Task<IEnumerable<AppealResponse>> Handle(GetAppealsByUserQuery request, 

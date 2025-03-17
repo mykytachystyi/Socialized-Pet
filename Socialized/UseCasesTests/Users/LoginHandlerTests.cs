@@ -8,13 +8,15 @@ using NSubstitute.ReturnsExtensions;
 using UseCases.Users.Models;
 using UseCases.Users.Commands.LoginUser;
 using Core.Providers.Hmac;
+using Infrastructure.Repositories;
+using System.Linq.Expressions;
 
 namespace UseCasesTests.Users
 {
     public class LoginHandlerTests
     {
         private ILogger logger = Substitute.For<ILogger>();
-        private IUserRepository userRepository = Substitute.For<IUserRepository>();
+        private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
         private IMapper mapper = Substitute.For<IMapper>();
         private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
 
@@ -33,7 +35,7 @@ namespace UseCasesTests.Users
                 HashedPassword = hashedPassword.Hash, 
                 HashedSalt = hashedPassword.Salt 
             };
-            userRepository.GetByEmail(command.Email).Returns(user);
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
             encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(true);
             var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
             mapper.Map<UserResponse>(user).Returns(new UserResponse { Email = command.Email, FirstName = "", LastName = "", TokenForUse = "" });
@@ -58,7 +60,7 @@ namespace UseCasesTests.Users
                 HashedPassword = hashedPassword.Hash,
                 HashedSalt = hashedPassword.Salt
             };
-            userRepository.GetByEmail(command.Email).Returns(user);
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
             var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
 
             await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
@@ -78,7 +80,7 @@ namespace UseCasesTests.Users
                 HashedPassword = hashedPassword.Hash,
                 HashedSalt = hashedPassword.Salt
             };
-            userRepository.GetByEmail(command.Email).ReturnsNull();
+            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
             var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
 
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));

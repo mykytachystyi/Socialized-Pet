@@ -1,5 +1,6 @@
 ﻿using Core.Providers.Hmac;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -8,12 +9,12 @@ namespace UseCases.Admins.Commands.SetupPassword;
 
 public class SetupPasswordCommandHandler(
     ILogger logger,
-    IAdminRepository adminRepository,
+    IRepository<Admin> adminRepository,
     IEncryptionProvider encryptionProvider) : IRequestHandler<SetupPasswordCommand, SetupPasswordResult>
 {
     public async Task<SetupPasswordResult> Handle(SetupPasswordCommand request, CancellationToken cancellationToken)
     {
-        var admin = adminRepository.GetByPasswordToken(request.Token);
+        var admin = await adminRepository.FirstOrDefaultAsync(a => a.TokenForStart == request.Token && !a.IsDeleted);
         if (admin == null)
         {
             throw new NotFoundException("Не було знайдено адміна по токену для зміни паролю.");

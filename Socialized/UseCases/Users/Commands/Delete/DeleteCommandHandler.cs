@@ -2,17 +2,18 @@
 using Serilog;
 using Domain.Users;
 using UseCases.Exceptions;
+using Infrastructure.Repositories;
 
 namespace UseCases.Users.Commands.Delete;
 
 public class DeleteCommandHandler (
     ILogger logger,
-    IUserRepository userRepository) : IRequestHandler<DeleteCommand, DeleteResponse>
+    IRepository<User> userRepository) : IRequestHandler<DeleteCommand, DeleteResponse>
 {
     public async Task<DeleteResponse> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {
         logger.Information("Початок видалення користувача по його токену.");
-        var user = userRepository.GetByUserTokenNotDeleted(request.UserToken);
+        var user = await userRepository.FirstOrDefaultAsync(u=> u.TokenForUse == request.UserToken && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по його токену для видалення аккаунту.");

@@ -1,8 +1,9 @@
 ﻿using Domain.Appeals;
-using Domain.Appeals.Repositories;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Appeals.Replies.Commands.UpdateAppealMessageReply;
 using UseCases.Exceptions;
 
@@ -11,13 +12,13 @@ namespace UseCasesTests.Appeals;
 public class UpdateReplyHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IAppealMessageReplyRepository replyRepository = Substitute.For<IAppealMessageReplyRepository>();
+    private IRepository<AppealMessageReply> replyRepository = Substitute.For<IRepository<AppealMessageReply>>();
     
     [Fact]
     public async Task Update_WhenReplyIsNotFound_ThrowsNotFoundException()
     {
         var command = new UpdateAppealMessageReplyCommand { ReplyId = 1, Reply = "Updated Reply" };
-        replyRepository.Get(command.ReplyId).ReturnsNull();
+        replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).ReturnsNull();
 
         var handler = new UpdateAppealMessageReplyCommandHandler(replyRepository, logger);
 
@@ -28,7 +29,7 @@ public class UpdateReplyHandlerTests
     {
         var command = new UpdateAppealMessageReplyCommand { ReplyId = 1, Reply = "Updated Reply" };
         var reply = new AppealMessageReply { Id = 1, Reply = "Old Reply", Message = new AppealMessage() };
-        replyRepository.Get(command.ReplyId).Returns(reply);
+        replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).Returns(reply);
 
         var handler = new UpdateAppealMessageReplyCommandHandler(replyRepository, logger);
 

@@ -1,6 +1,6 @@
 ﻿using Core.Providers.Rand;
-using Core.Providers.TextEncrypt;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -8,7 +8,7 @@ using UseCases.Exceptions;
 namespace UseCases.Users.Commands.LogOut;
 
 public class LogOutCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IRandomizer randomizer,
     ILogger logger) : IRequestHandler<LogOutCommand, LogOutResponse>
 {
@@ -16,7 +16,7 @@ public class LogOutCommandHandler (
     {
         logger.Information($"Початок виходу(logout) користувача.");
 
-        var user = userRepository.GetByUserTokenNotDeleted(request.UserToken);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.TokenForUse == request.UserToken && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по токен для активації аккаунту.");

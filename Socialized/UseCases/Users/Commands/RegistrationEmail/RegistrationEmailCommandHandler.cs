@@ -1,4 +1,5 @@
 ﻿using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -7,14 +8,14 @@ using UseCases.Users.Emails;
 namespace UseCases.Users.Commands.RegistrationEmail;
 
 public class RegistrationEmailCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IEmailMessanger emailMessanger,
     ILogger logger) : IRequestHandler<RegistrationEmailCommand, RegistrationEmailResponse>
 {
     public async Task<RegistrationEmailResponse> Handle(RegistrationEmailCommand request, CancellationToken cancellationToken)
     {
         logger.Information($"Початок відправлення листа на підтвердження реєстрації користувача, email={request.UserEmail}.");
-        var user = userRepository.GetByEmail(request.UserEmail);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.Email == request.UserEmail && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по email для активації аккаунту.");

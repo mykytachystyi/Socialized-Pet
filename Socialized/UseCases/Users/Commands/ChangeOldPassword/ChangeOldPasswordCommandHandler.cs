@@ -1,6 +1,6 @@
-﻿using Core.Providers;
-using Core.Providers.Hmac;
+﻿using Core.Providers.Hmac;
 using Domain.Users;
+using Infrastructure.Repositories;
 using MediatR;
 using Serilog;
 using UseCases.Exceptions;
@@ -8,7 +8,7 @@ using UseCases.Exceptions;
 namespace UseCases.Users.Commands.ChangeOldPassword;
 
 public class ChangeOldPasswordCommandHandler (
-    IUserRepository userRepository,
+    IRepository<User> userRepository,
     IEncryptionProvider encryptionProvider,
     ILogger logger) : IRequestHandler<ChangeOldPasswordCommand, ChangeOldPasswordResponse>
 {
@@ -16,7 +16,7 @@ public class ChangeOldPasswordCommandHandler (
         CancellationToken cancellationToken)
     {
         logger.Information($"Початок зміни старого паролю на новий для користувача.");
-        var user = userRepository.GetByUserTokenNotDeleted(request.UserToken);
+        var user = await userRepository.FirstOrDefaultAsync(u => u.TokenForUse == request.UserToken && !u.IsDeleted);
         if (user == null)
         {
             throw new NotFoundException("Сервер не визначив користувача по токену для зміни старого паролю користувача.");

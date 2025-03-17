@@ -3,22 +3,23 @@ using NSubstitute;
 using UseCases.Exceptions;
 using Domain.Appeals;
 using NSubstitute.ReturnsExtensions;
-using Domain.Appeals.Repositories;
 using UseCases.Appeals.Replies.Commands.DeleteAppealMessageReply;
+using Infrastructure.Repositories;
+using System.Linq.Expressions;
 
 namespace UseCasesTests.Appeals.Replies;
 
 public class DeleteReplyHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
-    private IAppealMessageReplyRepository replyRepository = Substitute.For<IAppealMessageReplyRepository>();
+    private IRepository<AppealMessageReply> replyRepository = Substitute.For<IRepository<AppealMessageReply>>();
     
     [Fact]
     public async Task Delete_WhenReplyIsNotFound_ThrowsNotFoundException()
     {
         var command = new DeleteAppealMessageReplyCommand { ReplyId = 1 };
-        replyRepository.Get(command.ReplyId).ReturnsNull();
-
+        replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).ReturnsNull();
+        
         var handler = new DeleteAppealMessageReplyCommandHandler(replyRepository, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -28,7 +29,7 @@ public class DeleteReplyHandlerTests
     {
         var command = new DeleteAppealMessageReplyCommand { ReplyId = 1 };
         var reply = new AppealMessageReply { Id = 1, Reply = "", IsDeleted = false, Message = new AppealMessage() };
-        replyRepository.Get(command.ReplyId).Returns(reply);
+        replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).Returns(reply);
 
         var handler = new DeleteAppealMessageReplyCommandHandler(replyRepository, logger);
 

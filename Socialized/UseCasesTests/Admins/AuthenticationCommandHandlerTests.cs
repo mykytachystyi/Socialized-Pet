@@ -1,9 +1,11 @@
 ﻿using Core;
 using Core.Providers.Hmac;
 using Domain.Admins;
+using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
+using System.Linq.Expressions;
 using UseCases.Admins.Commands.Authentication;
 using UseCases.Exceptions;
 
@@ -12,7 +14,7 @@ namespace UseCasesTests.Admins;
 public class AuthenticationCommandHandlerTests
 {
     private readonly ILogger logger = Substitute.For<ILogger>();
-    private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
+    private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
     private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
 
     [Fact]
@@ -30,7 +32,7 @@ public class AuthenticationCommandHandlerTests
             HashedPassword = new byte[1], HashedSalt = new byte[1]
         };
         encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(true);
-        repository.GetByEmail(command.Email).Returns(adminHashed);
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(adminHashed);
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         var result = await handler.Handle(command, CancellationToken.None);
@@ -45,7 +47,7 @@ public class AuthenticationCommandHandlerTests
             Email = "test@test.com",
             Password = "password"
         };
-        repository.GetByEmail(command.Email).ReturnsNull();
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
@@ -70,7 +72,7 @@ public class AuthenticationCommandHandlerTests
             HashedPassword = new byte[1],
             HashedSalt = new byte[1]
         };
-        repository.GetByEmail(command.Email).Returns(adminHashed);
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(adminHashed);
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
