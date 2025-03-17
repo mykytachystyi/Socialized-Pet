@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers;
 using Domain.Admins;
 using MediatR;
 using Serilog;
@@ -8,7 +8,7 @@ namespace UseCases.Admins.Commands.Authentication;
 
 public class AuthenticationCommandHandler(IAdminRepository adminRepository,
     ILogger logger,
-    ProfileCondition profileCondition
+    IEncryptionProvider encryptionProvider
     ) : IRequestHandler<AuthenticationCommand, Admin>
 {
     public async Task<Admin> Handle(AuthenticationCommand request, CancellationToken cancellationToken)
@@ -18,7 +18,8 @@ public class AuthenticationCommandHandler(IAdminRepository adminRepository,
         {
             throw new NotFoundException("Не було знайдено адміна по email-адресі.");
         }
-        if (!profileCondition.VerifyHashedPassword(admin.Password, request.Password))
+        if (!encryptionProvider.VerifyPasswordHash(request.Password,
+            new SaltAndHash { Hash = admin.HashedPassword, Salt = admin.HashedSalt }))
         {
             throw new ValidationException("Невірний пароль.");
         }

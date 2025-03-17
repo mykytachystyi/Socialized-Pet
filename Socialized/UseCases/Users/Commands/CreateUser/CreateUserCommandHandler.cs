@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Providers;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -11,6 +12,7 @@ namespace UseCases.Users.Commands.CreateUser
     public class CreateUserCommandHandler (
         IUserRepository userRepository,
         IEmailMessanger emailMessanger,
+        IEncryptionProvider encryptionProvider,
         ProfileCondition profileCondition,
         ILogger logger
         ) : IRequestHandler<CreateUserCommand, CreateUserResponse>
@@ -24,19 +26,21 @@ namespace UseCases.Users.Commands.CreateUser
                 user.IsDeleted = false;
                 user.TokenForUse = Guid.NewGuid().ToString();
                 userRepository.Update(user);
-                logger.Information($"Був востановлен видалений аккаунт, id={user.Id}.");
-                return new CreateUserResponse(true, $"Був востановлен видалений аккаунт, id={user.Id}.");
+                logger.Information($"Був відновлен видалений аккаунт, id={user.Id}.");
+                return new CreateUserResponse(true, $"Був відновлен видалений аккаунт, id={user.Id}.");
             }
             if (user != null && !user.IsDeleted)
             {
                 throw new NotFoundException("Користувач з таким email-адресом вже існує.");
             }
+            var hashedPasswordPair = encryptionProvider.HashPassword(request.Password);
             user = new User
             {
                 Email = request.Email,
                 FirstName = HttpUtility.UrlDecode(request.FirstName),
                 LastName = HttpUtility.UrlDecode(request.LastName),
-                Password = profileCondition.HashPassword(request.Password),
+                HashedPassword = hashedPasswordPair.Hash,
+                HashedSalt = hashedPasswordPair.Salt,
                 HashForActivate = profileCondition.CreateHash(100),
                 CreatedAt = DateTime.UtcNow,
                 LastLoginAt = DateTime.UtcNow,

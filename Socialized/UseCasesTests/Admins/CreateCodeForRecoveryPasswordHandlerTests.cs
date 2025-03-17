@@ -20,7 +20,8 @@ public class CreateCodeForRecoveryPasswordHandlerTests
         Email = "",
         FirstName = "",
         LastName = "",
-        Password = "",
+        HashedPassword = new byte[0],
+        HashedSalt = new byte[0],
         Role = "",
         TokenForStart = ""
     };

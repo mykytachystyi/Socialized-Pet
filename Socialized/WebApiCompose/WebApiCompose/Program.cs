@@ -19,6 +19,7 @@ using UseCases.Behaviors;
 using MediatR;
 using UseCases.Admins.Commands.Authentication;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
+using Core.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,7 @@ builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Ge
 
 builder.Services.AddScoped<IFileManager, AwsUploader>();
 builder.Services.AddScoped<ProfileCondition>();
+builder.Services.AddScoped<IEncryptionProvider, HmacSha256Provider>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmailMessanger, EmailMessanger>();

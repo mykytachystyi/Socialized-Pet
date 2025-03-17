@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core;
+using Core.Providers;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -10,7 +11,7 @@ namespace UseCases.Users.Commands.LoginUser;
 
 public class LoginUserCommandHandler (
     IUserRepository userRepository,
-    ProfileCondition profileCondition,
+    IEncryptionProvider encryptionProvider,
     IMapper mapper,
     ILogger logger
     ) : IRequestHandler<LoginUserCommand, UserResponse>
@@ -24,7 +25,8 @@ public class LoginUserCommandHandler (
         {
             throw new NotFoundException("Сервер не визначив користувача по email для логіну.");
         }
-        if (!profileCondition.VerifyHashedPassword(user.Password, request.Password))
+        if (!encryptionProvider.VerifyPasswordHash(request.Password,
+            new SaltAndHash { Hash = user.HashedPassword, Salt = user.HashedSalt }))
         {
             throw new ValidationException("Пароль користувача не співпадає з паролем на сервері.");
         }

@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Providers;
 using Domain.Admins;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -12,7 +13,7 @@ public class AuthenticationCommandHandlerTests
 {
     private readonly ILogger logger = Substitute.For<ILogger>();
     private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
-    private readonly ProfileCondition profileCondition = new ProfileCondition();
+    private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
 
     [Fact]
     public async Task Authentication_WhenEmailIsFoundAndPasswordIsValid_ReturnAdmin()
@@ -26,10 +27,11 @@ public class AuthenticationCommandHandlerTests
             Id = 1, FirstName = "", 
             LastName = "", Role = "", 
             TokenForStart = "", Email = command.Email, 
-            Password = profileCondition.HashPassword(command.Password)
+            HashedPassword = new byte[1], HashedSalt = new byte[1]
         };
+        encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(true);
         repository.GetByEmail(command.Email).Returns(adminHashed);
-        var handler = new AuthenticationCommandHandler(repository, logger, profileCondition);
+        var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -44,7 +46,7 @@ public class AuthenticationCommandHandlerTests
             Password = "password"
         };
         repository.GetByEmail(command.Email).ReturnsNull();
-        var handler = new AuthenticationCommandHandler(repository, logger, profileCondition);
+        var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
@@ -56,10 +58,20 @@ public class AuthenticationCommandHandlerTests
             Email = "test@test.com",
             Password = "password"
         };
-        var hashedPassword = profileCondition.HashPassword("different_password");
-        var admin = new Admin { Id = 1, FirstName = "", LastName = "", Role = "", TokenForStart = "", Email = command.Email, Password = hashedPassword };
-        repository.GetByEmail(command.Email).Returns(admin);
-        var handler = new AuthenticationCommandHandler(repository, logger, profileCondition);
+        encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(false);
+        var adminHashed = new Admin
+        {
+            Id = 1,
+            FirstName = "",
+            LastName = "",
+            Role = "",
+            TokenForStart = "",
+            Email = command.Email,
+            HashedPassword = new byte[1],
+            HashedSalt = new byte[1]
+        };
+        repository.GetByEmail(command.Email).Returns(adminHashed);
+        var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
     }

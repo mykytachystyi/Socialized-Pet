@@ -3,12 +3,13 @@ using MediatR;
 using Serilog;
 using Domain.Users;
 using UseCases.Exceptions;
+using Core.Providers;
 
 namespace UseCases.Users.Commands.ChangePassword;
 
 public class ChangeUserPasswordCommandHandler (
     IUserRepository userRepository,
-    ProfileCondition profileCondition,
+    IEncryptionProvider encryptionProvider,
     ILogger logger) : IRequestHandler<ChangeUserPasswordCommand, 
     ChangeUserPasswordResponse>
 {
@@ -25,7 +26,9 @@ public class ChangeUserPasswordCommandHandler (
         {
             throw new ValidationException("Паролі не співпадають одне з одним.");
         }
-        user.Password = profileCondition.HashPassword(request.UserPassword);
+        var newHashedPassword = encryptionProvider.HashPassword(request.UserPassword);
+        user.HashedPassword = newHashedPassword.Hash;
+        user.HashedSalt = newHashedPassword.Salt;
         user.RecoveryToken = "";
         userRepository.Update(user);
         logger.Information($"Пароль користувача було зміненно, id={user.Id}.");

@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Providers;
 using Domain.Admins;
 using MediatR;
 using Serilog;
@@ -9,7 +9,7 @@ namespace UseCases.Admins.Commands.SetupPassword;
 public class SetupPasswordCommandHandler(
     ILogger logger,
     IAdminRepository adminRepository,
-    ProfileCondition profileCondition) : IRequestHandler<SetupPasswordCommand, SetupPasswordResult>
+    IEncryptionProvider encryptionProvider) : IRequestHandler<SetupPasswordCommand, SetupPasswordResult>
 {
     public async Task<SetupPasswordResult> Handle(SetupPasswordCommand request, CancellationToken cancellationToken)
     {
@@ -18,7 +18,9 @@ public class SetupPasswordCommandHandler(
         {
             throw new NotFoundException("Не було знайдено адміна по токену для зміни паролю.");
         }
-        admin.Password = profileCondition.HashPassword(request.Password);
+        var newHashedPassword = encryptionProvider.HashPassword(request.Password);
+        admin.HashedPassword = newHashedPassword.Hash;
+        admin.HashedSalt = newHashedPassword.Salt;
         admin.TokenForStart = "";
         adminRepository.Update(admin);
         logger.Information($"Був налаштован пароль для адміна id={admin.Id}.");

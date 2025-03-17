@@ -1,6 +1,4 @@
-﻿using Domain.Appeals;
-
-namespace Domain.Users
+﻿namespace Domain.Users
 {
     public class User : BaseEntity
     {
@@ -8,7 +6,8 @@ namespace Domain.Users
         public string Email { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public string Password { get; set; } = null!;
+        public byte[] HashedPassword { get; set; } = null!;
+        public byte[] HashedSalt { get; set; } = null!;
         public DateTime LastLoginAt { get; set; }
         public string HashForActivate { get; set; } = null!;
         public bool Activate { get; set; }

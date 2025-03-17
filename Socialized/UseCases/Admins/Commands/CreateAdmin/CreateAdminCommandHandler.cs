@@ -7,14 +7,16 @@ using MediatR;
 using AutoMapper;
 using UseCases.Admins.Models;
 using UseCases.Admins.Emails;
+using Core.Providers;
 
 namespace UseCases.Admins.Commands.CreateAdmin;
 
 public class CreateAdminCommandHandler(
     IAdminRepository adminRepository,
-    ProfileCondition profileCondition,
+    IEncryptionProvider encryptionProvider,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
+    ProfileCondition profileCondition,
     IMapper mapper
     ) : IRequestHandler<CreateAdminCommand, AdminResponse>
 {
@@ -24,12 +26,14 @@ public class CreateAdminCommandHandler(
         {
             throw new NotFoundException($"Admin with email={command.Email} is already exist.");
         }
+        var newHashedPassword = encryptionProvider.HashPassword(command.Password);
         var admin = new Admin
         {
             Email = command.Email,
             FirstName = HttpUtility.UrlDecode(command.FirstName),
             LastName = HttpUtility.UrlDecode(command.LastName),
-            Password = profileCondition.HashPassword(command.Password),
+            HashedPassword = newHashedPassword.Hash,
+            HashedSalt = newHashedPassword.Salt,
             Role = "default",
             TokenForStart = profileCondition.CreateHash(10),
             CreatedAt = DateTime.UtcNow,

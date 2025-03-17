@@ -4,6 +4,7 @@ using Domain.Admins;
 using Domain.Appeals;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.EntityTypeConfiguration;
+using Core.Providers;
 
 namespace Infrastructure
 {
@@ -38,6 +39,9 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new CountryConfiguration());
             modelBuilder.ApplyConfiguration(new CultureConfiguration());
 
+            var provider = new HmacSha256Provider();
+            var hashedPassword = provider.HashPassword("Pass1234!");
+
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
                 {
@@ -46,7 +50,8 @@ namespace Infrastructure
                     FirstName = "default",
                     LastName = "default",
                     Role = "default",
-                    Password = new ProfileCondition().HashPassword("Pass1234!"),
+                    HashedPassword = hashedPassword.Hash,
+                    HashedSalt = hashedPassword.Salt,
                     CreatedAt = DateTime.Now,
                     TokenForStart = new ProfileCondition().CreateHash(10)
                 }
