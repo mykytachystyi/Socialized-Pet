@@ -6,7 +6,7 @@ using UseCases.Users.Emails;
 using UseCases.Users.Commands.CreateUser;
 using NSubstitute.ReturnsExtensions;
 using Core.Providers.Hmac;
-using Core.Providers.TextEncrypt;
+using Core.Providers.Rand;
 
 namespace UseCasesTests.Users;
 
@@ -16,7 +16,8 @@ public class CreateUserHandlerTests
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
     private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
-    private TextEncryptionProvider profileCondition = Substitute.For<TextEncryptionProvider>();
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
+
 
     [Fact]
     public async Task Create_WhenUserIsAlreadyExistAndNotDeleted_ThrowNotFoundException()
@@ -33,7 +34,7 @@ public class CreateUserHandlerTests
         };
         var user = new User { Email = command.Email, IsDeleted = false };
         userRepository.GetByEmail(command.Email).Returns(user);
-        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, profileCondition, logger);
+        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
@@ -52,7 +53,7 @@ public class CreateUserHandlerTests
         };
         var user = new User { Email = command.Email, IsDeleted = true };
         userRepository.GetByEmail(command.Email).Returns(user);
-        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, profileCondition, logger);
+        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -72,7 +73,7 @@ public class CreateUserHandlerTests
             Culture = "en_EN"
         };
         userRepository.GetByEmail(command.Email).ReturnsNull();
-        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, profileCondition, logger);
+        var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
 

@@ -1,4 +1,4 @@
-﻿namespace Core.Providers.Random
+﻿namespace Core.Providers.Rand
 {
     public interface IRandomizer
     {

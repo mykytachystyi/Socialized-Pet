@@ -1,5 +1,5 @@
 ﻿using Core.Providers.Hmac;
-using Core.Providers.TextEncrypt;
+using Core.Providers.Rand;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -13,7 +13,7 @@ namespace UseCases.Users.Commands.CreateUser
         IUserRepository userRepository,
         IEmailMessanger emailMessanger,
         IEncryptionProvider encryptionProvider,
-        TextEncryptionProvider profileCondition,
+        IRandomizer randomizer,
         ILogger logger
         ) : IRequestHandler<CreateUserCommand, CreateUserResponse>
     {
@@ -41,10 +41,10 @@ namespace UseCases.Users.Commands.CreateUser
                 LastName = HttpUtility.UrlDecode(request.LastName),
                 HashedPassword = hashedPasswordPair.Hash,
                 HashedSalt = hashedPasswordPair.Salt,
-                HashForActivate = profileCondition.CreateHash(100),
+                HashForActivate = randomizer.CreateHash(100),
                 CreatedAt = DateTime.UtcNow,
                 LastLoginAt = DateTime.UtcNow,
-                TokenForUse = profileCondition.CreateHash(40),
+                TokenForUse = randomizer.CreateHash(40),
                 RecoveryToken = ""
             };
             userRepository.Create(user);

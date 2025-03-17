@@ -1,7 +1,6 @@
-﻿namespace Core
+﻿namespace Core.SmtpMailing;
+
+public interface ISmtpSender
 {
-    public interface ISmtpSender
-    {
-        void SendEmail(string email, string subject, string text);
-    }
+    void SendEmail(string email, string subject, string text);
 }

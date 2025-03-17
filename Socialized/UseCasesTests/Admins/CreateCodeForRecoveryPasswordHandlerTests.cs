@@ -1,4 +1,5 @@
-﻿using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
+using Core.Providers.TextEncrypt;
 using Domain.Admins;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -14,7 +15,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
     private readonly ILogger logger = Substitute.For<ILogger>();
     private readonly IAdminRepository repository = Substitute.For<IAdminRepository>();
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
-    private readonly TextEncryptionProvider profileCondition = new TextEncryptionProvider();
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
     private readonly Admin admin = new Admin
     {
         Email = "",
@@ -35,7 +36,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
         };
         admin.Email = command.AdminEmail;
         repository.GetByEmail(command.AdminEmail, false).Returns(admin);
-        var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, profileCondition);
+        var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -49,7 +50,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
             AdminEmail = "test@test.com"
         };
         repository.GetByEmail(command.AdminEmail, false).ReturnsNull();
-        var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, profileCondition);
+        var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }

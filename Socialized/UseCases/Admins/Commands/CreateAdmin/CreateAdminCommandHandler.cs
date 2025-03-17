@@ -7,7 +7,7 @@ using AutoMapper;
 using UseCases.Admins.Models;
 using UseCases.Admins.Emails;
 using Core.Providers.Hmac;
-using Core.Providers.TextEncrypt;
+using Core.Providers.Rand;
 
 namespace UseCases.Admins.Commands.CreateAdmin;
 
@@ -16,7 +16,7 @@ public class CreateAdminCommandHandler(
     IEncryptionProvider encryptionProvider,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
-    TextEncryptionProvider profileCondition,
+    IRandomizer randomizer,
     IMapper mapper
     ) : IRequestHandler<CreateAdminCommand, AdminResponse>
 {
@@ -35,7 +35,7 @@ public class CreateAdminCommandHandler(
             HashedPassword = newHashedPassword.Hash,
             HashedSalt = newHashedPassword.Salt,
             Role = "default",
-            TokenForStart = profileCondition.CreateHash(10),
+            TokenForStart = randomizer.CreateHash(10),
             CreatedAt = DateTime.UtcNow,
             LastLoginAt = DateTime.UtcNow
         };

@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Core;
-using Core.Providers;
 using Core.Providers.Hmac;
 using Domain.Users;
 using MediatR;

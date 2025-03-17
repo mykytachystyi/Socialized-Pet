@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Providers.Hmac;
+using Core.Providers.Rand;
 using Core.Providers.TextEncrypt;
 using Domain.Admins;
 using NSubstitute;
@@ -19,7 +20,7 @@ public class CreateAdminTests
     private readonly IAdminEmailManager emailManager = Substitute.For<IAdminEmailManager>();
     private readonly IMapper mapper = Substitute.For<IMapper>();
     private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
-    private readonly TextEncryptionProvider profileCondition = new TextEncryptionProvider();
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
     private readonly Admin admin = new Admin
     { 
         Email = "", FirstName = "", 
@@ -42,7 +43,7 @@ public class CreateAdminTests
         var admin = new AdminResponse { Email = command.Email, FirstName = command.FirstName, LastName = command.LastName, Role = "default" };
         mapper.Map<AdminResponse>(null).ReturnsForAnyArgs(admin);
         var handler = new CreateAdminCommandHandler(repository, 
-            encryptionProvider, emailManager, logger, profileCondition, mapper);
+            encryptionProvider, emailManager, logger, randomizer, mapper);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -62,7 +63,7 @@ public class CreateAdminTests
         };
         repository.GetByEmail(command.Email, false).Returns(admin);
         var handler = new CreateAdminCommandHandler(repository, encryptionProvider,
-            emailManager, logger, profileCondition, mapper);
+            emailManager, logger, randomizer, mapper);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }

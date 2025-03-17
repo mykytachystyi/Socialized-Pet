@@ -1,4 +1,4 @@
-﻿using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -12,15 +12,15 @@ public class LogOutHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
-    private TextEncryptionProvider profileCondition = new TextEncryptionProvider();
-
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
+    
     [Fact]
     public async Task Logout_WhenUserTokenIsFound_Return()
     {
         var command = new LogOutCommand { UserToken = "1234567890" };
         var user = new User { TokenForUse = command.UserToken };
         userRepository.GetByUserTokenNotDeleted(command.UserToken).Returns(user);
-        var handler = new LogOutCommandHandler(userRepository, profileCondition, logger);
+        var handler = new LogOutCommandHandler(userRepository, randomizer, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -32,7 +32,7 @@ public class LogOutHandlerTests
         var command = new LogOutCommand { UserToken = "1234567890" };
         var user = new User { TokenForUse = command.UserToken };
         userRepository.GetByUserTokenNotDeleted(command.UserToken).ReturnsNull();
-        var handler = new LogOutCommandHandler(userRepository, profileCondition, logger);
+        var handler = new LogOutCommandHandler(userRepository, randomizer, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }

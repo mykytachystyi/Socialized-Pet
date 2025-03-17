@@ -1,4 +1,4 @@
-﻿using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -12,7 +12,7 @@ public class CheckRecoveryCodeCommandHandlerTests
 {
     private ILogger logger = Substitute.For<ILogger>();
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
-    private TextEncryptionProvider profileCondition = new TextEncryptionProvider();
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
 
     [Fact]
     public async Task CheckRecoveryCode_WhenCodeIsFoundAndEmailIsFound_Return()
@@ -25,7 +25,8 @@ public class CheckRecoveryCodeCommandHandlerTests
             RecoveryCode = command.RecoveryCode
         };
         userRepository.GetByEmail(command.UserEmail).Returns(user);
-        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, profileCondition);
+        randomizer.CreateHash(40).Returns("1234567890123456789012345678901234567890");
+        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -36,7 +37,7 @@ public class CheckRecoveryCodeCommandHandlerTests
     {
         var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
         userRepository.GetByEmail(command.UserEmail).ReturnsNull();
-        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, profileCondition);
+        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
@@ -51,7 +52,7 @@ public class CheckRecoveryCodeCommandHandlerTests
             RecoveryCode = 2222
         };
         userRepository.GetByEmail(command.UserEmail).Returns(user);
-        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, profileCondition);
+        var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
     }

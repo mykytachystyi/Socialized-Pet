@@ -1,6 +1,4 @@
 using System.Text;
-using Core;
-using Core.FileControl;
 using Domain.Users;
 using Domain.Admins;
 using Domain.Appeals.Repositories;
@@ -19,7 +17,11 @@ using UseCases.Behaviors;
 using MediatR;
 using UseCases.Admins.Commands.Authentication;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
-using Core.Providers;
+using Core.Providers.Hmac;
+using Core.Providers.TextEncrypt;
+using Core.FileControl.Aws;
+using Core.FileControl.CurrentFileSystem;
+using Core.SmtpMailing;
 
 var builder = WebApplication.CreateBuilder(args);
 

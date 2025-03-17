@@ -3,7 +3,7 @@ using Serilog;
 using Domain.Admins;
 using UseCases.Exceptions;
 using UseCases.Admins.Emails;
-using Core.Providers.TextEncrypt;
+using Core.Providers.Rand;
 
 namespace UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 
@@ -11,7 +11,7 @@ public class CreateCodeForRecoveryPasswordHandler(
     IAdminRepository adminRepository,
     IAdminEmailManager adminEmailManager,
     ILogger logger,
-    TextEncryptionProvider profileCondition
+    IRandomizer randomizer
     ) : IRequestHandler<CreateCodeForRecoveryPasswordCommand, CreateCodeForRecoveryPasswordResponse>
 {
     public async Task<CreateCodeForRecoveryPasswordResponse> Handle(
@@ -22,7 +22,7 @@ public class CreateCodeForRecoveryPasswordHandler(
         {
             throw new NotFoundException("Не було знайдено адміна по email-адресі.");
         }
-        admin.RecoveryCode = profileCondition.CreateCode(6);
+        admin.RecoveryCode = randomizer.CreateCode(6);
         adminRepository.Update(admin);
         adminEmailManager.RecoveryPassword(admin.RecoveryCode.Value, admin.Email);
         logger.Information($"Був створений новий код відновлення паролю адміна, id={admin.Id}.");

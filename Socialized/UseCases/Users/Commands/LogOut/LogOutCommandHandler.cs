@@ -1,4 +1,5 @@
-﻿using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
+using Core.Providers.TextEncrypt;
 using Domain.Users;
 using MediatR;
 using Serilog;
@@ -8,7 +9,7 @@ namespace UseCases.Users.Commands.LogOut;
 
 public class LogOutCommandHandler (
     IUserRepository userRepository,
-    TextEncryptionProvider profileCondition,
+    IRandomizer randomizer,
     ILogger logger) : IRequestHandler<LogOutCommand, LogOutResponse>
 {
     public async Task<LogOutResponse> Handle(LogOutCommand request, CancellationToken cancellationToken)
@@ -20,7 +21,7 @@ public class LogOutCommandHandler (
         {
             throw new NotFoundException("Сервер не визначив користувача по токен для активації аккаунту.");
         }
-        user.TokenForUse = profileCondition.CreateHash(40);
+        user.TokenForUse = randomizer.CreateHash(40);
         userRepository.Update(user);
         logger.Information($"Користувач вийшов з сервісу, id={user.Id}.");
 

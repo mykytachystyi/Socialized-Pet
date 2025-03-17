@@ -1,4 +1,4 @@
-﻿using Core.Providers.TextEncrypt;
+﻿using Core.Providers.Rand;
 using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -14,7 +14,7 @@ public class RecoveryPasswordHandlerTests
     private ILogger logger = Substitute.For<ILogger>();
     private IUserRepository userRepository = Substitute.For<IUserRepository>();
     private IEmailMessanger emailMessanger = Substitute.For<IEmailMessanger>();
-    private TextEncryptionProvider profileCondition = new TextEncryptionProvider();
+    private readonly IRandomizer randomizer = Substitute.For<IRandomizer>();
 
     [Fact]
     public async Task RecoveryPassword_WhenEmailIsFound_Return()
@@ -22,7 +22,7 @@ public class RecoveryPasswordHandlerTests
         var command = new RecoveryPasswordCommand { UserEmail = "test@test.com", Culture = "en_EN" };
         var user = new User { Email = command.UserEmail, IsDeleted = false };
         userRepository.GetByEmail(command.UserEmail, false, true).Returns(user);
-        var handler = new RecoveryPasswordCommandHandler(userRepository, profileCondition, emailMessanger, logger);
+        var handler = new RecoveryPasswordCommandHandler(userRepository, randomizer, emailMessanger, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);
 
@@ -33,7 +33,7 @@ public class RecoveryPasswordHandlerTests
     {
         var command = new RecoveryPasswordCommand { UserEmail = "test@test.com", Culture = "en_EN" };
         userRepository.GetByEmail(command.UserEmail, false, true).ReturnsNull();
-        var handler = new RecoveryPasswordCommandHandler(userRepository, profileCondition, emailMessanger, logger);
+        var handler = new RecoveryPasswordCommandHandler(userRepository, randomizer, emailMessanger, logger);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
