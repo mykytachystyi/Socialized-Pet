@@ -8,7 +8,7 @@
         public string LastName { get; set; } = null!;
         public byte[] HashedPassword { get; set; } = null!;
         public byte[] HashedSalt { get; set; } = null!;
-        public DateTime LastLoginAt { get; set; }
+        public DateTimeOffset LastLoginAt { get; set; }
         public string HashForActivate { get; set; } = null!;
         public bool Activate { get; set; }
         public int? RecoveryCode { get; set; }

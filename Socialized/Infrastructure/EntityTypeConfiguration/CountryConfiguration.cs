@@ -10,16 +10,11 @@ namespace Infrastructure.EntityTypeConfiguration
         {
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Name).IsRequired()
-                .HasColumnType("varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci");
-            builder.Property(e => e.Fullname).IsRequired()
-                .HasColumnType("varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci");
-            builder.Property(e => e.English).IsRequired()
-                .HasColumnType("varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci");
-            builder.Property(e => e.Location).IsRequired()
-                .HasColumnType("varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci");
-            builder.Property(e => e.LocationPrecise).IsRequired()
-                .HasColumnType("varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci");
+            builder.Property(e => e.Name).IsRequired();
+            builder.Property(e => e.Fullname).IsRequired();
+            builder.Property(e => e.English).IsRequired();
+            builder.Property(e => e.Location).IsRequired();
+            builder.Property(e => e.LocationPrecise).IsRequired();
         }
     }
 }

@@ -4,8 +4,8 @@
     {
         public long Id { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset LastUpdatedAt { get; set; }
+        public DateTimeOffset DeletedAt { get; set; }
     }
 }

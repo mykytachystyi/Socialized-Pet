@@ -1,10 +1,8 @@
-﻿using Core;
-using Domain.Users;
+﻿using Domain.Users;
 using Domain.Admins;
 using Domain.Appeals;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.EntityTypeConfiguration;
-using Core.Providers;
 using Core.Providers.Hmac;
 using Core.Providers.Rand;
 

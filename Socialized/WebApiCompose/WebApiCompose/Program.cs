@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -49,12 +49,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(builder.Configuration.GetSection("MailSettings").Get<MailSettings>());
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IJwtTokenManager, JwtTokenManager>();
 builder.Services.AddScoped<IAdminEmailManager, AdminEmailManager>();
 builder.Services.AddScoped<ISmtpSender, SmtpOauthSender>(); 
 
-builder.Services.AddSingleton(builder.Configuration.GetSection("AwsSettings").Get<AwsSettings>());
+builder.Services.Configure<AwsSettings>(builder.Configuration.GetSection("AwsSettings"));
 
 builder.Services.AddScoped<IFileManager, AwsUploader>();
 builder.Services.AddScoped<ITextEncryptionProvider, TextEncryptionProvider>();
@@ -139,7 +139,7 @@ using (var scopeDatabase  = app.Services.CreateScope())
 
 app.MapSwagger().RequireAuthorization();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.System.ArgumentException: 'Couldn't set user Arg_ParamName_Name
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -9,7 +9,7 @@
         public byte[] HashedPassword { get; set; } = null!;
         public byte[] HashedSalt { get; set; } = null!;
         public string TokenForStart { get; set; } = null!;
-        public DateTime LastLoginAt { get; set; }
+        public DateTimeOffset LastLoginAt { get; set; }
         public int? RecoveryCode { get; set; }
     }
 }

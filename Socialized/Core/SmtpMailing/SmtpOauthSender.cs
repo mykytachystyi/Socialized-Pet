@@ -2,6 +2,7 @@
 using MailKit.Net.Smtp;
 using MimeKit;
 using MailKit.Security;
+using Microsoft.Extensions.Options;
 
 namespace Core.SmtpMailing
 {
@@ -10,10 +11,10 @@ namespace Core.SmtpMailing
         private readonly MailSettings Settings;
         private readonly ILogger Logger;
 
-        public SmtpOauthSender(ILogger logger, MailSettings mailSettings)
+        public SmtpOauthSender(ILogger logger, IOptions<MailSettings> mailSettings)
         {
             Logger = logger;
-            Settings = mailSettings;
+            Settings = mailSettings.Value;
         }
 
         public void SendEmail(string email, string subject, string text)
