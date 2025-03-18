@@ -24,13 +24,13 @@ using Core.FileControl.CurrentFileSystem;
 using Core.SmtpMailing;
 using Core.Providers.Rand;
 using Domain.Appeals;
+using UseCases.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -75,7 +75,7 @@ builder.Services.AddScoped<IAppealQueryRepository, AppealQueryRepository>();
 
 builder.Services.AddScoped<ICreateAppealFilesAdditionalToMessage, CreateAppealMessageFileCommandHandler>();
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(MappingConfig).Assembly);
 
 
 builder.Services.AddAuthentication(option =>
@@ -155,3 +155,5 @@ app.MapControllers();
 await app.ApplyMigrationsAsync();
 
 app.Run();
+
+public partial class Program { }

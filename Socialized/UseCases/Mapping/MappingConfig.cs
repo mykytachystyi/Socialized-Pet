@@ -9,7 +9,7 @@ using UseCases.Appeals.Models;
 using UseCases.Appeals.Replies.Models;
 using UseCases.Users.Models;
 
-namespace WebApiCompose.Mapping
+namespace UseCases.Mapping
 {
     public class MappingConfig : Profile
     {

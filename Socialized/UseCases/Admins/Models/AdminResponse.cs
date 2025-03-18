@@ -6,6 +6,6 @@
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
         public required string Role { get; set; }
-        public DateTime LastLoginAt { get; set; }
+        public DateTimeOffset LastLoginAt { get; set; }
     }
 }

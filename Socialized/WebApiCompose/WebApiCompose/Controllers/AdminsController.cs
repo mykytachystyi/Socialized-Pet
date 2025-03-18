@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using WebAPI.Responses;
 using WebAPI.Middleware;
 using UseCases.Admins.Commands.Authentication;
 using UseCases.Admins.Commands.ChangePassword;
@@ -11,6 +10,10 @@ using MediatR;
 using UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
 using UseCases.Admins.Queries.GetAdmins;
 using UseCases.Admins.Queries.GetUsers;
+using WebApiCompose.Responses;
+using UseCases.Admins.Models;
+using UseCases.Users.Commands.RecoveryPassword;
+using UseCases.Users.Models;
 
 namespace WebAPI.Controllers
 {
@@ -26,43 +29,44 @@ namespace WebAPI.Controllers
         }
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<DataResponse>> Create(CreateAdminCommand command)
+        public async Task<ActionResult<AdminResponse>> Create(CreateAdminCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        public async Task<ActionResult<DataResponse>> Authentication(AuthenticationCommand command)
+        public async Task<ActionResult<AdminTokenResponse>> Authentication(AuthenticationCommand command)
         {
             var result = await Sender.Send(command);
 
             var token = JwtTokenManager.Authenticate(result);
 
-            return Ok(new { AdminToken = token });
+            return Ok(new AdminTokenResponse { AdminToken = token });
         }
         [HttpPost]
-        public async Task<ActionResult> SetupPassword(SetupPasswordCommand command)
+        public async Task<ActionResult<SetupPasswordResponse>> SetupPassword(SetupPasswordCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpDelete]
         [Authorize]
-        public async Task<ActionResult> Delete(DeleteAdminCommand command)
+        public async Task<ActionResult<DeleteAdminResponse>> Delete(DeleteAdminCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        public async Task<ActionResult> RecoveryPassword(string adminEmail)
+        public async Task<ActionResult<RecoveryPasswordResponse>> RecoveryPassword(string adminEmail)
         {
             return Ok(await Sender.Send(new CreateCodeForRecoveryPasswordCommand { AdminEmail = adminEmail}));
         }
         [HttpPost]
-        public async Task<ActionResult> ChangePassword(ChangePasswordCommand command)
+        public async Task<ActionResult<ChangePasswordResponse>> ChangePassword(ChangePasswordCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> GetAdmins([FromQuery] int since = 0, [FromQuery] int count = 10)
+        public async Task<ActionResult<IEnumerable<AdminResponse>>> 
+            GetAdmins([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
             long adminId = GetAdminIdByToken();
 
@@ -70,7 +74,8 @@ namespace WebAPI.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> GetUsers([FromQuery] int since = 0, [FromQuery] int count = 10)
+        public async Task<ActionResult<IEnumerable<UserResponse>>> 
+            GetUsers([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
             return Ok(await Sender.Send(new GetUsersQuery { Since = since, Count = count }));
         }

@@ -10,9 +10,9 @@ namespace UseCases.Admins.Commands.SetupPassword;
 public class SetupPasswordCommandHandler(
     ILogger logger,
     IRepository<Admin> adminRepository,
-    IEncryptionProvider encryptionProvider) : IRequestHandler<SetupPasswordCommand, SetupPasswordResult>
+    IEncryptionProvider encryptionProvider) : IRequestHandler<SetupPasswordCommand, SetupPasswordResponse>
 {
-    public async Task<SetupPasswordResult> Handle(SetupPasswordCommand request, CancellationToken cancellationToken)
+    public async Task<SetupPasswordResponse> Handle(SetupPasswordCommand request, CancellationToken cancellationToken)
     {
         var admin = await adminRepository.FirstOrDefaultAsync(a => a.TokenForStart == request.Token && !a.IsDeleted);
         if (admin == null)
@@ -25,6 +25,6 @@ public class SetupPasswordCommandHandler(
         admin.TokenForStart = "";
         adminRepository.Update(admin);
         logger.Information($"Був налаштован пароль для адміна id={admin.Id}.");
-        return new SetupPasswordResult(true, "Пароль було успішно змінено.");
+        return new SetupPasswordResponse(true, "Пароль було успішно змінено.");
     }
 }
