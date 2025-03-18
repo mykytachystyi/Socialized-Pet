@@ -1,5 +1,4 @@
 ﻿using Core.Providers.Hmac;
-using Domain.Admins;
 using Domain.Appeals;
 using Domain.Users;
 using FluentAssertions;

@@ -27,7 +27,7 @@ public class DeleteHandlerTests
     public async Task Delete_WhenIdIsFound_Return()
     {
         var command = new DeleteAdminCommand { AdminId = 1 };
-        repository.GetByIdAsync(Arg.Any<int>()).Returns(admin);
+        repository.GetByIdAsync(Arg.Any<long>()).Returns(admin);
         var handler = new DeleteAdminCommandHandler(repository, logger);
 
         var result = await handler.Handle(command, CancellationToken.None);

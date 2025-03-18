@@ -11,15 +11,17 @@ public class UpdateAppealMessageCommandHandler(
     ILogger logger
     ) : IRequestHandler<UpdateAppealMessageCommand, UpdateAppealMessageCommandResponse>
 {
-    public async Task<UpdateAppealMessageCommandResponse> Handle(UpdateAppealMessageCommand request, 
+    public async Task<UpdateAppealMessageCommandResponse> Handle(UpdateAppealMessageCommand command, 
         CancellationToken cancellationToken)
     {
-        var message = await appealMessageRepository.FirstOrDefaultAsync(m => m.Id == request.MessageId);
+        logger.Information($"Оновлення повідомлення, id={command.MessageId}...");
+        
+        var message = await appealMessageRepository.FirstOrDefaultAsync(m => m.Id == command.MessageId);
         if (message == null)
         {
             throw new NotFoundException("Повідомлення не було визначенно сервером по id.");
         }
-        message.Message = request.Message;
+        message.Message = command.Message;
         appealMessageRepository.Update(message);
         logger.Information($"Повідомлення було оновленно, id={message.Id}..");
         return new UpdateAppealMessageCommandResponse(true, "Повідомлення було оновленно.");

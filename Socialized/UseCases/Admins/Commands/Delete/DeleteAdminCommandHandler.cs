@@ -13,6 +13,7 @@ public class DeleteAdminCommandHandler(
 {
     public async Task<DeleteAdminResponse> Handle(DeleteAdminCommand request, CancellationToken cancellationToken)
     {
+        logger.Information($"Початок видалення адміна, id={request.AdminId}.");
         var admin = await adminRepository.GetByIdAsync(request.AdminId);
         if (admin == null)
         {

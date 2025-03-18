@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using UseCases.Appeals.Replies.Commands.CreateAppealMessageReply;
 using UseCases.Appeals.Replies.Commands.DeleteAppealMessageReply;
 using UseCases.Appeals.Replies.Commands.UpdateAppealMessageReply;
+using UseCases.Appeals.Replies.Models;
 
 namespace WebAPI.Controllers.Appeals
 {
@@ -17,21 +18,21 @@ namespace WebAPI.Controllers.Appeals
         }
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> Create(CreateAppealMessageReplyCommand command)
+        public async Task<ActionResult<AppealReplyResponse>> Create(CreateAppealMessageReplyCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> Update(UpdateAppealMessageReplyCommand command)
+        public async Task<ActionResult<UpdateAppealMessageReplyResponse>> Update(UpdateAppealMessageReplyCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpDelete]
         [Authorize]
-        public async Task<ActionResult> Delete(DeleteAppealMessageReplyCommand command)
+        public async Task<ActionResult<DeleteAppealMessageReplyResponse>> Delete([FromQuery] long replyId)
         {
-            return Ok(await Sender.Send(command));
+            return Ok(await Sender.Send(new DeleteAppealMessageReplyCommand { ReplyId = replyId }));
         }
     }
 }

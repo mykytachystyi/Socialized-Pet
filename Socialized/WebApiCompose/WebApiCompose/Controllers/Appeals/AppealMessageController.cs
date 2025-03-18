@@ -3,6 +3,7 @@ using UseCases.Appeals.Messages.CreateAppealMessage;
 using UseCases.Appeals.Messages.DeleteAppealMessage;
 using UseCases.Appeals.Messages.UpdateAppealMessage;
 using MediatR;
+using System.Text.Json;
 
 namespace WebAPI.Controllers.Appeals
 {
@@ -16,8 +17,9 @@ namespace WebAPI.Controllers.Appeals
         }
         [HttpPost]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
-        public async Task<ActionResult> Create([FromForm] ICollection<IFormFile> files, [FromForm] CreateAppealMessageCommand command)
+        public async Task<ActionResult> Create([FromForm] ICollection<IFormFile> files, [FromForm] string commandJson)
         {
+            var command = JsonSerializer.Deserialize<CreateAppealMessageCommand>(commandJson);
             command.Files = Map(files);
 
             return Ok(await Sender.Send(command));
@@ -28,9 +30,9 @@ namespace WebAPI.Controllers.Appeals
             return Ok(await Sender.Send(command));
         }
         [HttpDelete]
-        public async Task<ActionResult> Delete(DeleteAppealMessageCommand command)
+        public async Task<ActionResult> Delete([FromQuery] long messageId)
         {
-            return Ok(await Sender.Send(command));
+            return Ok(await Sender.Send(new DeleteAppealMessageCommand {  MessageId = messageId }));
         }
     }
 }
