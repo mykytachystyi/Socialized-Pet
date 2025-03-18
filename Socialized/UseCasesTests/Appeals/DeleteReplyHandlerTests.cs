@@ -17,24 +17,30 @@ public class DeleteReplyHandlerTests
     [Fact]
     public async Task Delete_WhenReplyIsNotFound_ThrowsNotFoundException()
     {
+        // Arrange
         var command = new DeleteAppealMessageReplyCommand { ReplyId = 1 };
         replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).ReturnsNull();
         
         var handler = new DeleteAppealMessageReplyCommandHandler(replyRepository, logger);
 
+
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
     public async Task Delete_WhenReplyIsFound_DeletesReply()
     {
+        // Arrange
         var command = new DeleteAppealMessageReplyCommand { ReplyId = 1 };
         var reply = new AppealMessageReply { Id = 1, Reply = "", IsDeleted = false, Message = new AppealMessage() };
         replyRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessageReply, bool>>?>()).Returns(reply);
 
         var handler = new DeleteAppealMessageReplyCommandHandler(replyRepository, logger);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.True(result.Success);
     }
 }

@@ -19,6 +19,7 @@ public class CheckRecoveryCodeCommandHandlerTests
     [Fact]
     public async Task CheckRecoveryCode_WhenCodeIsFoundAndEmailIsFound_Return()
     {
+        // Arrange
         var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
         var user = new User
         {
@@ -30,22 +31,27 @@ public class CheckRecoveryCodeCommandHandlerTests
         randomizer.CreateHash(40).Returns("1234567890123456789012345678901234567890");
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.NotEmpty(result.RecoveryToken);
     }
     [Fact]
     public async Task CheckRecoveryCode_WhenEmailIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
     public async Task CheckRecoveryCode_WhenCodeIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
         var user = new User
         {
@@ -56,6 +62,7 @@ public class CheckRecoveryCodeCommandHandlerTests
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
+        // Act & Assert
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

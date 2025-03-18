@@ -19,23 +19,28 @@ public class LogOutHandlerTests
     [Fact]
     public async Task Logout_WhenUserTokenIsFound_Return()
     {
+        // Arrange
         var command = new LogOutCommand { UserToken = "1234567890" };
         var user = new User { TokenForUse = command.UserToken };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new LogOutCommandHandler(userRepository, randomizer, logger);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.True(result.Success);
     }
     [Fact]
     public async Task Logout_WhenUserTokenIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new LogOutCommand { UserToken = "1234567890" };
         var user = new User { TokenForUse = command.UserToken };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new LogOutCommandHandler(userRepository, randomizer, logger);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

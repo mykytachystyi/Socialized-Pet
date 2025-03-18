@@ -18,6 +18,7 @@ public class DeleteAppealMessageHandlerTests
     [Fact]
     public async Task Delete_WhenIdIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new DeleteAppealMessageCommand
         {
             MessageId = 1
@@ -25,11 +26,13 @@ public class DeleteAppealMessageHandlerTests
         appealMessageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>()).ReturnsNull();
         var handler = new DeleteAppealMessageCommandHandler(appealMessageRepository, logger);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
     public async Task Delete_WhenIdIsFound_Return()
     {
+        // Arrange
         var command = new DeleteAppealMessageCommand
         {
             MessageId = 1
@@ -38,8 +41,10 @@ public class DeleteAppealMessageHandlerTests
             .Returns(new AppealMessage { Id = command.MessageId, Message = "text" });
         var handler = new DeleteAppealMessageCommandHandler(appealMessageRepository, logger);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.True(result.Success);
     }
 }

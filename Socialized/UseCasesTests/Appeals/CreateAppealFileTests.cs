@@ -35,6 +35,7 @@ namespace UseCasesTests.Appeals
         [Fact]
         public async Task Create_WhenFilesIsEmpty_ReturnEmptyCollection()
         {
+            // Arrange
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .Returns(new AppealMessage());
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
@@ -45,13 +46,16 @@ namespace UseCasesTests.Appeals
                 Upload = new List<FileDto> { }
             };
 
+            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
+            // Assert
             Assert.Empty(result);
         }
         [Fact]
         public async Task Create_WhenFilesIsExist_ReturnFilesCollection()
         {
+            // Arrange
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .Returns(new AppealMessage());
             var appealFile = new AppealFileResponse { Id = 1, MessageId = 1, RelativePath = "" };
@@ -64,13 +68,16 @@ namespace UseCasesTests.Appeals
                 Upload = new List<FileDto> { File }
             };
 
+            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
+            // Assert
             Assert.Single(result);
         }
         [Fact]
         public async Task Create_WhenFilesIsExist_ThrowNotFoundException()
         {
+            // Arrange
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .ReturnsNull();
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
@@ -82,6 +89,7 @@ namespace UseCasesTests.Appeals
                 Upload = new List<FileDto> { File }
             };
 
+            // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
         }
     }

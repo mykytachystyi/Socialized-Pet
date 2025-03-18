@@ -11,79 +11,85 @@ using Core.Providers.Hmac;
 using Infrastructure.Repositories;
 using System.Linq.Expressions;
 
-namespace UseCasesTests.Users
+namespace UseCasesTests.Users;
+
+public class LoginHandlerTests
 {
-    public class LoginHandlerTests
+    private ILogger logger = Substitute.For<ILogger>();
+    private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
+    private IMapper mapper = Substitute.For<IMapper>();
+    private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
+
+    [Fact]
+    public async Task Login_WhenUserPasswordValidAndEmailIsFound_ReturnUser()
     {
-        private ILogger logger = Substitute.For<ILogger>();
-        private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
-        private IMapper mapper = Substitute.For<IMapper>();
-        private IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
-
-        [Fact]
-        public async Task Login_WhenUserPasswordValidAndEmailIsFound_ReturnUser()
+        // Arrange
+        var command = new LoginUserCommand
         {
-            var command = new LoginUserCommand
-            {
-                Email = "test@test.com",
-                Password = "password"
-            };
-            var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
-            var user = new User 
-            { 
-                Email = command.Email, 
-                HashedPassword = hashedPassword.Hash, 
-                HashedSalt = hashedPassword.Salt 
-            };
-            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
-            encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(true);
-            var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
-            mapper.Map<UserResponse>(user).Returns(new UserResponse { Email = command.Email, FirstName = "", LastName = "", TokenForUse = "" });
+            Email = "test@test.com",
+            Password = "password"
+        };
+        var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
+        var user = new User 
+        { 
+            Email = command.Email, 
+            HashedPassword = hashedPassword.Hash, 
+            HashedSalt = hashedPassword.Salt 
+        };
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
+        encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(true);
+        var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
+        mapper.Map<UserResponse>(user).Returns(new UserResponse { Email = command.Email, FirstName = "", LastName = "", TokenForUse = "" });
 
-            var result = await handler.Handle(command, CancellationToken.None);
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
 
-            Assert.Equal(command.Email, result.Email);
-        }
-        [Fact]
-        public async Task Login_WhenUserPasswordIsNotValid_ThrowValidationException()
+        // Assert
+        Assert.Equal(command.Email, result.Email);
+    }
+    [Fact]
+    public async Task Login_WhenUserPasswordIsNotValid_ThrowValidationException()
+    {
+        // Arrange
+        var command = new LoginUserCommand
         {
-            var command = new LoginUserCommand
-            {
-                Email = "test@test.com",
-                Password = "password"
-            };
-            var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
-            encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(false);
-            var user = new User
-            {
-                Email = command.Email,
-                HashedPassword = hashedPassword.Hash,
-                HashedSalt = hashedPassword.Salt
-            };
-            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
-            var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
-
-            await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
-        }
-        [Fact]
-        public async Task Login_WhenUserEmailIsNotFound_ThrowNotFoundException()
+            Email = "test@test.com",
+            Password = "password"
+        };
+        var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
+        encryptionProvider.VerifyPasswordHash(command.Password, Arg.Any<SaltAndHash>()).Returns(false);
+        var user = new User
         {
-            var command = new LoginUserCommand
-            {
-                Email = "test@test.com",
-                Password = "password"
-            };
-            var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
-            var user = new User
-            {
-                Email = command.Email,
-                HashedPassword = hashedPassword.Hash,
-                HashedSalt = hashedPassword.Salt
-            };
-            userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
-            var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
+            Email = command.Email,
+            HashedPassword = hashedPassword.Hash,
+            HashedSalt = hashedPassword.Salt
+        };
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
+        var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
 
-            await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
-        }
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
+    }
+    [Fact]
+    public async Task Login_WhenUserEmailIsNotFound_ThrowNotFoundException()
+    {
+        // Arrange
+        var command = new LoginUserCommand
+        {
+            Email = "test@test.com",
+            Password = "password"
+        };
+        var hashedPassword = new SaltAndHash { Hash = new byte[1], Salt = new byte[1] };
+        var user = new User
+        {
+            Email = command.Email,
+            HashedPassword = hashedPassword.Hash,
+            HashedSalt = hashedPassword.Salt
+        };
+        userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
+        var handler = new LoginUserCommandHandler(userRepository, encryptionProvider, mapper, logger);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

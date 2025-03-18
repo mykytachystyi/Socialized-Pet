@@ -33,6 +33,7 @@ public class CreateAdminTests
     [Fact]
     public async Task Create_WhenSameEmailIsNotFound_ReturnNewAdmin()
     {
+        // Arrange
         var command = new CreateAdminCommand
         {
             Email = "test@test.com",
@@ -46,8 +47,10 @@ public class CreateAdminTests
         var handler = new CreateAdminCommandHandler(repository, 
             encryptionProvider, emailManager, logger, randomizer, mapper);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.Equal(result.Email, command.Email);
         Assert.Equal(result.FirstName, command.FirstName);
         Assert.Equal(result.LastName, command.LastName);
@@ -55,6 +58,7 @@ public class CreateAdminTests
     [Fact]
     public async Task Create_WhenSameEmailIsFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new CreateAdminCommand
         {
             Email = "test@test.com",
@@ -66,6 +70,7 @@ public class CreateAdminTests
         var handler = new CreateAdminCommandHandler(repository, encryptionProvider,
             emailManager, logger, randomizer, mapper);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

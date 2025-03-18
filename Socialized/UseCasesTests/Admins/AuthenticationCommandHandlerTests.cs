@@ -20,6 +20,7 @@ public class AuthenticationCommandHandlerTests
     [Fact]
     public async Task Authentication_WhenEmailIsFoundAndPasswordIsValid_ReturnAdmin()
     {
+        // Arrange
         var command = new AuthenticationCommand
         {
             Email = "test@test.com", Password = "password"
@@ -35,13 +36,16 @@ public class AuthenticationCommandHandlerTests
         repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(adminHashed);
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.Equal(command.Email, result.Email);
     }
     [Fact]
     public async Task Authentication_WhenEmailIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new AuthenticationCommand
         {
             Email = "test@test.com",
@@ -50,11 +54,13 @@ public class AuthenticationCommandHandlerTests
         repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
     public async Task Authentication_WhenPasswordIsNotValid_ThrowValidationExceptionException()
     {
+        // Arrange
         var command = new AuthenticationCommand
         {
             Email = "test@test.com",
@@ -75,6 +81,7 @@ public class AuthenticationCommandHandlerTests
         repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(adminHashed);
         var handler = new AuthenticationCommandHandler(repository, logger, encryptionProvider);
 
+        // Act & Assert
         await Assert.ThrowsAsync<ValidationException>(() => handler.Handle(command, CancellationToken.None));
     }
 

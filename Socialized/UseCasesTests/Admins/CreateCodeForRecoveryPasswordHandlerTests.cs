@@ -31,6 +31,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
     [Fact]
     public async Task CreateCodeForRecoveryPassword_WhenEmailIsFound_Return()
     {
+        // Arrange
         var command = new CreateCodeForRecoveryPasswordCommand
         {
             AdminEmail = "test@test.com"
@@ -40,13 +41,16 @@ public class CreateCodeForRecoveryPasswordHandlerTests
 
         var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.True(result.Success);
     }
     [Fact]
     public async Task CreateCodeForRecoveryPassword_WhenEmailIsNotFound_Return()
     {
+        // Arrange
         var command = new CreateCodeForRecoveryPasswordCommand
         {
             AdminEmail = "test@test.com"
@@ -55,6 +59,7 @@ public class CreateCodeForRecoveryPasswordHandlerTests
 
         var handler = new CreateCodeForRecoveryPasswordHandler(repository, emailManager, logger, randomizer);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

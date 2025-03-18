@@ -22,17 +22,20 @@ public class CreateReplyHandlerTests
     [Fact]
     public async Task Create_WhenMessageIsNotFound_ThrowsNotFoundException()
     {
+        // Arrange
         var command = new CreateAppealMessageReplyCommand { AppealMessageId = 1, Reply = "Test Reply" };
         messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>()).ReturnsNull();
         
         var handler = new CreateAppealMessageReplyCommandHandler(messageRepository, appealRepository, 
             replyRepository, logger, mapper);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
     [Fact]
     public async Task Create_WhenMessageIsFound_CreatesReply()
     {
+        // Arrange
         var command = new CreateAppealMessageReplyCommand { AppealMessageId = 1, Reply = "Test Reply" };
         var appeal = new Appeal { Id = 1 };
         var message = new AppealMessage { Id = 1, AppealId = appeal.Id };
@@ -42,8 +45,10 @@ public class CreateReplyHandlerTests
         appealRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Appeal, bool>>?>()).Returns(appeal);
         var handler = new CreateAppealMessageReplyCommandHandler(messageRepository, appealRepository, replyRepository, logger, mapper);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.Equal(command.Reply, result.Reply);
     }
 }

@@ -26,21 +26,26 @@ public class DeleteHandlerTests
     [Fact]
     public async Task Delete_WhenIdIsFound_Return()
     {
+        // Arrange
         var command = new DeleteAdminCommand { AdminId = 1 };
         repository.GetByIdAsync(Arg.Any<long>()).Returns(admin);
         var handler = new DeleteAdminCommandHandler(repository, logger);
 
+        // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.True(result.Success);
     }
     [Fact]
     public async Task Delete_WhenIdIsNotFound_ThrowNotFoundException()
     {
+        // Arrange
         var command = new DeleteAdminCommand { AdminId = 1 };
         repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
         var handler = new DeleteAdminCommandHandler(repository, logger);
 
+        // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
     }
 }

@@ -35,6 +35,7 @@ namespace UseCasesTests.Appeals
         [Fact]
         public async Task Create_WhenUserTokenIsNotFound_ThrowNotFoundException()
         {
+            // Arrange
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository,
                 appealMessageRepository, logger, mapper, filesAdditionalToMessage);
             var command = new CreateAppealMessageCommand
@@ -45,11 +46,13 @@ namespace UseCasesTests.Appeals
                 Files = new List<FileDto> { File }
             };
 
+            // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
         }
         [Fact]
         public async Task Create_WhenAppealIdAndUserTokenIsNotFound_ThrowNotFoundException()
         {
+            // Arrange
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository, 
                 appealMessageRepository, logger, mapper, filesAdditionalToMessage);
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(new User());
@@ -61,11 +64,13 @@ namespace UseCasesTests.Appeals
                 Files = new List<FileDto> { File }
             };
 
+            // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));
         }
         [Fact]
         public async Task Create_WhenAppealIdAndTokenIsFound_ReturnMessage()
         {
+            // Arrange
             var command = new CreateAppealMessageCommand
             {
                 AppealId = 1, Message = "test", UserToken = "",
@@ -79,8 +84,10 @@ namespace UseCasesTests.Appeals
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository,
                 appealMessageRepository, logger, mapper, filesAdditionalToMessage);
 
+            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
+            // Assert
             Assert.Equal(command.AppealId, result.AppealId);
             Assert.Equal(command.Message, result.Message);
         }
