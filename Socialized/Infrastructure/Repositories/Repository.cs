@@ -18,7 +18,10 @@ public class Repository<T> : IRepository<T> where T : class
     {
         return await _dbSet.FindAsync([id], cancellationToken: cancellationToken);
     }
-
+    public async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.FindAsync([id], cancellationToken: cancellationToken);
+    }
     public async Task<bool> AnyAsync(Expression<Func<T, bool>>? predicate = null,
         CancellationToken cancellationToken = default)
     {

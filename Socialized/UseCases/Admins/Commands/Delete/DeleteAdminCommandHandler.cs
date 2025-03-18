@@ -13,7 +13,7 @@ public class DeleteAdminCommandHandler(
 {
     public async Task<DeleteAdminResponse> Handle(DeleteAdminCommand request, CancellationToken cancellationToken)
     {
-        var admin = await adminRepository.GetByIdAsync((int) request.AdminId);
+        var admin = await adminRepository.GetByIdAsync(request.AdminId);
         if (admin == null)
         {
             throw new NotFoundException("Не було знайдено адміна по id.");

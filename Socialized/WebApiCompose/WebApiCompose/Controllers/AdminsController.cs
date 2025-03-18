@@ -49,12 +49,12 @@ namespace WebAPI.Controllers
         }
         [HttpDelete]
         [Authorize]
-        public async Task<ActionResult<DeleteAdminResponse>> Delete(DeleteAdminCommand command)
+        public async Task<ActionResult<DeleteAdminResponse>> Delete([FromQuery] long adminId)
         {
-            return Ok(await Sender.Send(command));
+            return Ok(await Sender.Send(new DeleteAdminCommand { AdminId = adminId }));
         }
-        [HttpPost]
-        public async Task<ActionResult<RecoveryPasswordResponse>> RecoveryPassword(string adminEmail)
+        [HttpGet]
+        public async Task<ActionResult<RecoveryPasswordResponse>> RecoveryPassword([FromQuery]string adminEmail)
         {
             return Ok(await Sender.Send(new CreateCodeForRecoveryPasswordCommand { AdminEmail = adminEmail}));
         }

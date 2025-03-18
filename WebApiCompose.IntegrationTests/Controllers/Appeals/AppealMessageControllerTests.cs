@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApiCompose.IntegrationTests
+namespace WebApiCompose.IntegrationTests.Controllers.Appeals
 {
-    public class AdminControllerTests
+    public class AppealMessageControllerTests
     {
     }
 }
