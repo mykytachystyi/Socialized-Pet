@@ -31,7 +31,6 @@ namespace WebAPI.Controllers
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("Authentication")]
         public async Task<ActionResult<DataResponse>> Authentication(AuthenticationCommand command)
         {
             var result = await Sender.Send(command);
@@ -41,7 +40,6 @@ namespace WebAPI.Controllers
             return Ok(new { AdminToken = token });
         }
         [HttpPost]
-        [ActionName("SetupPassword")]
         public async Task<ActionResult> SetupPassword(SetupPasswordCommand command)
         {
             return Ok(await Sender.Send(command));
@@ -53,20 +51,17 @@ namespace WebAPI.Controllers
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("RecoveryPassword")]
         public async Task<ActionResult> RecoveryPassword(string adminEmail)
         {
             return Ok(await Sender.Send(new CreateCodeForRecoveryPasswordCommand { AdminEmail = adminEmail}));
         }
         [HttpPost]
-        [ActionName("ChangePassword")]
         public async Task<ActionResult> ChangePassword(ChangePasswordCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpGet]
         [Authorize]
-        [ActionName("Admins")]
         public async Task<ActionResult> GetAdmins([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
             long adminId = GetAdminIdByToken();
@@ -75,7 +70,6 @@ namespace WebAPI.Controllers
         }
         [HttpGet]
         [Authorize]
-        [ActionName("Users")]
         public async Task<ActionResult> GetUsers([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
             return Ok(await Sender.Send(new GetUsersQuery { Since = since, Count = count }));

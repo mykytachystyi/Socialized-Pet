@@ -21,7 +21,6 @@ namespace WebAPI.Controllers.Appeals
             return Ok(await Sender.Send(command));
         }
         [HttpGet]
-        [ActionName("GetAppealsByUser")]
         public async Task<ActionResult> GetAppealsByUser([FromQuery] string userToken, 
             [FromQuery] int since = 0, [FromQuery] int count = 10)
         {
@@ -29,7 +28,6 @@ namespace WebAPI.Controllers.Appeals
         }
         [HttpGet]
         [Authorize]
-        [ActionName("GetAppealsByAdmin")]
         public async Task<ActionResult> GetAppealsByAdmin([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
             return Ok(await Sender.Send(new GetAppealsByAdminQuery { Since = since, Count = count }));

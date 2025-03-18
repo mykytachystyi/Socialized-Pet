@@ -22,13 +22,11 @@ namespace WebAPI.Controllers
             Sender = sender;
         }
         [HttpPost]
-        [ActionName("Registration")]
         public async Task<ActionResult> Registration(CreateUserCommand command)
         {
             return Ok( await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("RegistrationEmail")]
         public async Task<ActionResult> RegistrationEmail([FromQuery] string email)
         {
             var culture = GetCulture();
@@ -36,19 +34,16 @@ namespace WebAPI.Controllers
             return Ok(await Sender.Send(new RegistrationEmailCommand { Culture = culture, UserEmail = email }));
         }
         [HttpPost]
-        [ActionName("Login")]
         public async Task<ActionResult> Login(LoginUserCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("LogOut")]
         public async Task<ActionResult> LogOut([FromBody] string userToken)
         {
             return Ok(await Sender.Send(new LogOutCommand { UserToken = userToken }));
         }
         [HttpPost]
-        [ActionName("RecoveryPassword")]
         public async Task<ActionResult> RecoveryPassword([FromQuery] string email)
         {
             var culture = GetCulture();
@@ -56,25 +51,21 @@ namespace WebAPI.Controllers
             return Ok(await Sender.Send(new RecoveryPasswordCommand { UserEmail = email, Culture = culture }));
         }
         [HttpPost]
-        [ActionName("CheckRecoveryCode")]
         public async Task<ActionResult> CheckRecoveryCode(CheckRecoveryCodeCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("ChangePassword")]
         public async Task<ActionResult> ChangePassword(ChangeUserPasswordCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpPost]
-        [ActionName("ChangeOldPassword")]
         public async Task<ActionResult> ChangeOldPassword(ChangeOldPasswordCommand command)
         {
             return Ok(await Sender.Send(command));
         }
         [HttpGet]
-        [ActionName("Activate")]
         public async Task<ActionResult> Activate([FromQuery] string hash)
         {
             return Ok(await Sender.Send(new ActivateCommand { Hash = hash }));
