@@ -10,7 +10,6 @@ public class RegistrationEmailValidator : AbstractValidator<RegistrationEmailCom
             .NotEmpty().WithMessage("Email не може бути порожнім.")
             .EmailAddress().WithMessage("Email має бути валідним.");
         RuleFor(x => x.Culture)
-            .NotEmpty().WithMessage("Культура не може бути порожньою.")
-            .Length(2).WithMessage("Культура має містити 2 символи.");
+            .NotEmpty().WithMessage("Культура не може бути порожньою.");
     }
 }

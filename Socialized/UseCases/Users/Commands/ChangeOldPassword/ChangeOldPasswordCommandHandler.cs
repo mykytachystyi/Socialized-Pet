@@ -21,7 +21,7 @@ public class ChangeOldPasswordCommandHandler (
         {
             throw new NotFoundException("Сервер не визначив користувача по токену для зміни старого паролю користувача.");
         }
-        if (!encryptionProvider.VerifyPasswordHash(request.NewPassword, 
+        if (!encryptionProvider.VerifyPasswordHash(request.OldPassword, 
             new SaltAndHash { Hash = user.HashedPassword, Salt = user.HashedSalt }))
         {
             throw new ValidationException("Пароль користувача не співпадає з паролем на сервері для заміни старого паролю.");
