@@ -1,0 +1,35 @@
+networks:
+  dev:
+    driver: bridge 
+
+services:
+  webapicompose:
+    image: ${DOCKER_REGISTRY-}webapicompose
+    depends_on:
+      - "postgres"
+    ports:
+       - "8000:80"
+    build:
+      context: .
+      dockerfile: WebApiCompose/WebApiCompose/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=host=postgres;port=5432;database=socialized;username=mykyta;password=Pass1234!;Pooling=true;
+    networks:
+      - dev
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: always
+    environment:
+        - POSTGRES_USER=mykyta
+        - POSTGRES_PASSWORD=Pass1234!
+        - POSTGRES_DB=socialized
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dev
+volumes:
+  postgres_data:
