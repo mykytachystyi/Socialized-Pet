@@ -1,21 +1,35 @@
-version: '3.4'
+networks:
+  dev:
+    driver: bridge 
 
 services:
   webapicompose:
     image: ${DOCKER_REGISTRY-}webapicompose
+    depends_on:
+      - "postgres"
+    ports:
+       - "8000:80"
     build:
       context: .
       dockerfile: WebApiCompose/WebApiCompose/Dockerfile
-  mysql:
-    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: Pass1234!
-      MYSQL_DATABASE: socialized
-      MYSQL_USER: mykyta
-      MYSQL_PASSWORD: Pass1234!
+      - ConnectionStrings__DefaultConnection=host=postgres;port=5432;database=socialized;username=mykyta;password=Pass1234!;Pooling=true;
+    networks:
+      - dev
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: always
+    environment:
+        - POSTGRES_USER=mykyta
+        - POSTGRES_PASSWORD=Pass1234!
+        - POSTGRES_DB=socialized
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dev
 volumes:
-  mysql_data:
+  postgres_data:
