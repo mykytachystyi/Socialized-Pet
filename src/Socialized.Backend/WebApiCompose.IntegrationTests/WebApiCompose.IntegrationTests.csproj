@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Socialized\Core\Core.csproj" />
-    <ProjectReference Include="..\Socialized\WebApiCompose\WebApiCompose\WebApiCompose.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\WebApiCompose\WebApiCompose\WebApiCompose.csproj" />
   </ItemGroup>
-
 </Project>

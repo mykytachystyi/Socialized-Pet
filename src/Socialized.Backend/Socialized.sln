@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCompose", "WebApiComp
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{657E8253-CE21-4FD9-A382-16EA8393AD4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCompose.IntegrationTests", "..\WebApiCompose.IntegrationTests\WebApiCompose.IntegrationTests.csproj", "{ED670384-6A1F-409B-8DA6-DB3DC38DA9FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCompose.IntegrationTests", "WebApiCompose.IntegrationTests\WebApiCompose.IntegrationTests.csproj", "{B61FF8AB-2541-48B0-A4F6-1B44DBB75F07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +59,10 @@ Global
 		{657E8253-CE21-4FD9-A382-16EA8393AD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{657E8253-CE21-4FD9-A382-16EA8393AD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{657E8253-CE21-4FD9-A382-16EA8393AD4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED670384-6A1F-409B-8DA6-DB3DC38DA9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED670384-6A1F-409B-8DA6-DB3DC38DA9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED670384-6A1F-409B-8DA6-DB3DC38DA9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED670384-6A1F-409B-8DA6-DB3DC38DA9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B61FF8AB-2541-48B0-A4F6-1B44DBB75F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B61FF8AB-2541-48B0-A4F6-1B44DBB75F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B61FF8AB-2541-48B0-A4F6-1B44DBB75F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B61FF8AB-2541-48B0-A4F6-1B44DBB75F07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
