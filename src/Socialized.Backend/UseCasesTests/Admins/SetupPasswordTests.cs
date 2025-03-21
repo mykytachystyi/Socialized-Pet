@@ -1,37 +1,36 @@
-﻿using Core;
-using Core.Providers.Hmac;
-using Domain.Admins;
+﻿using Core.Providers.Hmac;
+using Domain.Enums;
+using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
-using UseCases.Admins.Commands.SetupPassword;
 using UseCases.Exceptions;
+using UseCases.Users.DefaultAdmin.Commands.SetupPassword;
 
 namespace UseCasesTests.Admins
 {
     public class SetupPasswordTests
     {
         private readonly ILogger logger = Substitute.For<ILogger>();
-        private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
+        private readonly IRepository<User> repository = Substitute.For<IRepository<User>>();
         private readonly IEncryptionProvider encryptionProvider = Substitute.For<IEncryptionProvider>();
-        private readonly Admin admin = new Admin
+        private readonly User admin = new User
         {
             Email = "",
             FirstName = "",
             LastName = "",
             HashedPassword = new byte[0],
             HashedSalt = new byte[0],
-            Role = "",
-            TokenForStart = ""
+            Role = (int) IdentityRole.DefaultAdmin
         };
         [Fact]
         public async Task SetupPassword_WhenAdminTokenIsFound_Return()
         {
             // Arrange
-            var command = new SetupPasswordCommand { Token = "1234567890", Password = "password" };
-            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).Returns(admin);
+            var command = new SetupPasswordWithAdminCommand { AdminId = 1, Password = "password" };
+            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(admin);
             var handler = new SetupPasswordCommandHandler(logger, repository, encryptionProvider);
 
             // Act
@@ -44,8 +43,8 @@ namespace UseCasesTests.Admins
         public async Task SetupPassword_WhenTokenIsNotFound_ThrowNotFoundException()
         {
             // Arrange
-            var command = new SetupPasswordCommand { Token = "1234567890", Password = "password" };
-            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
+            var command = new SetupPasswordWithAdminCommand { AdminId = 1, Password = "password" };
+            repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
             var handler = new SetupPasswordCommandHandler(logger, repository, encryptionProvider);
 
             // Act & Assert

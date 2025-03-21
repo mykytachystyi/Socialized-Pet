@@ -6,8 +6,8 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.RecoveryPassword;
-using UseCases.Users.Emails;
+using UseCases.Users.DefaultUser.Commands.RecoveryPassword;
+using UseCases.Users.DefaultUser.Emails;
 
 namespace UseCasesTests.Users;
 

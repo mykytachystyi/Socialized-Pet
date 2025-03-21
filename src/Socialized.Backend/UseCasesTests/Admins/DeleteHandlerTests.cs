@@ -1,34 +1,34 @@
-﻿using Domain.Admins;
+﻿using Domain.Enums;
+using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
-using UseCases.Admins.Commands.Delete;
 using UseCases.Exceptions;
+using UseCases.Users.DefaultAdmin.Commands.DeleteAdmin;
 
 namespace UseCasesTests.Admins;
 
 public class DeleteHandlerTests
 {
     private readonly ILogger logger = Substitute.For<ILogger>();
-    private readonly IRepository<Admin> repository = Substitute.For<IRepository<Admin>>();
-    private readonly Admin admin = new Admin
+    private readonly IRepository<User> repository = Substitute.For<IRepository<User>>();
+    private readonly User admin = new User
     {
         Email = "",
         FirstName = "",
         LastName = "",
         HashedPassword = new byte[0],
         HashedSalt = new byte[0],
-        Role = "",
-        TokenForStart = ""
+        Role = (int) IdentityRole.DefaultAdmin,
     };
     [Fact]
     public async Task Delete_WhenIdIsFound_Return()
     {
         // Arrange
         var command = new DeleteAdminCommand { AdminId = 1 };
-        repository.GetByIdAsync(Arg.Any<long>()).Returns(admin);
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(admin);
         var handler = new DeleteAdminCommandHandler(repository, logger);
 
         // Act
@@ -42,7 +42,7 @@ public class DeleteHandlerTests
     {
         // Arrange
         var command = new DeleteAdminCommand { AdminId = 1 };
-        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Admin, bool>>?>()).ReturnsNull();
+        repository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new DeleteAdminCommandHandler(repository, logger);
 
         // Act & Assert

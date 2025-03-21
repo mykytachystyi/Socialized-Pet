@@ -2,6 +2,7 @@
 using Domain.Appeals;
 using Infrastructure.Repositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using UseCases.Appeals.Models;
 
@@ -17,11 +18,11 @@ public class GetAppealsByAdminQueryHandler (
     {
         var appeals = appealRepository.AsNoTracking();
 
-        var appealArray = appeals.OrderBy(appeal => appeal.State)
+        var appealArray = await appeals.OrderBy(appeal => appeal.State)
             .ThenByDescending(appeal => appeal.CreatedAt)
             .Skip(request.Since * request.Count)
             .Take(request.Count)
-            .ToArray();
+            .ToArrayAsync();
 
         logger.Information($"Отримано список адміном, з={request.Since} по={request.Count}.");
 

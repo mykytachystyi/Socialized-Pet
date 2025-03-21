@@ -22,10 +22,6 @@ namespace Infrastructure.EntityTypeConfiguration
             builder.HasMany(e => e.Files)
                   .WithOne(f => f.Message)
                   .HasForeignKey(f => f.MessageId);
-
-            builder.HasMany(e => e.AppealMessageReplies)
-                  .WithOne(r => r.Message)
-                  .HasForeignKey(r => r.AppealMessageId);
         }
     }
 }

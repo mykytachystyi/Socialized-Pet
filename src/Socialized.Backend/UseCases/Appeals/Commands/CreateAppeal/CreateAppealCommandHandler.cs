@@ -15,14 +15,16 @@ public class CreateAppealCommandHandler(
     IRepository<User> userRepository,
     ILogger logger,
     IMapper mapper
-    ) : IRequestHandler<CreateAppealCommand, AppealResponse>
+    ) : IRequestHandler<CreateAppealWithUserCommand, AppealResponse>
 {
-    public async Task<AppealResponse> Handle(CreateAppealCommand request, CancellationToken cancellationToken)
+    public async Task<AppealResponse> Handle(CreateAppealWithUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.FirstOrDefaultAsync(u => u.TokenForUse == request.UserToken && !u.IsDeleted);
+        logger.Information("Початок створення нової заяви.");
+
+        var user = await userRepository.FirstOrDefaultAsync(u => u.Id == request.UserId && !u.IsDeleted);
         if (user == null)
         {
-            throw new NotFoundException("Користувач не був визначений по токену.");
+            throw new NotFoundException("Користувач не був визначений по id.");
         }
         var appeal = new Appeal
         {
@@ -33,6 +35,7 @@ public class CreateAppealCommandHandler(
             LastActivity = DateTime.UtcNow
         };
         await appealRepository.AddAsync(appeal);
+
         logger.Information($"Було створенно нова заява, id={appeal.Id}.");
         return mapper.Map<AppealResponse>(appeal);
     }

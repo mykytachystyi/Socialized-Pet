@@ -16,7 +16,7 @@ public class GetAppealsByUserQueryHandler(
     {
         logger.Information($"Отримано список користувачем, з={request.Since} по={request.Count}.");
 
-        var appeals = appealRepository.GetAppealsBy(request.UserToken, request.Since, request.Count);
+        var appeals = await appealRepository.GetAppealsByAsync(request.UserId, request.Since, request.Count);
 
         return mapper.Map<List<AppealResponse>>(appeals);
     }

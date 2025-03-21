@@ -4,6 +4,7 @@ namespace UseCases.Appeals.Messages.DeleteAppealMessage;
 
 public class DeleteAppealMessageCommand : IRequest<DeleteAppealMessageResponse>
 {
+    public long UserId { get; set; }
     public long MessageId { get; set; }
 }
 

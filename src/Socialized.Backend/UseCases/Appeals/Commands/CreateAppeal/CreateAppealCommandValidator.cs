@@ -6,8 +6,6 @@ public class CreateAppealCommandValidator : AbstractValidator<CreateAppealComman
 {
     public CreateAppealCommandValidator()
     {
-        RuleFor(x => x.UserToken)
-            .NotEmpty().WithMessage("User token is required");
         RuleFor(x => x.Subject)
             .NotEmpty().WithMessage("Subject is required")
             .MaximumLength(200).WithMessage("Subject cannot be longer than 200 characters");

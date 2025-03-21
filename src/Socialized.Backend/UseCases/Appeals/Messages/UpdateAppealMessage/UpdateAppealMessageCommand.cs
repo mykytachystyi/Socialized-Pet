@@ -4,6 +4,7 @@ namespace UseCases.Appeals.Messages.UpdateAppealMessage;
 
 public record class UpdateAppealMessageCommand : IRequest<UpdateAppealMessageCommandResponse>
 {
+    public long UserId { get; set; }
     public long MessageId { get; set; }
     public required string Message { get; set; }
 }

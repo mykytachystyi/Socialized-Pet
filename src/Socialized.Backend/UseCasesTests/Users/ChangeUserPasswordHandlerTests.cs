@@ -1,5 +1,4 @@
-﻿using Core;
-using Core.Providers.Hmac;
+﻿using Core.Providers.Hmac;
 using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
@@ -7,7 +6,7 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.ChangePassword;
+using UseCases.Users.DefaultUser.Commands.ChangePassword;
 
 namespace UseCasesTests.Users
 {

@@ -10,12 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 using WebAPI.Middleware;
-using UseCases.Admins.Emails;
-using UseCases.Users.Emails;
 using FluentValidation;
 using UseCases.Behaviors;
 using MediatR;
-using UseCases.Admins.Commands.Authentication;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
 using Core.Providers.Hmac;
 using Core.Providers.TextEncrypt;
@@ -25,6 +22,9 @@ using Core.SmtpMailing;
 using Core.Providers.Rand;
 using Domain.Appeals;
 using UseCases.Mapping;
+using UseCases.Users.DefaultUser.Emails;
+using UseCases.Users.DefaultAdmin.Emails;
+using UseCases.Users.DefaultUser.Commands.LoginUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,10 +40,10 @@ builder.Services.AddSerilog();
 builder.Services.AddSingleton(Log.Logger);
 builder.Services.AddMediatR(cfg => 
 {
-    cfg.RegisterServicesFromAssembly(typeof(AuthenticationCommand).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(LoginUserCommand).Assembly);
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 });
-builder.Services.AddValidatorsFromAssembly(typeof(AuthenticationCommand).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(LoginUserCommand).Assembly);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -62,11 +62,9 @@ builder.Services.AddScoped<IEncryptionProvider, HmacSha256Provider>();
 builder.Services.AddScoped<IRandomizer,  Randomizer>();
 
 builder.Services.AddScoped<IRepository<User>, Repository<User>>();
-builder.Services.AddScoped<IRepository<Admin>, Repository<Admin>>();
 builder.Services.AddScoped<IRepository<Appeal>, Repository<Appeal>>();
 builder.Services.AddScoped<IRepository<AppealFile>, Repository<AppealFile>>();
 builder.Services.AddScoped<IRepository<AppealMessage>, Repository<AppealMessage>>();
-builder.Services.AddScoped<IRepository<AppealMessageReply>, Repository<AppealMessageReply>>();
 builder.Services.AddScoped<IAppealQueryRepository, AppealQueryRepository>();
 
 builder.Services.AddScoped<IEmailMessanger, EmailMessanger>();

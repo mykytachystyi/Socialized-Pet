@@ -5,7 +5,7 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.Delete;
+using UseCases.Users.DefaultUser.Commands.Delete;
 
 namespace UseCasesTests.Users;
 
@@ -18,7 +18,7 @@ public class DeleteCommandHandlerTests
     public async Task Delete_WhenUserIsNotFoundByToken_ThrowNotFoundException()
     {
         // Arrange
-        var command = new DeleteCommand { UserToken = "1234567890" };
+        var command = new DeleteCommand { UserId = 1 };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new DeleteCommandHandler(logger, userRepository);
 
@@ -29,7 +29,7 @@ public class DeleteCommandHandlerTests
     public async Task Delete_WhenUserIsFoundByToken_DeleteAndReturn()
     {
         // Arrange
-        var command = new DeleteCommand { UserToken = "1234567890" };
+        var command = new DeleteCommand { UserId = 1 };
         var user = new User { Email = "test@test.com", IsDeleted = false };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
         var handler = new DeleteCommandHandler(logger, userRepository);

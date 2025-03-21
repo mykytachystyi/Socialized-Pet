@@ -3,10 +3,9 @@ using Domain.Users;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.Activate;
 using Infrastructure.Repositories;
-using Domain.Admins;
 using System.Linq.Expressions;
+using UseCases.Users.DefaultUser.Commands.Activate;
 
 namespace UseCasesTests.Users;
 

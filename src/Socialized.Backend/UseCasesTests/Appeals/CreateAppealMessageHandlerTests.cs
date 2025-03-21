@@ -38,11 +38,11 @@ namespace UseCasesTests.Appeals
             // Arrange
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository,
                 appealMessageRepository, logger, mapper, filesAdditionalToMessage);
-            var command = new CreateAppealMessageCommand
+            var command = new CreateAppealMessageWithUserCommand
             {
                 AppealId = 1,
                 Message = "",
-                UserToken = "",
+                UserId = 1,
                 Files = new List<FileDto> { File }
             };
 
@@ -56,11 +56,11 @@ namespace UseCasesTests.Appeals
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository, 
                 appealMessageRepository, logger, mapper, filesAdditionalToMessage);
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(new User());
-            var command = new CreateAppealMessageCommand
+            var command = new CreateAppealMessageWithUserCommand
             {
                 AppealId = 1,
                 Message = "",
-                UserToken = "",
+                UserId = 1,
                 Files = new List<FileDto> { File }
             };
 
@@ -71,9 +71,9 @@ namespace UseCasesTests.Appeals
         public async Task Create_WhenAppealIdAndTokenIsFound_ReturnMessage()
         {
             // Arrange
-            var command = new CreateAppealMessageCommand
+            var command = new CreateAppealMessageWithUserCommand
             {
-                AppealId = 1, Message = "test", UserToken = "",
+                AppealId = 1, Message = "test", UserId = 1,
                 Files = new List<FileDto> { File }
             };
             var response = new AppealMessageResponse { AppealId = command.AppealId, Message = command.Message };

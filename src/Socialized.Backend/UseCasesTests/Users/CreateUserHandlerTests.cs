@@ -2,13 +2,14 @@
 using NSubstitute;
 using Serilog;
 using UseCases.Exceptions;
-using UseCases.Users.Emails;
-using UseCases.Users.Commands.CreateUser;
 using NSubstitute.ReturnsExtensions;
 using Core.Providers.Hmac;
 using Core.Providers.Rand;
 using Infrastructure.Repositories;
 using System.Linq.Expressions;
+using UseCases.Users.DefaultUser.Emails;
+using UseCases.Users.DefaultUser.Commands.CreateUser;
+using Domain.Enums;
 
 namespace UseCasesTests.Users;
 
@@ -24,15 +25,12 @@ public class CreateUserHandlerTests
     public async Task Create_WhenUserIsAlreadyExistAndNotDeleted_ThrowNotFoundException()
     {
         // Arrange
-        var command = new CreateUserCommand
+        var command = new CreateUserWithRoleCommand((int)IdentityRole.DefaultUser, "en_EN")
         {
             Email = "test@test.com",
             FirstName = "Rick",
             LastName = "Dolton",
-            Password = "Pass1234!",
-            CountryName = "USA",
-            TimeZone = 6,
-            Culture = "en_EN"
+            Password = "Pass1234!"
         };
         var user = new User { Email = command.Email, IsDeleted = false };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
@@ -45,15 +43,12 @@ public class CreateUserHandlerTests
     public async Task Create_WhenUserWasDeleted_RestoreUserAndReturn()
     {
         // Arrange
-        var command = new CreateUserCommand
+        var command = new CreateUserWithRoleCommand((int)IdentityRole.DefaultUser, "en_EN")
         {
             Email = "test@test.com",
             FirstName = "Rick",
             LastName = "Dolton",
-            Password = "Pass1234!",
-            CountryName = "USA",
-            TimeZone = 6,
-            Culture = "en_EN"
+            Password = "Pass1234!"
         };
         var user = new User { Email = command.Email, IsDeleted = true };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(user);
@@ -69,15 +64,12 @@ public class CreateUserHandlerTests
     public async Task Create_WhenJustNewUser_CreateNewUserAndReturn()
     {
         // Arrange
-        var command = new CreateUserCommand
+        var command = new CreateUserWithRoleCommand((int)IdentityRole.DefaultUser, "en_EN")
         {
             Email = "test@test.com",
             FirstName = "Rick",
             LastName = "Dolton",
-            Password = "Pass1234!",
-            CountryName = "USA",
-            TimeZone = 6,
-            Culture = "en_EN"
+            Password = "Pass1234!"
         };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new CreateUserCommandHandler(userRepository, emailMessanger, encryptionProvider, randomizer, logger);

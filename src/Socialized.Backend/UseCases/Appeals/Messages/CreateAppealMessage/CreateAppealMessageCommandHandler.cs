@@ -18,12 +18,12 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
         ILogger logger,
         IMapper mapper,
         ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage
-        ) : IRequestHandler<CreateAppealMessageCommand, AppealMessageResponse>
+        ) : IRequestHandler<CreateAppealMessageWithUserCommand, AppealMessageResponse>
     {
-        public async Task<AppealMessageResponse> Handle(CreateAppealMessageCommand request, 
+        public async Task<AppealMessageResponse> Handle(CreateAppealMessageWithUserCommand request, 
             CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefaultAsync(u => u.TokenForUse == request.UserToken && !u.IsDeleted);
+            var user = await userRepository.FirstOrDefaultAsync(u => u.Id == request.UserId && !u.IsDeleted);
 
             if (user == null)
             {

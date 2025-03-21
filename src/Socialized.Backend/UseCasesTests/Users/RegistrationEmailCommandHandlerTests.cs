@@ -5,8 +5,8 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.RegistrationEmail;
-using UseCases.Users.Emails;
+using UseCases.Users.DefaultUser.Commands.RegistrationEmail;
+using UseCases.Users.DefaultUser.Emails;
 
 namespace UseCasesTests.Users;
 

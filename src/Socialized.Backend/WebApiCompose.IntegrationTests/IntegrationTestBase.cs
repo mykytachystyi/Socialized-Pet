@@ -1,6 +1,5 @@
 ﻿using WebApiCompose.IntegrationTests.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 using Infrastructure;
 

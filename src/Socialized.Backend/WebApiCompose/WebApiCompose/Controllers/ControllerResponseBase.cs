@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
             return Request.Headers["Accept-Language"].FirstOrDefault() ?? "en_US";
         }
         [NonAction]
-        public long GetAdminIdByToken()
+        public long GetIdByJwtToken()
         {
             return long.Parse(HttpContext.User.Claims.First().Value);
         }

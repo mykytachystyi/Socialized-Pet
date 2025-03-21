@@ -2,7 +2,7 @@
 {
     public interface IAppealQueryRepository
     {
-        IEnumerable<Appeal> GetAppealsBy(string userToken, int since = 0, int count = 10, bool IsUserDeleted = false);
-        IEnumerable<Appeal> GetAppealsBy(string userToken, int since = 0, int count = 10);
+        Task<IEnumerable<Appeal>> GetAppealsByAsync(long userId, int since = 0, int count = 10, bool IsUserDeleted = false);
+        Task<IEnumerable<Appeal>> GetAppealsByAsync(long userId, int since = 0, int count = 10);
     }
 }

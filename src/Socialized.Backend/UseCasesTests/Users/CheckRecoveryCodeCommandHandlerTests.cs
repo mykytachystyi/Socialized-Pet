@@ -6,7 +6,7 @@ using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.CheckRecoveryCode;
+using UseCases.Users.DefaultUser.Commands.CheckRecoveryCode;
 
 namespace UseCasesTests.Users;
 
@@ -20,10 +20,10 @@ public class CheckRecoveryCodeCommandHandlerTests
     public async Task CheckRecoveryCode_WhenCodeIsFoundAndEmailIsFound_Return()
     {
         // Arrange
-        var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
+        var command = new CheckRecoveryCodeCommand { Email = "test@test.com", RecoveryCode = 1111 };
         var user = new User
         {
-            Email = command.UserEmail,
+            Email = command.Email,
             IsDeleted = false,
             RecoveryCode = command.RecoveryCode
         };
@@ -41,7 +41,7 @@ public class CheckRecoveryCodeCommandHandlerTests
     public async Task CheckRecoveryCode_WhenEmailIsNotFound_ThrowNotFoundException()
     {
         // Arrange
-        var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
+        var command = new CheckRecoveryCodeCommand { Email = "test@test.com", RecoveryCode = 1111 };
         userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
         var handler = new CheckRecoveryCodeCommandHandler(logger, userRepository, randomizer);
 
@@ -52,10 +52,10 @@ public class CheckRecoveryCodeCommandHandlerTests
     public async Task CheckRecoveryCode_WhenCodeIsNotFound_ThrowNotFoundException()
     {
         // Arrange
-        var command = new CheckRecoveryCodeCommand { UserEmail = "test@test.com", RecoveryCode = 1111 };
+        var command = new CheckRecoveryCodeCommand { Email = "test@test.com", RecoveryCode = 1111 };
         var user = new User
         {
-            Email = command.UserEmail,
+            Email = command.Email,
             IsDeleted = false,
             RecoveryCode = 2222
         };

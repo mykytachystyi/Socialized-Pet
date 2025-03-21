@@ -1,38 +1,33 @@
-﻿using Core.Providers.Hmac;
-using Domain.Admins;
-using Domain.Users;
-using FluentAssertions;
-using Infrastructure;
+﻿using FluentAssertions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using UseCases.Admins.Commands.Authentication;
-using UseCases.Admins.Commands.ChangePassword;
-using UseCases.Admins.Commands.CreateAdmin;
-using UseCases.Admins.Commands.Delete;
-using UseCases.Admins.Commands.SetupPassword;
-using UseCases.Admins.Models;
 using UseCases.Exceptions;
-using UseCases.Users.Commands.RecoveryPassword;
-using UseCases.Users.Models;
-using WebApiCompose.Responses;
+using UseCases.Users.DefaultAdmin.Commands.DeleteAdmin;
+using UseCases.Users.DefaultAdmin.Commands.SetupPassword;
+using UseCases.Users.DefaultAdmin.Models;
+using UseCases.Users.DefaultUser.Commands.ChangeOldPassword;
+using UseCases.Users.DefaultUser.Commands.ChangePassword;
+using UseCases.Users.DefaultUser.Commands.CheckRecoveryCode;
+using UseCases.Users.DefaultUser.Commands.CreateUser;
+using UseCases.Users.DefaultUser.Commands.LoginUser;
+using UseCases.Users.DefaultUser.Commands.RecoveryPassword;
+using UseCases.Users.DefaultUser.Models;
 
 namespace WebApiCompose.IntegrationTests.Controllers
 {
-    public class AdminControllerTests : IntegrationTestBase
+    public class AdminControllerTests : UsersControllerTests
     {
-        public Admin ActualAdmin { get; set; }
-        public string ActualJwtToken { get; set; }
         [Fact]
-        public async Task Authentication_ReturnOk()
+        public async Task LoginAdmin_ReturnOk()
         {
             // Arrange
             var admin = await CreateTestAdmin();
 
             // Act
             var content = new StringContent(JsonSerializer.Serialize(
-                new AuthenticationCommand
+                new LoginUserCommand
                 {
                     Email = admin.Email,
                     Password = "Pass1234!"
@@ -40,26 +35,25 @@ namespace WebApiCompose.IntegrationTests.Controllers
                 Encoding.UTF8,
                 "application/json"
             );
-            var response = await Client.PostAsync("/1.0/Admins/Authentication/", content);
+            var response = await Client.PostAsync("/1.0/Admins/Login/", content);
 
-            var result = await response.Content.ReadFromJsonAsync<AdminTokenResponse>();
+            var result = await response.Content.ReadFromJsonAsync<LoginTokenResponse>();
 
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             result.Should().NotBeNull();
-            result!.AdminToken.Should().NotBeNullOrEmpty();
-            ActualJwtToken = result.AdminToken;
+            result!.AuthenticationToken.Should().NotBeNullOrEmpty();
         }
         [Fact]
-        public async Task Authentication_WhenPasswordIsWrong_ReturnErrorMessage()
+        public async Task LoginAdmin_WhenPasswordIsWrong_ReturnErrorMessage()
         {
             // Arrange
             var admin = await CreateTestAdmin();
 
             // Act
             var content = new StringContent(JsonSerializer.Serialize(
-                new AuthenticationCommand
+                new LoginUserCommand
                 {
                     Email = admin.Email,
                     Password = "WrongPassword1234"
@@ -67,7 +61,7 @@ namespace WebApiCompose.IntegrationTests.Controllers
                 Encoding.UTF8,
                 "application/json"
             );
-            var response = await Client.PostAsync("/1.0/Admins/Authentication/", content);
+            var response = await Client.PostAsync("/1.0/Admins/Login/", content);
 
             var result = await response.Content.ReadFromJsonAsync<ValidationException>();
 
@@ -77,12 +71,13 @@ namespace WebApiCompose.IntegrationTests.Controllers
             result!.Message.Should().NotBeNullOrEmpty();
         }
         [Fact]
-        public async Task Create_ReturnNewAdminResponse()
+        public async Task CreateAdmin_ReturnNewAdminResponse()
         {
             // Arrange
-            await Authentication_ReturnOk();
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
 
-            var command = new CreateAdminCommand
+            var command = new CreateUserCommand
             {
                 Email = "newAdmin@example.com",
                 Password = "Pass1234!",
@@ -90,31 +85,29 @@ namespace WebApiCompose.IntegrationTests.Controllers
                 LastName = "Cross"
             };
             var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
-
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ActualJwtToken);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
             var response = await Client.PostAsync("/1.0/Admins/Create/", content);
-            var result = await response.Content.ReadFromJsonAsync<AdminResponse>();
+            var result = await response.Content.ReadFromJsonAsync<CreateUserResponse>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Email.Should().Be(command.Email);
-            result.FirstName.Should().Be(command.FirstName);
-            result.LastName.Should().Be(command.LastName);
+            result!.Success.Should().BeTrue();
         }
         [Fact]
         public async Task SetupPassword_ReturnOk()
         {
             // Arrange
-            await Authentication_ReturnOk();
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
 
             var command = new SetupPasswordCommand
             {
-                Token = "TokenForStart",
                 Password = "NewPass1234!"
             };
             var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
             var response = await Client.PostAsync("/1.0/Admins/SetupPassword/", content);
@@ -122,46 +115,68 @@ namespace WebApiCompose.IntegrationTests.Controllers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Success.Should().BeTrue();
+            result!.Success.Should().BeTrue();
         }
         [Fact]
-        public async Task Delete_ReturnOk()
+        public async Task DeleteAdmin_ReturnOk()
         {
             // Arrange
-            await Authentication_ReturnOk();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ActualJwtToken);
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            var response = await Client.DeleteAsync($"/1.0/Admins/Delete?adminId={ActualAdmin.Id}" );
+            var response = await Client.DeleteAsync($"/1.0/Admins/Delete?adminId={admin.Id}" );
             var result = await response.Content.ReadFromJsonAsync<DeleteAdminResponse>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Success.Should().BeTrue();
+            result!.Success.Should().BeTrue();
         }
         [Fact]
-        public async Task RecoveryPassword_ReturnOk()
+        public async Task RecoveryPasswordAdmin_ReturnOk()
         {
             // Arrange
-            await Authentication_ReturnOk();
+            var admin = await CreateTestAdmin();
 
             // Act
-            var response = await Client.GetAsync($"/1.0/Admins/RecoveryPassword?adminEmail={ActualAdmin.Email}");
+            var response = await Client.GetAsync($"/1.0/Admins/RecoveryPassword?email={admin.Email}");
             var result = await response.Content.ReadFromJsonAsync<RecoveryPasswordResponse>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Success.Should().BeTrue();
+            result!.Success.Should().BeTrue();
         }
         [Fact]
-        public async Task ChangePassword_ReturnOk()
+        public async Task CheckRecoveryCodeAdmin_ReturnOk()
         {
             // Arrange
-            await Authentication_ReturnOk();
-            var command = new ChangePasswordCommand
+            var admin = await CreateTestAdmin();
+            var command = new CheckRecoveryCodeCommand
             {
-                RecoveryCode = 123456,
-                Password = "Pass1234!"
+                Email = admin.Email,
+                RecoveryCode = admin.RecoveryCode!.Value
+            };
+            var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await Client.PostAsync($"/1.0/Admins/CheckRecoveryCode/", content);
+            var result = await response.Content.ReadFromJsonAsync<CheckRecoveryCodeResponse>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            result!.RecoveryToken.Should().NotBeEmpty();
+        }
+        [Fact]
+        public async Task ChangePasswordAdmin_ReturnOk()
+        {
+            // Arrange
+            var admin = await CreateTestAdmin();
+            var command = new ChangeUserPasswordCommand
+            {
+                RecoveryToken = admin.RecoveryToken,
+                UserPassword = "NewPass1234!",
+                UserConfirmPassword = "NewPass1234!"
             };
             var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
 
@@ -171,90 +186,61 @@ namespace WebApiCompose.IntegrationTests.Controllers
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Success.Should().BeTrue();
+            result!.Success.Should().BeTrue();
+        }
+        [Fact]
+        public async Task ChangeOldPasswordAdmin_ReturnOk()
+        {
+            // Arrange
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
+            var command = new ChangeOldPasswordCommand
+            {
+                OldPassword = "Pass1234!",
+                NewPassword = "NewPass1234!"
+            };
+            var content = new StringContent(JsonSerializer.Serialize(command), Encoding.UTF8, "application/json");
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // Act
+            var response = await Client.PostAsync($"/1.0/Admins/ChangeOldPassword/", content);
+            var result = await response.Content.ReadFromJsonAsync<ChangeOldPasswordResponse>();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            result!.Success.Should().BeTrue();
         }
         [Fact]
         public async Task GetAdmins_ReturnListOfAdmins()
         {
             // Arrange
-            await Authentication_ReturnOk();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ActualJwtToken);
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
             var response = await Client.GetAsync($"/1.0/Admins/GetAdmins?since=0&count=10");
-            var result = await response.Content.ReadFromJsonAsync<IEnumerable<AdminResponse>>();
+            var result = await response.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Count().Should().BeGreaterThan(0);
+            result!.Count().Should().Be(0);
         }
         [Fact]
         public async Task GetUsers_ReturnListOfUsers()
         {
             // Arrange
             await CreateTestUser();
-            await Authentication_ReturnOk();
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ActualJwtToken);
+            var admin = await CreateTestAdmin();
+            var token = await SetupAdmin(admin);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            var response = await Client.GetAsync($"/1.0/Admins/GetUsers?since=0&count=10");
+            var response = await Client.GetAsync("/1.0/Admins/GetUsers/?since=0&count=10");
             var result = await response.Content.ReadFromJsonAsync<IEnumerable<UserResponse>>();
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Count().Should().BeGreaterThan(0);
-        }
-        private async Task<Admin> CreateTestAdmin()
-        {
-            using var scope = Application.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            var hashedPassword = new HmacSha256Provider().HashPassword("Pass1234!");
-
-            var admin = new Admin
-            {
-                FirstName = "Rick",
-                LastName = "Cross",
-                Email = "user@example.com",
-                HashedPassword = hashedPassword.Hash,
-                HashedSalt = hashedPassword.Salt,
-                Role = "default",
-                CreatedAt = DateTime.UtcNow,
-                TokenForStart = "TokenForStart",
-                LastLoginAt = DateTimeOffset.UtcNow,
-                RecoveryCode = 123456
-            };
-            context.Admins.Add(admin);
-            await context.SaveChangesAsync();
-
-            ActualAdmin = admin;
-            return admin;
-        }
-        private async Task CreateTestUser()
-        {
-            using var scope = Application.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            var hashedPassword = new HmacSha256Provider().HashPassword("Pass1234!");
-
-            var user = new User
-            {
-                FirstName = "Rick",
-                LastName = "Cross",
-                Email = "user@example.com",
-                HashedPassword = hashedPassword.Hash,
-                HashedSalt = hashedPassword.Salt,
-                CreatedAt = DateTime.UtcNow,
-                LastLoginAt = DateTimeOffset.UtcNow,
-                RecoveryCode = 123456,
-                RecoveryToken = "RecoveryToken",
-                TokenForUse = "TokenForUser",
-                HashForActivate = "HashForActivate",
-                Activate = true
-            };
-
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
+            result!.Count().Should().BeGreaterThan(0);
         }
     }
 }

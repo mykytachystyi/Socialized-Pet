@@ -2,43 +2,45 @@
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using Domain.Admins;
+using Domain.Users;
+using Domain.Enums;
 
-namespace WebAPI.Middleware
+namespace WebAPI.Middleware;
+
+public interface IJwtTokenManager
 {
-    public interface IJwtTokenManager
+    string Authenticate(User user);
+}
+public class JwtTokenManager : IJwtTokenManager
+{
+    private readonly IConfiguration _configuration;
+    private readonly byte[] _keyBytes;
+    
+    public JwtTokenManager(IConfiguration configuration)
     {
-        string Authenticate(Admin admin);
+        _configuration = configuration;
+        var key = _configuration.GetValue<string>("JwtConfig:Key")
+            ?? throw new InvalidOperationException("Jwt config key - відсутній.");
+        _keyBytes = Encoding.UTF8.GetBytes(key);
     }
-    public class JwtTokenManager : IJwtTokenManager
+    public string Authenticate(User user)
     {
-        private readonly IConfiguration _configuration;
-
-        public JwtTokenManager(IConfiguration configuration)
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
-            _configuration = configuration;
-        }
-        public string Authenticate(Admin admin)
-        {
-            var key = _configuration.GetValue<string>("JwtConfig:Key") 
-                ?? throw new InvalidOperationException("Jwt config key - відсутній.");
-            var keyBytes = Encoding.UTF8.GetBytes(key);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                 {
-                    new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, admin.Email),
-                    new Claim(ClaimTypes.Role, admin.Role)
-                 }),
-                Expires = DateTime.UtcNow.AddMinutes(30),
-                SigningCredentials = new SigningCredentials(
-                                      new SymmetricSecurityKey(keyBytes),
-                                      SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+            Subject = new ClaimsIdentity(
+             [
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Email),
+                new Claim(ClaimTypes.Role, IdentityRoleConverter.CovertToRoleName(user.Role))
+             ]),
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            SigningCredentials = new SigningCredentials(
+                                  new SymmetricSecurityKey(_keyBytes),
+                                  SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+        return tokenString;
     }
 }

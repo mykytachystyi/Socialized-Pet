@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebAPI.Middleware;
-using UseCases.Admins.Commands.Authentication;
-using UseCases.Admins.Commands.ChangePassword;
-using UseCases.Admins.Commands.CreateAdmin;
-using UseCases.Admins.Commands.Delete;
-using UseCases.Admins.Commands.SetupPassword;
 using MediatR;
-using UseCases.Admins.Commands.CreateCodeForRecoveryPassword;
-using UseCases.Admins.Queries.GetAdmins;
-using UseCases.Admins.Queries.GetUsers;
-using WebApiCompose.Responses;
-using UseCases.Admins.Models;
-using UseCases.Users.Commands.RecoveryPassword;
-using UseCases.Users.Models;
+using UseCases.Users.DefaultUser.Models;
+using Domain.Enums;
+using UseCases.Users.DefaultUser.Commands.LoginUser;
+using UseCases.Users.DefaultUser.Commands.CreateUser;
+using UseCases.Users.DefaultAdmin.Commands.SetupPassword;
+using UseCases.Users.DefaultAdmin.Commands.DeleteAdmin;
+using UseCases.Users.DefaultUser.Commands.ChangeOldPassword;
+using UseCases.Users.DefaultUser.Commands.RecoveryPassword;
+using UseCases.Users.DefaultAdmin.Queries.GetUsers;
+using UseCases.Users.DefaultUser.Commands.ChangePassword;
+using UseCases.Users.DefaultUser.Commands.CheckRecoveryCode;
+using UseCases.Users.DefaultAdmin.Models;
 
 namespace WebAPI.Controllers
 {
@@ -28,56 +28,104 @@ namespace WebAPI.Controllers
             JwtTokenManager = jwtTokenManager;
         }
         [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<AdminResponse>> Create(CreateAdminCommand command)
+        [Authorize(Roles = IdentityRoleConverter.DefaultAdmin)]
+        public async Task<ActionResult<CreateUserResponse>> Create(CreateUserCommand command)
         {
-            return Ok(await Sender.Send(command));
+            return Ok(await Sender.Send(new CreateUserWithRoleCommand((int) IdentityRole.DefaultAdmin, "en_EN") 
+            {
+                Email = command.Email,
+                FirstName = command.FirstName,
+                LastName = command.LastName,
+                Password = command.Password
+            }));
         }
         [HttpPost]
-        public async Task<ActionResult<AdminTokenResponse>> Authentication(AuthenticationCommand command)
+        public async Task<ActionResult<LoginTokenResponse>> Login(LoginUserCommand command)
         {
-            var result = await Sender.Send(command);
+            var result = await Sender.Send(new LoginUserWithRoleCommand
+            {
+                Email = command.Email,
+                Password = command.Password,
+                Role = (int)IdentityRole.DefaultAdmin
+            });
 
             var token = JwtTokenManager.Authenticate(result);
 
-            return Ok(new AdminTokenResponse { AdminToken = token });
+            return Ok(new LoginTokenResponse(token));
         }
         [HttpPost]
-        public async Task<ActionResult<SetupPasswordResponse>> SetupPassword(SetupPasswordCommand command)
+        public async Task<ActionResult<SetupPasswordResponse>> SetupPassword(SetupPasswordCommand request)
         {
+            var command = new SetupPasswordWithAdminCommand
+            {
+                AdminId = GetIdByJwtToken(), Password = request.Password
+            }; 
+
             return Ok(await Sender.Send(command));
         }
         [HttpDelete]
-        [Authorize]
+        [Authorize(Roles = IdentityRoleConverter.DefaultAdmin)]
         public async Task<ActionResult<DeleteAdminResponse>> Delete([FromQuery] long adminId)
         {
             return Ok(await Sender.Send(new DeleteAdminCommand { AdminId = adminId }));
         }
         [HttpGet]
-        public async Task<ActionResult<RecoveryPasswordResponse>> RecoveryPassword([FromQuery]string adminEmail)
+        public async Task<ActionResult<RecoveryPasswordResponse>> RecoveryPassword([FromQuery] string email)
         {
-            return Ok(await Sender.Send(new CreateCodeForRecoveryPasswordCommand { AdminEmail = adminEmail}));
+            var culture = GetCulture();
+
+            return Ok(await Sender.Send(new RecoveryPasswordCommand { UserEmail = email, Culture = culture }));
         }
         [HttpPost]
-        public async Task<ActionResult<ChangePasswordResponse>> ChangePassword(ChangePasswordCommand command)
+        public async Task<ActionResult<CheckRecoveryCodeResponse>> CheckRecoveryCode(CheckRecoveryCodeCommand command)
         {
             return Ok(await Sender.Send(command));
         }
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<AdminResponse>>> 
-            GetAdmins([FromQuery] int since = 0, [FromQuery] int count = 10)
+        [HttpPost]
+        public async Task<ActionResult<ChangeUserPasswordResponse>> ChangePassword(ChangeUserPasswordCommand command)
         {
-            long adminId = GetAdminIdByToken();
-
-            return Ok(await Sender.Send(new GetAdminsQuery { AdminId = adminId, Since = since, Count = count}));
+            return Ok(await Sender.Send(command));
+        }
+        [HttpPost]
+        [Authorize(Roles = IdentityRoleConverter.DefaultAdmin)]
+        public async Task<ActionResult<ChangeOldPasswordResponse>> ChangeOldPassword(ChangeOldPasswordCommand command)
+        {
+            return Ok(await Sender.Send(new ChangeOldPasswordWithUserCommand
+            {
+                NewPassword = command.NewPassword,
+                OldPassword = command.OldPassword,
+                UserId = GetIdByJwtToken()
+            }));
         }
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = IdentityRoleConverter.DefaultAdmin)]
+        public async Task<ActionResult<IEnumerable<UserResponse>>> 
+            GetAdmins([FromQuery] int since = 0, [FromQuery] int count = 10)
+        {
+            long adminId = GetIdByJwtToken();
+
+            return Ok(await Sender.Send(new GetUsersQuery 
+            { 
+                AdminId = adminId, 
+                Since = since, 
+                Count = count, 
+                Role = (int) IdentityRole.DefaultAdmin 
+            }));
+        }
+        [HttpGet]
+        [Authorize(Roles = IdentityRoleConverter.DefaultAdmin)]
         public async Task<ActionResult<IEnumerable<UserResponse>>> 
             GetUsers([FromQuery] int since = 0, [FromQuery] int count = 10)
         {
-            return Ok(await Sender.Send(new GetUsersQuery { Since = since, Count = count }));
+            long adminId = GetIdByJwtToken();
+
+            return Ok(await Sender.Send(new GetUsersQuery
+            {
+                AdminId = adminId,
+                Since = since,
+                Count = count,
+                Role = (int)IdentityRole.DefaultUser
+            }));
         }
     }
 }

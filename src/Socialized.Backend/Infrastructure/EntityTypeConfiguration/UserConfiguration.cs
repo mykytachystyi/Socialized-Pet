@@ -10,7 +10,6 @@ namespace Infrastructure.EntityTypeConfiguration
         {
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.TokenForUse).IsRequired();
             builder.Property(e => e.Email).IsRequired().HasMaxLength(320);
             builder.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
             builder.Property(e => e.LastName).IsRequired().HasMaxLength(100);

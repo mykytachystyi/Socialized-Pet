@@ -2,10 +2,10 @@
 {
     public class User : BaseEntity
     {
-        public string TokenForUse { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
+        public int Role { get; set; } = 0;
         public byte[] HashedPassword { get; set; } = null!;
         public byte[] HashedSalt { get; set; } = null!;
         public DateTimeOffset LastLoginAt { get; set; }
