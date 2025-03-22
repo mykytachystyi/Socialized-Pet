@@ -103,6 +103,12 @@ namespace WebApiCompose.IntegrationTests.Controllers
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             result!.Success.Should().BeTrue();
+
+            // Verify database
+            using var scope = Application.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var userFromDb = context.Users.First(u => u.Email == ActualUser.Email);
+            userFromDb.RecoveryCode.Should().NotBeNull();
         }
         [Fact]
         public async Task CheckRecoveryCode_ReturnOk()

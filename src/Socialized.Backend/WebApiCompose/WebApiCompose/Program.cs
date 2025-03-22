@@ -75,6 +75,14 @@ builder.Services.AddScoped<ICreateAppealFilesAdditionalToMessage, CreateAppealMe
 
 builder.Services.AddAutoMapper(typeof(MappingConfig).Assembly);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
+
 
 builder.Services.AddAuthentication(option =>
 {
@@ -145,6 +153,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 

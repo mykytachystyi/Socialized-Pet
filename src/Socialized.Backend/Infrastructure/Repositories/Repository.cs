@@ -47,7 +47,7 @@ public class Repository<T> : IRepository<T> where T : class
     public void Update(T entity)
     {
         _dbSet.Update(entity);
-        _context.SaveChanges();
+        _context.SaveChangesAsync();
     }
 
     public async Task<int> RemoveAsync(Expression<Func<T, bool>>? predicate = null,
