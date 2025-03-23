@@ -12,7 +12,7 @@ using UseCases.Appeals.Messages.UpdateAppealMessage;
 
 namespace WebApiCompose.IntegrationTests.Controllers;
 
-public class AppealMessageControllerTests : AppealsControllerTests
+public class AppealMessageControllerTests : IntegrationTestContext
 {
     [Fact]
     public async Task CreateAppeal_ReturnOk()
@@ -98,24 +98,5 @@ public class AppealMessageControllerTests : AppealsControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         result!.Success.Should().BeTrue();
-    }
-    public async Task<AppealMessage> CreateMessage(Appeal appeal)
-    {
-        using var scope = Application.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var appealMessage = new AppealMessage
-        {
-            AppealId = appeal.Id,
-            CreatedAt = DateTime.UtcNow,
-            DeletedAt = DateTimeOffset.UtcNow,
-            Message = "Test message",
-            IsDeleted = false,
-            LastUpdatedAt = DateTimeOffset.UtcNow,
-            UpdatedAt = DateTimeOffset.UtcNow,
-        };
-        context.AppealMessages.Add(appealMessage);
-        await context.SaveChangesAsync();
-
-        return appealMessage;
     }
 }

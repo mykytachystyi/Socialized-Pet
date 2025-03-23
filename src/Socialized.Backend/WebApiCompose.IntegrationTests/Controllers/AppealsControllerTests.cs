@@ -1,6 +1,4 @@
-﻿using Domain.Appeals;
-using Domain.Users;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -12,7 +10,7 @@ using UseCases.Appeals.Models;
 
 namespace WebApiCompose.IntegrationTests.Controllers;
 
-public class AppealsControllerTests : UsersControllerTests
+public class AppealsControllerTests : IntegrationTestContext
 {
     [Fact]
     public async Task Create_ReturnOk()
@@ -78,22 +76,5 @@ public class AppealsControllerTests : UsersControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         result!.Count().Should().Be(1);
-    }
-    public async Task<Appeal> CreateAppeal(User user)
-    {
-        using var scope = Application.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
-        var appeal = new Appeal
-        {
-            UserId = user.Id,
-            CreatedAt = DateTime.UtcNow,
-            DeletedAt = DateTimeOffset.UtcNow,
-            Subject = "Test subject",
-            LastActivity = DateTimeOffset.UtcNow,
-        };
-        context.Appeals.Add(appeal);
-        await context.SaveChangesAsync();
-        return appeal;
     }
 }

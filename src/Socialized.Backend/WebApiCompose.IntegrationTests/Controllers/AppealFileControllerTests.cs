@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace WebApiCompose.IntegrationTests.Controllers;
 
-public class AppealFileControllerTests : AppealMessageControllerTests
+public class AppealFileControllerTests : IntegrationTestContext
 {
     [Fact]
     public async Task CreateAppealFile_ReturnOk()

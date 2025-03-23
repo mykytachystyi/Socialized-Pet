@@ -18,11 +18,9 @@ using UseCases.Users.DefaultUser.Models;
 
 namespace WebApiCompose.IntegrationTests.Controllers
 {
-    public class UsersControllerTests : IntegrationTestBase
+    public class UsersControllerTests : IntegrationTestContext
     {
-        public User ActualUser;
-        public string ActualUserJwtToken;
-
+        
         [Fact]
         public async Task Registration_ReturnOk()
         {
@@ -215,57 +213,6 @@ namespace WebApiCompose.IntegrationTests.Controllers
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             result!.Success.Should().BeTrue();
-        }
-        public virtual async Task<string> SetupUser(User user)
-        {
-            var command = new LoginUserCommand
-            {
-                Email = user.Email,
-                Password = "Pass1234!"
-            };
-            // Act
-            var content = new StringContent(JsonSerializer.Serialize(command),
-                Encoding.UTF8,
-                "application/json"
-            );
-            var response = Client.PostAsync("/1.0/Users/Login/", content);
-            var result = response.Result.Content.ReadFromJsonAsync<LoginTokenResponse>();
-
-            ActualUserJwtToken = result!.Result!.AuthenticationToken;
-            return result!.Result!.AuthenticationToken;
-        }
-        public virtual async Task<string> SetupAdmin(User user)
-        {
-            var command = new LoginUserCommand
-            {
-                Email = user.Email,
-                Password = "Pass1234!"
-            };
-            // Act
-            var content = new StringContent(JsonSerializer.Serialize(command),
-                Encoding.UTF8,
-                "application/json"
-            );
-            var response = await Client.PostAsync("/1.0/Admins/Login/", content);
-            var result = await response.Content.ReadFromJsonAsync<LoginTokenResponse>();
-
-            return result!.AuthenticationToken;
-        }
-        public virtual async Task<User> CreateTestUser()
-        {
-            using var scope = Application.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var user = context.Users.FirstOrDefault(u => u.Email == "user@example.com");
-
-            ActualUser = user;
-            return user;
-        }
-        public async Task<User> CreateTestAdmin()
-        {
-            using var scope = Application.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var admin = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
-            return admin;
         }
     }
 }
