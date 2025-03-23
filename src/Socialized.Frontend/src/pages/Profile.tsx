@@ -12,17 +12,17 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Profile token check:', token);
     if (!token) {
       navigate('/login');
     }
@@ -67,32 +67,78 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
-    <Container component="main" maxWidth="md">
-      <Box sx={{ mt: 8 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            padding: 4, 
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+        >
+          <Typography component="h1" variant="h5">
             Профіль користувача
           </Typography>
-
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
               {error}
             </Alert>
           )}
-
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="body1" gutterBottom>
-              Тут буде інформація про профіль користувача
-            </Typography>
-
+          {success && (
+            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+              {success}
+            </Alert>
+          )}
+          <Box sx={{ mt: 1, width: '100%' }}>
             <Button
+              fullWidth
+              variant="contained"
+              component={Link}
+              to="/create-appeal"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Створити звернення
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              component={Link}
+              to="/my-appeals"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Мої звернення
+            </Button>
+            <Button
+              fullWidth
               variant="contained"
               color="error"
               onClick={() => setShowDeleteDialog(true)}
-              sx={{ mt: 2 }}
+              sx={{ mt: 3, mb: 2 }}
             >
               Видалити акаунт
+            </Button>
+            <Button
+              fullWidth
+              variant="text"
+              onClick={handleLogout}
+            >
+              Вийти
             </Button>
           </Box>
         </Paper>

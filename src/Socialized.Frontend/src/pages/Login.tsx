@@ -120,7 +120,7 @@ const Login = () => {
               Увійти
             </Button>
             
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
               <MuiLink component={Link} to="/register" variant="body2">
                 {"Немає акаунту? Зареєструватися"}
               </MuiLink>

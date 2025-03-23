@@ -42,7 +42,6 @@ const AdminLogin = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Admin login response:', data);
         if (data.authenticationToken) {
           localStorage.setItem('adminToken', data.authenticationToken);
           navigate('/admin/dashboard');

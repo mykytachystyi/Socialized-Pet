@@ -1,5 +1,5 @@
-import { Container, Box, Typography, Paper, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Container, Box, Typography, Paper, Grid, Card, CardContent, Button } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
 import PeopleIcon from '@mui/icons-material/People';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -23,46 +23,56 @@ const AdminDashboard = () => {
         </Typography>
         
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <Paper 
-              sx={{ 
-                p: 3, 
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center',
-                cursor: 'pointer'
-              }}
-              onClick={() => navigate('/admin/users')}
-            >
-              <PeopleIcon sx={{ fontSize: 60, mb: 2, color: 'primary.main' }} />
-              <Typography variant="h6" gutterBottom>
-                Користувачі
-              </Typography>
-              <Typography variant="body2" color="text.secondary" align="center">
-                Переглянути список всіх користувачів
-              </Typography>
-            </Paper>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Користувачі
+                </Typography>
+                <Button
+                  variant="contained"
+                  component={Link}
+                  to="/admin/users"
+                  fullWidth
+                >
+                  Переглянути користувачів
+                </Button>
+              </CardContent>
+            </Card>
           </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Paper 
-              sx={{ 
-                p: 3, 
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center',
-                cursor: 'pointer'
-              }}
-              onClick={() => navigate('/admin/admins')}
-            >
-              <AdminPanelSettingsIcon sx={{ fontSize: 60, mb: 2, color: 'primary.main' }} />
-              <Typography variant="h6" gutterBottom>
-                Адміністратори
-              </Typography>
-              <Typography variant="body2" color="text.secondary" align="center">
-                Переглянути список адміністраторів
-              </Typography>
-            </Paper>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Адміністратори
+                </Typography>
+                <Button
+                  variant="contained"
+                  component={Link}
+                  to="/admin/admins"
+                  fullWidth
+                >
+                  Переглянути адміністраторів
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Звернення
+                </Typography>
+                <Button
+                  variant="contained"
+                  component={Link}
+                  to="/admin/appeals"
+                  fullWidth
+                >
+                  Переглянути звернення
+                </Button>
+              </CardContent>
+            </Card>
           </Grid>
 
           <Grid item xs={12} md={4}>
