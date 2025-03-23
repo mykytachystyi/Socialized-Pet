@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -32,7 +32,7 @@ const Login = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/Login', {
+      const response = await fetch('http://localhost:5217/1.0/Admins/Login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,10 +42,10 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login response:', data);
+        console.log('Admin login response:', data);
         if (data.authenticationToken) {
-          localStorage.setItem('token', data.authenticationToken);
-          navigate('/profile');
+          localStorage.setItem('adminToken', data.authenticationToken);
+          navigate('/admin/dashboard');
         } else {
           setError('Токен не отримано від сервера');
         }
@@ -79,7 +79,7 @@ const Login = () => {
           }}
         >
           <Typography component="h1" variant="h5">
-            Вхід
+            Вхід для адміністратора
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
             <TextField
@@ -107,7 +107,7 @@ const Login = () => {
               onChange={handleChange}
             />
             {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
+              <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
                 {error}
               </Alert>
             )}
@@ -117,21 +117,18 @@ const Login = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Увійти
+              Увійти як адміністратор
             </Button>
             
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-              <MuiLink component={Link} to="/register" variant="body2">
-                {"Немає акаунту? Зареєструватися"}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <MuiLink component={Link} to="/login" variant="body2">
+                {"Вхід для користувача"}
               </MuiLink>
-              <Box>
-                <MuiLink component={Link} to="/recovery-password" variant="body2" sx={{ mr: 2 }}>
-                  {"Забули пароль?"}
-                </MuiLink>
-                <MuiLink component={Link} to="/admin/login" variant="body2">
-                  {"Вхід для адміністратора"}
-                </MuiLink>
-              </Box>
+            </Box>
+            <Box sx={{ textAlign: 'center' }}>
+              <Link to="/admin/recovery-password" style={{ textDecoration: 'none' }}>
+                Забули пароль?
+              </Link>
             </Box>
           </Box>
         </Paper>
@@ -140,4 +137,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin; 
