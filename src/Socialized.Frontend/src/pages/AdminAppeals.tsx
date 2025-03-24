@@ -26,7 +26,7 @@ import { Visibility } from '@mui/icons-material';
 interface Appeal {
   id: string;
   subject: string;
-  status: string;
+  state: number;
   createdAt: string;
   updatedAt: string;
   userId: string;
@@ -38,7 +38,7 @@ const AdminAppeals = () => {
   const [appeals, setAppeals] = useState<Appeal[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState(0);
 
   useEffect(() => {
     const fetchAppeals = async () => {
@@ -49,7 +49,7 @@ const AdminAppeals = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:5217/1.0/Appeals/GetAllAppeals', {
+        const response = await fetch('http://localhost:5217/1.0/Appeals/GetAppealsByAdmin', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -76,7 +76,7 @@ const AdminAppeals = () => {
     fetchAppeals();
   }, [navigate]);
 
-  const handleStatusChange = async (appealId: string, newStatus: string) => {
+  const handleStatusChange = async (appealId: string, state: number) => {
     const token = localStorage.getItem('adminToken');
     if (!token) return;
 
@@ -87,14 +87,14 @@ const AdminAppeals = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status: state })
       });
 
       if (response.ok) {
         setAppeals(prevAppeals =>
           prevAppeals.map(appeal =>
             appeal.id === appealId
-              ? { ...appeal, status: newStatus }
+              ? { ...appeal, state: state }
               : appeal
           )
         );
@@ -112,22 +112,22 @@ const AdminAppeals = () => {
     return new Date(dateString).toLocaleString('uk-UA');
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'pending':
+  const getStatusColor = (state: number) => {
+    switch (state) {
+      case 0:
         return 'warning';
-      case 'in progress':
+      case 1:
         return 'info';
-      case 'completed':
+      case 2:
         return 'success';
       default:
         return 'default';
     }
   };
 
-  const filteredAppeals = statusFilter === 'all'
+  const filteredAppeals = statusFilter === 0
     ? appeals
-    : appeals.filter(appeal => appeal.status.toLowerCase() === statusFilter);
+    : appeals.filter(appeal => appeal.state === statusFilter);
 
   if (isLoading) {
     return (
@@ -173,7 +173,7 @@ const AdminAppeals = () => {
                 <Select
                   value={statusFilter}
                   label="Фільтр за статусом"
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => setStatusFilter(0)}
                 >
                   <MenuItem value="all">Всі</MenuItem>
                   <MenuItem value="pending">В очікуванні</MenuItem>
@@ -206,11 +206,11 @@ const AdminAppeals = () => {
                     <TableCell>
                       <FormControl size="small" sx={{ minWidth: 120 }}>
                         <Select
-                          value={appeal.status}
-                          onChange={(e) => handleStatusChange(appeal.id, e.target.value)}
+                          value={appeal.state}
+                          onChange={(e) => handleStatusChange(appeal.id, appeal.state)}
                           sx={{
                             '& .MuiSelect-select': {
-                              color: getStatusColor(appeal.status),
+                              color: getStatusColor(appeal.state),
                               fontWeight: 'bold'
                             }
                           }}

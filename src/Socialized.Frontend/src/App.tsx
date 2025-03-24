@@ -19,6 +19,7 @@ import CreateAppeal from './pages/CreateAppeal';
 import UserAppeals from './pages/UserAppeals';
 import AdminAppeals from './pages/AdminAppeals';
 import AppealDetails from './pages/AppealDetails';
+import AppealMessages from './pages/AppealMessages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 
@@ -143,6 +144,7 @@ function App() {
               <Route path="/create-appeal" element={<ProtectedRoute><CreateAppeal /></ProtectedRoute>} />
               <Route path="/my-appeals" element={<ProtectedRoute><UserAppeals /></ProtectedRoute>} />
               <Route path="/appeal/:id" element={<ProtectedRoute><AppealDetails /></ProtectedRoute>} />
+              <Route path="/appeal/:id/messages" element={<ProtectedRoute><AppealMessages /></ProtectedRoute>} />
               <Route path="/admin/appeals" element={<AdminAppeals />} />
             </Routes>
           </Box>

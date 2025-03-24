@@ -22,9 +22,14 @@ namespace WebApiCompose.Controllers
         [HttpPost]
         [Authorize]
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
-        public async Task<ActionResult> Create([FromForm] ICollection<IFormFile> files, [FromQuery] string commandJson)
+        public async Task<ActionResult> Create([FromForm] ICollection<IFormFile> files, 
+            [FromQuery] long appealId, [FromQuery] string message)
         {
-            var command = JsonSerializer.Deserialize<CreateAppealMessageWithUserCommand>(commandJson);
+            var command = new CreateAppealMessageWithUserCommand
+            {
+                AppealId = appealId,
+                Message = message
+            };
 
             command!.Files = Map(files);
 

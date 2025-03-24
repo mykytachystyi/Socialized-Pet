@@ -1,5 +1,4 @@
-﻿using Domain.Appeals;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Net;

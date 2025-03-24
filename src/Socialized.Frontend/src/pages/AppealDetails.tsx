@@ -31,7 +31,7 @@ interface Message {
 interface Appeal {
   id: string;
   subject: string;
-  status: string;
+  state: number;
   createdAt: string;
   updatedAt: string;
   messages: Message[];
@@ -41,6 +41,7 @@ const AppealDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [appeal, setAppeal] = useState<Appeal | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -55,7 +56,7 @@ const AppealDetails = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5217/1.0/Appeals/GetAppeal/${id}`, {
+        const response = await fetch(`http://localhost:5217/1.0/AppealMessage/Get?appealId=${id}&since=0&count=100`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -64,6 +65,7 @@ const AppealDetails = () => {
         if (response.ok) {
           const data = await response.json();
           setAppeal(data);
+          setMessages(data.messages || []);
         } else if (response.status === 401) {
           localStorage.removeItem('token');
           navigate('/login');
@@ -91,21 +93,18 @@ const AppealDetails = () => {
     if (!token || !newMessage.trim()) return;
 
     try {
-      const response = await fetch(`http://localhost:5217/1.0/AppealsMessage/Create`, {
+      const response = await fetch(`http://localhost:5217/1.0/AppealsMessage/Create?appealId=${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ content: newMessage })
+        body: JSON.stringify({ text: newMessage })
       });
 
       if (response.ok) {
         const data = await response.json();
-        setAppeal(prev => prev ? {
-          ...prev,
-          messages: [...prev.messages, data]
-        } : null);
+        setMessages(prev => [...prev, data]);
         setNewMessage('');
         setSuccess('Повідомлення додано');
       } else {
@@ -122,13 +121,13 @@ const AppealDetails = () => {
     return new Date(dateString).toLocaleString('uk-UA');
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'pending':
+  const getStatusColor = (status: number) => {
+    switch (status) {
+      case 0:
         return 'warning';
-      case 'in progress':
+      case 1:
         return 'info';
-      case 'completed':
+      case 2:
         return 'success';
       default:
         return 'default';
@@ -180,6 +179,19 @@ const AppealDetails = () => {
             </Typography>
           </Box>
 
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h4" gutterBottom>
+              Деталі звернення #{id}
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => navigate(`/appeal/${id}/messages`)}
+            >
+              Переглянути повідомлення
+            </Button>
+          </Box>
+
           {error && (
             <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
               {error}
@@ -198,8 +210,8 @@ const AppealDetails = () => {
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
                 <Chip 
-                  label={appeal.status} 
-                  color={getStatusColor(appeal.status)}
+                  label={appeal.state} 
+                  color={getStatusColor(appeal.state)}
                   size="small"
                 />
                 <Typography variant="body2" color="text.secondary">
@@ -218,7 +230,7 @@ const AppealDetails = () => {
             Повідомлення
           </Typography>
           <List sx={{ width: '100%' }}>
-            {appeal.messages.map((message) => (
+            {messages.map((message) => (
               <ListItem 
                 key={message.id} 
                 divider
