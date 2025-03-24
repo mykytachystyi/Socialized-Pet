@@ -9,7 +9,7 @@ using UseCases.Appeals.Files.CreateAppealMessageFile;
 using UseCases.Appeals.Messages.Models;
 using UseCases.Exceptions;
 
-namespace UseCases.Appeals.Messages.CreateAppealMessage
+namespace UseCases.Appeals.Messages.Commands.CreateAppealMessage
 {
     public class CreateAppealMessageCommandHandler(
         IRepository<User> userRepository,
@@ -20,7 +20,7 @@ namespace UseCases.Appeals.Messages.CreateAppealMessage
         ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage
         ) : IRequestHandler<CreateAppealMessageWithUserCommand, AppealMessageResponse>
     {
-        public async Task<AppealMessageResponse> Handle(CreateAppealMessageWithUserCommand request, 
+        public async Task<AppealMessageResponse> Handle(CreateAppealMessageWithUserCommand request,
             CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(u => u.Id == request.UserId && !u.IsDeleted);

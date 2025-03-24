@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace UseCases.Appeals.Messages.UpdateAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
 
 public record class UpdateAppealMessageCommand : IRequest<UpdateAppealMessageCommandResponse>
 {

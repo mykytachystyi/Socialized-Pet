@@ -1,5 +1,4 @@
-﻿using Domain.Users;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Infrastructure;
 using System.Net;
 using System.Net.Http.Headers;

@@ -6,14 +6,33 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using UseCases.Appeals.Messages.CreateAppealMessage;
-using UseCases.Appeals.Messages.DeleteAppealMessage;
-using UseCases.Appeals.Messages.UpdateAppealMessage;
+using UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
+using UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
+using UseCases.Appeals.Messages.Commands.CreateAppealMessage;
+using UseCases.Appeals.Messages.Models;
 
 namespace WebApiCompose.IntegrationTests.Controllers;
 
 public class AppealMessageControllerTests : IntegrationTestContext
 {
+    [Fact]
+    public async Task Get_ReturnEnumarableMessages()
+    {
+        // Arrange
+        var user = await CreateTestUser();
+        var token = await SetupUser(user);
+        var appeal = await CreateAppeal(user);
+        var appealMessage = await CreateMessage(appeal);
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await Client.GetAsync($"/1.0/AppealMessage/Get?appealId={appeal.Id}&since=0&count=1");
+        var result = await response.Content.ReadFromJsonAsync<IEnumerable<AppealMessageResponse>>();
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Should().HaveCount(1);
+    }
     [Fact]
     public async Task CreateAppeal_ReturnOk()
     {

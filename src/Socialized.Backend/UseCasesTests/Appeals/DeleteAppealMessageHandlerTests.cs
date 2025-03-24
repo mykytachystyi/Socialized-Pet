@@ -5,7 +5,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
-using UseCases.Appeals.Messages.DeleteAppealMessage;
+using UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals;

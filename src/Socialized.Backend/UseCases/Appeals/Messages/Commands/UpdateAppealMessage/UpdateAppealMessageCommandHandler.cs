@@ -4,18 +4,18 @@ using UseCases.Exceptions;
 using Domain.Appeals;
 using Infrastructure.Repositories;
 
-namespace UseCases.Appeals.Messages.UpdateAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
 
 public class UpdateAppealMessageCommandHandler(
     IRepository<AppealMessage> appealMessageRepository,
     ILogger logger
     ) : IRequestHandler<UpdateAppealMessageCommand, UpdateAppealMessageCommandResponse>
 {
-    public async Task<UpdateAppealMessageCommandResponse> Handle(UpdateAppealMessageCommand command, 
+    public async Task<UpdateAppealMessageCommandResponse> Handle(UpdateAppealMessageCommand command,
         CancellationToken cancellationToken)
     {
         logger.Information($"Оновлення повідомлення, id={command.MessageId}...");
-        
+
         var message = await appealMessageRepository.FirstOrDefaultAsync(m => m.Id == command.MessageId);
         if (message == null)
         {

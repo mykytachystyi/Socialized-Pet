@@ -2,7 +2,7 @@
 using UseCases.Appeals.Messages.Models;
 using UseCases.Appeals.Files.Models;
 
-namespace UseCases.Appeals.Messages.CreateAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.CreateAppealMessage;
 
 public record class CreateAppealMessageWithUserCommand : CreateAppealMessageCommand, IRequest<AppealMessageResponse>
 {

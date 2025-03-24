@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace UseCases.Appeals.Messages.UpdateAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
 
 public class UpdateAppealMessageCommandValidator : AbstractValidator<UpdateAppealMessageCommand>
 {

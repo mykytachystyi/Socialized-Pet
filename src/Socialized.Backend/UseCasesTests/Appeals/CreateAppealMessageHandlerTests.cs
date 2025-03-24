@@ -7,7 +7,7 @@ using Serilog;
 using System.Linq.Expressions;
 using UseCases.Appeals.Files.CreateAppealMessageFile;
 using UseCases.Appeals.Files.Models;
-using UseCases.Appeals.Messages.CreateAppealMessage;
+using UseCases.Appeals.Messages.Commands.CreateAppealMessage;
 using UseCases.Appeals.Messages.Models;
 using UseCases.Exceptions;
 

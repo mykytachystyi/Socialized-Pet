@@ -4,7 +4,7 @@ using UseCases.Exceptions;
 using Domain.Appeals;
 using Infrastructure.Repositories;
 
-namespace UseCases.Appeals.Messages.DeleteAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
 
 public class DeleteAppealMessageCommandHandler(
     IRepository<AppealMessage> appealMessageRepository,
@@ -12,7 +12,7 @@ public class DeleteAppealMessageCommandHandler(
     ) : IRequestHandler<DeleteAppealMessageCommand, DeleteAppealMessageResponse>
 {
     public async Task<DeleteAppealMessageResponse> Handle(
-        DeleteAppealMessageCommand request, 
+        DeleteAppealMessageCommand request,
         CancellationToken cancellationToken)
     {
         var message = await appealMessageRepository.FirstOrDefaultAsync(m => m.Id == request.MessageId);

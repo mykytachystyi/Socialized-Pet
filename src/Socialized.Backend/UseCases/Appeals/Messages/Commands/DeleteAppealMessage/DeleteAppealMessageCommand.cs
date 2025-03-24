@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace UseCases.Appeals.Messages.DeleteAppealMessage;
+namespace UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
 
 public class DeleteAppealMessageCommand : IRequest<DeleteAppealMessageResponse>
 {

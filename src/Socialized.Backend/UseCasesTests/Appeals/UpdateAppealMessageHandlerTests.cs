@@ -4,7 +4,7 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using Serilog;
 using System.Linq.Expressions;
-using UseCases.Appeals.Messages.UpdateAppealMessage;
+using UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
 using UseCases.Exceptions;
 
 namespace UseCasesTests.Appeals;
