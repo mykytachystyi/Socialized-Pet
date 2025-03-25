@@ -22,6 +22,7 @@ import {
   Grid
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
+import { API_ENDPOINTS } from '../config';
 
 interface Appeal {
   id: string;
@@ -49,7 +50,7 @@ const AdminAppeals = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:5217/1.0/Appeals/GetAppealsByAdmin', {
+        const response = await fetch(API_ENDPOINTS.appeals.getAppealsByAdmin(0, 100), {
           headers: {
             'Authorization': `Bearer ${token}`
           }

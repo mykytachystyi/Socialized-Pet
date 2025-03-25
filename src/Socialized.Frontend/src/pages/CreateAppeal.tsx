@@ -4,60 +4,49 @@ import {
   Container,
   Paper,
   Typography,
+  Box,
   TextField,
   Button,
-  Box,
-  Alert,
-  CircularProgress
+  Alert
 } from '@mui/material';
+import { API_ENDPOINTS } from '../config';
 
-const CreateAppeal = () => {
+export default function CreateAppeal() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
+    if (!subject.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Appeals/Create', {
+      const token = localStorage.getItem('token');
+      const response = await fetch(API_ENDPOINTS.appeals.create, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ 
-          subject
-        })
+        body: JSON.stringify({ subject })
       });
 
-      if (response.ok) {
-        navigate('/my-appeals');
-      } else {
-        const data = await response.json();
-        setError(data.message || 'Помилка при створенні звернення');
+      if (!response.ok) {
+        throw new Error('Помилка створення звернення');
       }
+
+      const data = await response.json();
+      navigate(`/appeals/${data.id}`);
     } catch (err) {
-      console.error('Помилка при створенні звернення:', err);
-      setError('Помилка сервера');
-    } finally {
-      setIsLoading(false);
+      setError('Помилка при створенні звернення');
     }
   };
 
   return (
     <Container maxWidth="md">
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
+      <Paper sx={{ p: 3, mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
           Створення нового звернення
         </Typography>
 
@@ -67,7 +56,7 @@ const CreateAppeal = () => {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
             fullWidth
             label="Тема"
@@ -75,29 +64,25 @@ const CreateAppeal = () => {
             onChange={(e) => setSubject(e.target.value)}
             margin="normal"
             required
-            disabled={isLoading}
           />
 
-          <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isLoading || !subject.trim()}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'Створити звернення'}
-            </Button>
+          <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
               variant="outlined"
-              onClick={() => navigate('/my-appeals')}
-              disabled={isLoading}
+              onClick={() => navigate('/appeals')}
             >
               Скасувати
             </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={!subject.trim()}
+            >
+              Створити звернення
+            </Button>
           </Box>
-        </form>
+        </Box>
       </Paper>
     </Container>
   );
-};
-
-export default CreateAppeal; 
+} 

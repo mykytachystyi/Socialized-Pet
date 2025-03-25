@@ -16,7 +16,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -38,7 +38,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/Registration', {
+      const response = await fetch(API_ENDPOINTS.users.registration, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const Register = () => {
     setResendSuccess('');
 
     try {
-        const response = await fetch('http://localhost:5217/1.0/Users/RegistrationEmail?email=' + resendEmail, {
+        const response = await fetch(API_ENDPOINTS.users.registrationEmail + '?email=' + resendEmail, {
         method: 'GET',
     });
 

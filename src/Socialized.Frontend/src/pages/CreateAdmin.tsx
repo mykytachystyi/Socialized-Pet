@@ -11,7 +11,7 @@ import {
   Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 const CreateAdmin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ const CreateAdmin = () => {
     
     try {
       const adminToken = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5217/1.0/Admins/Create', {
+      const response = await fetch(API_ENDPOINTS.admins.create, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

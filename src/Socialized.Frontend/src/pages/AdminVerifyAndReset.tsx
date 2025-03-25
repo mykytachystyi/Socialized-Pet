@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Alert, Paper } from '@mui/material';
-
+import { API_ENDPOINTS } from '../config';
 const AdminVerifyAndReset = () => {
   const navigate = useNavigate();
   const [recoveryCode, setRecoveryCode] = useState('');
@@ -28,7 +28,7 @@ const AdminVerifyAndReset = () => {
     setSuccess('');
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Admins/CheckRecoveryCode', {
+      const response = await fetch(API_ENDPOINTS.admins.checkRecoveryCode, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const AdminVerifyAndReset = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5217/1.0/Admins/ChangePassword', {
+      const response = await fetch(API_ENDPOINTS.admins.changePassword, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

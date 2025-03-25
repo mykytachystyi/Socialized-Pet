@@ -1,7 +1,5 @@
 import { Container, Box, Typography, Paper, Grid, Card, CardContent, Button } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import PeopleIcon from '@mui/icons-material/People';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useEffect } from 'react';
 

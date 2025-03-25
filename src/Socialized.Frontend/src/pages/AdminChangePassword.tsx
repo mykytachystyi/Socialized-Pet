@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
+import { API_ENDPOINTS } from '../config';
 
 const AdminChangePassword = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const AdminChangePassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Admins/ChangeOldPassword', {
+      const response = await fetch(API_ENDPOINTS.admins.changeOldPassword, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

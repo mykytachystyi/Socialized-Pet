@@ -13,7 +13,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +41,7 @@ const Profile = () => {
       }
       
       console.log(token);
-      const response = await fetch('http://localhost:5217/1.0/Users/Delete', {
+      const response = await fetch(API_ENDPOINTS.users.delete, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

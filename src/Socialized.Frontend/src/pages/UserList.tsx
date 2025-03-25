@@ -14,7 +14,7 @@ import {
   Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 interface User {
   id: string;
   email: string;
@@ -38,7 +38,7 @@ const UserList = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5217/1.0/Admins/GetUsers', {
+        const response = await fetch(API_ENDPOINTS.admins.getUsers, {
           headers: {
             'Authorization': `Bearer ${adminToken}`
           }

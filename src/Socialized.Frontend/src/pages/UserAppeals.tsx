@@ -19,7 +19,7 @@ import {
   Fab
 } from '@mui/material';
 import { Add, Visibility } from '@mui/icons-material';
-
+import { API_ENDPOINTS } from '../config';
 interface Appeal {
   id: string;
   subject: string;
@@ -43,7 +43,7 @@ const UserAppeals = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:5217/1.0/Appeals/GetAppealsByUser', {
+        const response = await fetch(API_ENDPOINTS.appeals.getAppealsByUser(0, 100), {
           headers: {
             'Authorization': `Bearer ${token}`
           }

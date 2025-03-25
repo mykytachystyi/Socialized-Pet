@@ -18,14 +18,23 @@ import {
   Grid,
   IconButton
 } from '@mui/material';
-import { ArrowBack, Send } from '@mui/icons-material';
+import { ArrowBack, Send, AttachFile } from '@mui/icons-material';
+import { API_ENDPOINTS } from '../config';
 
 interface Message {
-  id: string;
-  content: string;
+  id: number;
+  message: string;
   createdAt: string;
-  userId: string;
-  userEmail: string;
+  userId: number;
+  appealId: number;
+  updatedAt: string;
+  files?: FileInfo[];
+}
+
+interface FileInfo {
+  id: number;
+  messageId: number;
+  relativePath: string;
 }
 
 interface Appeal {
@@ -42,78 +51,101 @@ const AppealDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [appeal, setAppeal] = useState<Appeal | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAppeal = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await fetch(`http://localhost:5217/1.0/AppealMessage/Get?appealId=${id}&since=0&count=100`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setAppeal(data);
-          setMessages(data.messages || []);
-        } else if (response.status === 401) {
-          localStorage.removeItem('token');
-          navigate('/login');
-        } else {
-          const data = await response.json();
-          setError(data.message || 'Помилка при отриманні звернення');
-        }
-      } catch (err) {
-        console.error('Помилка при отриманні звернення:', err);
-        setError('Помилка сервера');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAppeal();
-  }, [id, navigate]);
+    fetchMessages();
+  }, [id]);
+
+  const fetchAppeal = async () => {
+    if (!id) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(API_ENDPOINTS.appeals.messages.list(Number(id)), {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Помилка завантаження звернення');
+      }
+      const data = await response.json();
+      setAppeal(data);
+    } catch (err) {
+      setError('Помилка при завантаженні звернення');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchMessages = async () => {
+    if (!id) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(API_ENDPOINTS.appeals.messages.list(Number(id)), {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Помилка завантаження повідомлень');
+      }
+      const data = await response.json();
+      setMessages(data);
+    } catch (err) {
+      setError('Помилка при завантаженні повідомлень');
+    }
+  };
 
   const handleSubmitMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    const token = localStorage.getItem('token');
-    if (!token || !newMessage.trim()) return;
+    if (!message.trim()) return;
 
     try {
-      const response = await fetch(`http://localhost:5217/1.0/AppealsMessage/Create?appealId=${id}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(API_ENDPOINTS.appeals.messages.create, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ text: newMessage })
+        body: JSON.stringify({ message, appealId: id })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(prev => [...prev, data]);
-        setNewMessage('');
-        setSuccess('Повідомлення додано');
-      } else {
-        const data = await response.json();
-        setError(data.message || 'Помилка при додаванні повідомлення');
+      if (!response.ok) {
+        throw new Error('Помилка відправки повідомлення');
       }
+
+      const responseMessage = await response.json();
+      setMessages([...messages, responseMessage]);
+      setMessage('');
+      setSuccess('Повідомлення відправлено');
     } catch (err) {
-      console.error('Помилка при додаванні повідомлення:', err);
-      setError('Помилка сервера');
+      setError('Помилка при відправці повідомлення');
+    }
+  };
+
+  const handleDeleteAppeal = async () => {
+    if (!id) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(API_ENDPOINTS.appeals.messages.delete(Number(id)), {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Помилка видалення звернення');
+      }
+
+      navigate('/appeals');
+    } catch (err) {
+      setError('Помилка при видаленні звернення');
     }
   };
 
@@ -243,20 +275,34 @@ const AppealDetails = () => {
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
-                    {message.userEmail[0].toUpperCase()}
+                    {message.userId}
                   </Avatar>
                   <Box>
                     <Typography variant="subtitle2" component="div">
-                      {message.userEmail}
+                      {message.userId}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {formatDate(message.createdAt)}
                     </Typography>
                   </Box>
                 </Box>
-                <Typography variant="body1" sx={{ ml: 7 }}>
-                  {message.content}
+                <Typography variant="body1" sx={{ mt: 1, ml: 7 }}>
+                  {message.message}
                 </Typography>
+                {message.files && message.files.length > 0 && (
+                  <Box sx={{ mt: 1, ml: 7, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {message.files.map((file) => (
+                      <Chip
+                        key={file.id}
+                        icon={<AttachFile />}
+                        label={file.relativePath.split('/').pop()}
+                        size="small"
+                        variant="outlined"
+                        sx={{ borderRadius: 1 }}
+                      />
+                    ))}
+                  </Box>
+                )}
               </ListItem>
             ))}
           </List>
@@ -277,13 +323,13 @@ const AppealDetails = () => {
               rows={2}
               variant="outlined"
               placeholder="Введіть ваше повідомлення..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
             />
             <IconButton 
               type="submit" 
               color="primary"
-              disabled={!newMessage.trim()}
+              disabled={!message.trim()}
               sx={{ alignSelf: 'flex-end' }}
             >
               <Send />

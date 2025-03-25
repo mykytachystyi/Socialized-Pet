@@ -4,7 +4,7 @@ import {
   Paper, Alert, CircularProgress 
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 const RecoveryPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const RecoveryPassword = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/RecoveryPassword?email=' + email, {
+      const response = await fetch(API_ENDPOINTS.users.recoveryPassword + '?email=' + email, {
         method: 'GET'
       });
 

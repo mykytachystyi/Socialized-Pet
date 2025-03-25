@@ -5,7 +5,7 @@ import {
   StepLabel 
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import { API_ENDPOINTS } from '../config';
 const VerifyAndReset = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,7 +34,7 @@ const VerifyAndReset = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/CheckRecoveryCode', {
+      const response = await fetch(API_ENDPOINTS.users.checkRecoveryCode, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, recoveryCode })
@@ -66,7 +66,7 @@ const VerifyAndReset = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/ChangePassword', {
+      const response = await fetch(API_ENDPOINTS.users.changePassword, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

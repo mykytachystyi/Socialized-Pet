@@ -20,7 +20,7 @@ const Home = () => {
           Ласкаво просимо до Socialized Pet
         </Typography>
         <Typography variant="h5" color="text.secondary" paragraph>
-          Ваша платформа для звернень та підтримки домашніх улюбленців
+          Ваша платформа для аналізу та прокачки ваших Instagram аккаунтів
         </Typography>
         <Box sx={{ mt: 4 }}>
           <Button

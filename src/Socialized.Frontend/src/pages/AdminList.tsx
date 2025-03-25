@@ -17,9 +17,10 @@ import {
   DialogActions,
   Alert
 } from '@mui/material';
+import { API_ENDPOINTS } from '../config';
 
 interface Admin {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
@@ -45,7 +46,7 @@ const AdminList = () => {
 
   const fetchAdmins = async () => {
     try {
-      const response = await fetch('http://localhost:5217/1.0/Admins/GetAdmins', {
+      const response = await fetch(API_ENDPOINTS.admins.getAdmins, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -76,7 +77,7 @@ const AdminList = () => {
 
     try {
       console.log('Відправка запиту на видалення адміністратора:', selectedAdmin);
-      const response = await fetch(`http://localhost:5217/1.0/Admins/Delete?adminId=${selectedAdmin.id}`, {
+      const response = await fetch(API_ENDPOINTS.admins.delete(selectedAdmin.id), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`

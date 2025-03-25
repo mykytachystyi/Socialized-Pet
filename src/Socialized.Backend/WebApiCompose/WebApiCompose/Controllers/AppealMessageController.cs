@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
 using MediatR;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using WebAPI.Controllers;
 using UseCases.Appeals.Messages.Commands.CreateAppealMessage;

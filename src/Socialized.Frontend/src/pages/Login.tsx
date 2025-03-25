@@ -10,6 +10,7 @@ import {
   Alert
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Login = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:5217/1.0/Users/Login', {
+      const response = await fetch(API_ENDPOINTS.users.login, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
