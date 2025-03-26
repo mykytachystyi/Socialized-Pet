@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.Json;
 using UseCases.Appeals.Messages.Commands.DeleteAppealMessage;
 using UseCases.Appeals.Messages.Commands.UpdateAppealMessage;
-using UseCases.Appeals.Messages.Commands.CreateAppealMessage;
 using UseCases.Appeals.Messages.Models;
 
 namespace WebApiCompose.IntegrationTests.Controllers;
@@ -33,21 +32,13 @@ public class AppealMessageControllerTests : IntegrationTestContext
         result.Should().HaveCount(1);
     }
     [Fact]
-    public async Task CreateAppeal_ReturnOk()
+    public async Task CreateAppealMessage_ReturnOk()
     {
         // Arrange
         var user = await CreateTestUser();
         var token = await SetupUser(user);
         var appeal = await CreateAppeal(user);
-        var command = new CreateAppealMessageCommand
-        {
-            Message = "Test message",
-            AppealId = appeal.Id
-        };
         var content = new MultipartFormDataContent();
-        var jsonContent = JsonSerializer.Serialize(command);
-        var commandContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        content.Add(commandContent, "commandJson");
 
         var fileContent = new ByteArrayContent(Encoding.UTF8.GetBytes("Test file content"));
         fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
@@ -57,7 +48,7 @@ public class AppealMessageControllerTests : IntegrationTestContext
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await Client.PostAsync("/1.0/AppealMessage/Create", content);
+        var response = await Client.PostAsync($"/1.0/AppealMessage/Create?appealId={appeal.Id}&message={"Test message"}", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -72,7 +63,7 @@ public class AppealMessageControllerTests : IntegrationTestContext
         files.Should().HaveCount(2);
     }
     [Fact]
-    public async Task UpdateAppeal_ReturnOk()
+    public async Task UpdateAppealMessage_ReturnOk()
     {
         // Arrange
         var user = await CreateTestUser();
@@ -98,7 +89,7 @@ public class AppealMessageControllerTests : IntegrationTestContext
         result!.Success.Should().BeTrue();
     }
     [Fact]
-    public async Task DeleteAppeal_ReturnOk()
+    public async Task DeleteAppealMessage_ReturnOk()
     {
         // Arrange
         var user = await CreateTestUser();
