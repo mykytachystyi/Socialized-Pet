@@ -16,7 +16,7 @@ services:
   backend_socalized:
     container_name: backend_socalized
     build:
-      context: ./WebApiCompose/WebApiCompose
+      context: ./src/Socialized.Backend/WebApiCompose/WebApiCompose
       dockerfile: Dockerfile
     image: ${DOCKER_REGISTRY-}webapicompose
     ports:

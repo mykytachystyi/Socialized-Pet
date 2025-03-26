@@ -400,3 +400,5 @@ Socialized/WebApiCompose/WebApiCompose/appsettings.json
 Socialized/WebApiCompose/WebApiCompose/appsettings.Development.json
 src/Socialized.Backend/WebApiCompose/WebApiCompose/appsettings.Development.json
 src/Socialized.Backend/WebApiCompose/WebApiCompose/appsettings.json
+src/Socialized.Backend/Socialized.API/appsettings.Development.json
+src/Socialized.Backend/Socialized.API/appsettings.json
