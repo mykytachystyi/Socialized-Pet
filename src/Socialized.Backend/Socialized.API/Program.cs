@@ -27,9 +27,6 @@ using UseCases.Users.DefaultUser.Commands.LoginUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -37,6 +34,13 @@ Log.Logger = new LoggerConfiguration()
 // Add services to the container.
 builder.Services.AddSerilog();
 builder.Services.AddSingleton(Log.Logger);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+Log.Logger.Information("Connection string: {connectionString}", connectionString);
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+
 builder.Services.AddMediatR(cfg => 
 {
     cfg.RegisterServicesFromAssembly(typeof(LoginUserCommand).Assembly);
@@ -140,6 +144,8 @@ using (var scopeDatabase  = app.Services.CreateScope())
     var dbContext = scopeDatabase.ServiceProvider.GetRequiredService<AppDbContext>();
 
     dbContext.Database.EnsureCreated();
+
+    Log.Logger.Information("Database created");
 }
 
 app.MapSwagger().RequireAuthorization();
@@ -150,8 +156,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigin");
 

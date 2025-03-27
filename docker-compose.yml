@@ -16,14 +16,28 @@ services:
   backend_socalized:
     container_name: backend_socalized
     build:
-      context: ./src/Socialized.Backend/WebApiCompose/WebApiCompose
+      context: ./src/Socialized.Backend/
       dockerfile: Dockerfile
-    image: ${DOCKER_REGISTRY-}webapicompose
+    image: ${DOCKER_REGISTRY-}socalized-api
     ports:
-        - "8000:80"
+        - "8080:8080"
     restart: on-failure
     environment:
       - ConnectionStrings__DefaultConnection=host=postgres_container;port=5432;database=socialized;username=mykyta;password=Pass1234!;Pooling=true;
+
+  frontend_socalized:
+    container_name: frontend_socalized
+    build:
+      context: ./src/Socialized.Frontend/
+      dockerfile: Dockerfile
+    image: ${DOCKER_REGISTRY-}socalized-frontend
+    ports:
+      - "5173:5173"
+    restart: on-failure
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    depends_on:
+      - backend_socalized
   
 volumes:
   socialized_db_data:
