@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Domain.Appeals;
 using Domain.Users;
 using UseCases.Appeals.Files.Models;
@@ -9,25 +9,27 @@ using UseCases.Users.DefaultUser.Models;
 
 namespace UseCases.Mapping
 {
-    public class MappingConfig : Profile
+    public class MappingConfig : IRegister
     {
-        public MappingConfig()
+        public void Register(TypeAdapterConfig config)
         {
+            config.NewConfig<User, UserResponse>();
+            config.NewConfig<User, UserResponse>();
 
-            CreateMap<User, UserResponse>();
-            CreateMap<UserResponse, User>();
+            config.NewConfig<User, LoginTokenResponse>();
+            config.NewConfig<LoginTokenResponse, UserResponse>();
 
-            CreateMap<User, LoginTokenResponse>();
-            CreateMap<LoginTokenResponse, User>();
+            config.NewConfig<User, LoginTokenResponse>();
+            config.NewConfig<LoginTokenResponse, UserResponse>();
 
-            CreateMap<Appeal, AppealResponse>();
-            CreateMap<AppealResponse, Appeal>();
+            config.NewConfig<Appeal, AppealResponse>();
+            config.NewConfig<AppealResponse, Appeal>();
 
-            CreateMap<AppealMessage, AppealMessageResponse>();
-            CreateMap<AppealMessageResponse, AppealMessage>();
+            config.NewConfig<AppealMessage, AppealMessageResponse>();
+            config.NewConfig<AppealMessageResponse, AppealMessage>();
 
-            CreateMap<AppealFileResponse, AppealFile>();
-            CreateMap<AppealFile, AppealFileResponse>();
+            config.NewConfig<AppealFileResponse, AppealFile>();
+            config.NewConfig<AppealFile, AppealFileResponse>();
         }
     }
 }

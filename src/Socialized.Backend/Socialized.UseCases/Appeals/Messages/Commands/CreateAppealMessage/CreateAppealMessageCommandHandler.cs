@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Domain.Appeals;
 using Domain.Users;
 using Infrastructure.Repositories;
@@ -16,7 +16,6 @@ namespace UseCases.Appeals.Messages.Commands.CreateAppealMessage
         IRepository<Appeal> appealRepository,
         IRepository<AppealMessage> appealMessageRepository,
         ILogger logger,
-        IMapper mapper,
         ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage
         ) : IRequestHandler<CreateAppealMessageWithUserCommand, AppealMessageResponse>
     {
@@ -47,7 +46,7 @@ namespace UseCases.Appeals.Messages.Commands.CreateAppealMessage
             {
                 message.Files = filesAdditionalToMessage.Create(request.Files, message);
             }
-            return mapper.Map<AppealMessageResponse>(message);
+            return message.Adapt<AppealMessageResponse>();
         }
     }
 }

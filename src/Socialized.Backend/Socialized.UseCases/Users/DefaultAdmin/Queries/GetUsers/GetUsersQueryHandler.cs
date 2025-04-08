@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Domain.Users;
 using Infrastructure.Repositories;
 using MediatR;
@@ -10,8 +10,7 @@ namespace UseCases.Users.DefaultAdmin.Queries.GetUsers;
 
 public class GetUsersQueryHandler(
     ILogger logger,
-    IRepository<User> userRepository,
-    IMapper mapper
+    IRepository<User> userRepository
     ) : IRequestHandler<GetUsersQuery, IEnumerable<UserResponse>>
 {
     public async Task<IEnumerable<UserResponse>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
@@ -25,6 +24,6 @@ public class GetUsersQueryHandler(
                 .Take(request.Count)
                 .ToArrayAsync();
 
-        return mapper.Map<List<UserResponse>>(usersArray);
+        return usersArray.Adapt<List<UserResponse>>();
     }
 }

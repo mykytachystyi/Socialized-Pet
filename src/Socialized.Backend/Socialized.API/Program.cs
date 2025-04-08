@@ -24,6 +24,7 @@ using UseCases.Mapping;
 using UseCases.Users.DefaultUser.Emails;
 using UseCases.Users.DefaultAdmin.Emails;
 using UseCases.Users.DefaultUser.Commands.LoginUser;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +77,9 @@ builder.Services.AddScoped<IAppealQueryRepository, AppealQueryRepository>();
 
 builder.Services.AddScoped<ICreateAppealFilesAdditionalToMessage, CreateAppealMessageFileCommandHandler>();
 
-builder.Services.AddAutoMapper(typeof(MappingConfig).Assembly);
+var config = TypeAdapterConfig.GlobalSettings;
+    config.Scan(typeof(MappingConfig).Assembly);
+builder.Services.AddSingleton(config);
 
 builder.Services.AddCors(options =>
 {
@@ -94,7 +97,7 @@ builder.Services.AddAuthentication(option =>
 })
 .AddJwtBearer(jwtOption =>
 {
-    var key = builder.Configuration.GetValue<string>("JwtConfig:Key");
+    var key = builder.Configuration.GetValue<string>("JwtConfig:Key") ?? "";
     var keyBytes = Encoding.ASCII.GetBytes(key);
     jwtOption.SaveToken = true;
     jwtOption.TokenValidationParameters = new TokenValidationParameters

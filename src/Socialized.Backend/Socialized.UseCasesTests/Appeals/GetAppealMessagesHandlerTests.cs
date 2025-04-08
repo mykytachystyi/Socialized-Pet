@@ -1,12 +1,9 @@
-﻿using AutoMapper;
-using Domain.Appeals;
+﻿using Domain.Appeals;
 using FluentAssertions;
 using Infrastructure.Repositories;
 using Serilog;
 using NSubstitute;
-using UseCases.Appeals.Messages.Models;
 using UseCases.Appeals.Messages.Queries.GetAppealMessages;
-using Microsoft.EntityFrameworkCore;
 
 namespace UseCasesTests.Appeals;
 
@@ -18,8 +15,7 @@ public class GetAppealMessagesHandlerTests
         // Arrange
         var logger = Substitute.For<ILogger>();
         var repository = Substitute.For<IRepository<AppealMessage>>();
-        var mapper = Substitute.For<IMapper>();
-        var handler = new GetAppealMessagesHandler(logger, repository, mapper);
+        var handler = new GetAppealMessagesHandler(logger, repository);
         var request = new GetAppealMessagesCommand
         {
             AppealId = 1,
@@ -34,12 +30,6 @@ public class GetAppealMessagesHandlerTests
         }.AsQueryable();
         repository.AsNoTracking().Returns(messages);
 
-        mapper.Map<List<AppealMessageResponse>>(Arg.Any<Array>())
-            .Returns(new List<AppealMessageResponse>
-            {
-                new AppealMessageResponse { Id = 1, Message = "Message 1" },
-                new AppealMessageResponse { Id = 2, Message = "Message 2" }
-            });
         // Act
         var result = await handler.Handle(request, CancellationToken.None);
         // Assert

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Appeals;
+﻿using Domain.Appeals;
 using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
@@ -29,7 +28,6 @@ namespace UseCasesTests.Appeals
         private IRepository<Appeal> appealRepository = Substitute.For<IRepository<Appeal>>();
         private IRepository<AppealMessage> appealMessageRepository = Substitute.For<IRepository<AppealMessage>>();
         private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
-        private IMapper mapper = Substitute.For<IMapper>();
         private ICreateAppealFilesAdditionalToMessage filesAdditionalToMessage = Substitute.For<ICreateAppealFilesAdditionalToMessage>();
 
         [Fact]
@@ -37,7 +35,7 @@ namespace UseCasesTests.Appeals
         {
             // Arrange
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository,
-                appealMessageRepository, logger, mapper, filesAdditionalToMessage);
+                appealMessageRepository, logger, filesAdditionalToMessage);
             var command = new CreateAppealMessageWithUserCommand
             {
                 AppealId = 1,
@@ -54,7 +52,7 @@ namespace UseCasesTests.Appeals
         {
             // Arrange
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository, 
-                appealMessageRepository, logger, mapper, filesAdditionalToMessage);
+                appealMessageRepository, logger, filesAdditionalToMessage);
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(new User());
             var command = new CreateAppealMessageWithUserCommand
             {
@@ -77,12 +75,11 @@ namespace UseCasesTests.Appeals
                 Files = new List<FileDto> { File }
             };
             var response = new AppealMessageResponse { AppealId = command.AppealId, Message = command.Message };
-            mapper.Map<AppealMessageResponse>(null).ReturnsForAnyArgs(response);
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(new User());
             appealRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<Appeal, bool>>?>()).Returns(new Appeal { Id = command.AppealId });
 
             var handler = new CreateAppealMessageCommandHandler(userRepository, appealRepository,
-                appealMessageRepository, logger, mapper, filesAdditionalToMessage);
+                appealMessageRepository, logger, filesAdditionalToMessage);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);

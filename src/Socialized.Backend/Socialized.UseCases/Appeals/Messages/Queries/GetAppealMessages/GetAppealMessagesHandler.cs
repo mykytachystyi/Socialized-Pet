@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Domain.Appeals;
 using Infrastructure.Repositories;
 using MediatR;
@@ -10,8 +10,7 @@ namespace UseCases.Appeals.Messages.Queries.GetAppealMessages;
 
 public class GetAppealMessagesHandler (
     ILogger logger,
-    IRepository<AppealMessage> appealMessageRepository,
-    IMapper mapper
+    IRepository<AppealMessage> appealMessageRepository
     )
     : IRequestHandler<GetAppealMessagesCommand, IEnumerable<AppealMessageResponse>>
 {
@@ -30,6 +29,6 @@ public class GetAppealMessagesHandler (
 
         logger.Information($"Getting appeal messages for appeal {request.AppealId}.");
 
-        return Task.FromResult<IEnumerable<AppealMessageResponse>>(mapper.Map<List<AppealMessageResponse>>(messages));
+        return Task.FromResult<IEnumerable<AppealMessageResponse>>(messages.Adapt<List<AppealMessageResponse>>());
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Serilog;
-using AutoMapper;
+using Mapster;
 using UseCases.Appeals.Models;
 using Domain.Appeals.Repositories;
 
@@ -8,8 +8,7 @@ namespace UseCases.Appeals.Queries.GetAppealsByUser;
 
 public class GetAppealsByUserQueryHandler(
     ILogger logger,
-    IAppealQueryRepository appealRepository,
-    IMapper mapper) : IRequestHandler<GetAppealsByUserQuery, IEnumerable<AppealResponse>>
+    IAppealQueryRepository appealRepository) : IRequestHandler<GetAppealsByUserQuery, IEnumerable<AppealResponse>>
 {
     public async Task<IEnumerable<AppealResponse>> Handle(GetAppealsByUserQuery request, 
         CancellationToken cancellationToken)
@@ -18,6 +17,6 @@ public class GetAppealsByUserQueryHandler(
 
         var appeals = await appealRepository.GetAppealsByAsync(request.UserId, request.Since, request.Count);
 
-        return mapper.Map<List<AppealResponse>>(appeals);
+        return appeals.Adapt<List<AppealResponse>>();
     }
 }

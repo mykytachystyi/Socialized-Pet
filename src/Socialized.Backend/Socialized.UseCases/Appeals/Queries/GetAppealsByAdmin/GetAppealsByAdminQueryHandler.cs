@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using Domain.Appeals;
 using Infrastructure.Repositories;
 using MediatR;
@@ -10,8 +10,7 @@ namespace UseCases.Appeals.Queries.GetAppealsByAdmin;
 
 public class GetAppealsByAdminQueryHandler (
     IRepository<Appeal> appealRepository,
-    ILogger logger,
-    IMapper mapper) : IRequestHandler<GetAppealsByAdminQuery, IEnumerable<AppealResponse>>
+    ILogger logger) : IRequestHandler<GetAppealsByAdminQuery, IEnumerable<AppealResponse>>
 {
     public async Task<IEnumerable<AppealResponse>> Handle(GetAppealsByAdminQuery request, 
         CancellationToken cancellationToken)
@@ -26,6 +25,6 @@ public class GetAppealsByAdminQueryHandler (
 
         logger.Information($"Отримано список адміном, з={request.Since} по={request.Count}.");
 
-        return mapper.Map<List<AppealResponse>>(appealArray);
+        return appealArray.Adapt<List<AppealResponse>>();
     }
 }

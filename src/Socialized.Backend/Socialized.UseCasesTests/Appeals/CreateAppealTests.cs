@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Appeals;
+﻿using Domain.Appeals;
 using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
@@ -17,17 +16,15 @@ namespace UseCasesTests.Appeals
         private ILogger logger = Substitute.For<ILogger>();
         private IRepository<Appeal> appealRepository = Substitute.For<IRepository<Appeal>>();
         private IRepository<User> userRepository = Substitute.For<IRepository<User>>();
-        private IMapper mapper = Substitute.For<IMapper>();
-
+        
         [Fact]
         public async Task Create_WhenUserTokenAndIdIsValid_ReturnMessage()
         {
             // Arrange
             var command = new CreateAppealWithUserCommand { Subject = "Test", UserId = 1 };
             var response = new AppealResponse { Subject = command.Subject, State = 1 };
-            mapper.Map<AppealResponse>(null).ReturnsForAnyArgs(response);
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).Returns(new User { Id = 1 });
-            var handler = new CreateAppealCommandHandler(appealRepository, userRepository, logger, mapper);
+            var handler = new CreateAppealCommandHandler(appealRepository, userRepository, logger);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -42,7 +39,7 @@ namespace UseCasesTests.Appeals
             // Arrange
             var command = new CreateAppealWithUserCommand { Subject = "Test", UserId = 1 };
             userRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<User, bool>>?>()).ReturnsNull();
-            var handler = new CreateAppealCommandHandler(appealRepository, userRepository, logger, mapper);
+            var handler = new CreateAppealCommandHandler(appealRepository, userRepository, logger);
 
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(command, CancellationToken.None));

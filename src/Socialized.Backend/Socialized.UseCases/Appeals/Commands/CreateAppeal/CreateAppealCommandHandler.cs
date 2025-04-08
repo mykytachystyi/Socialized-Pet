@@ -4,7 +4,7 @@ using Domain.Users;
 using MediatR;
 using System.Web;
 using UseCases.Exceptions;
-using AutoMapper;
+using Mapster;
 using UseCases.Appeals.Models;
 using Infrastructure.Repositories;
 
@@ -13,8 +13,7 @@ namespace UseCases.Appeals.Commands.CreateAppeal;
 public class CreateAppealCommandHandler(
     IRepository<Appeal> appealRepository,
     IRepository<User> userRepository,
-    ILogger logger,
-    IMapper mapper
+    ILogger logger
     ) : IRequestHandler<CreateAppealWithUserCommand, AppealResponse>
 {
     public async Task<AppealResponse> Handle(CreateAppealWithUserCommand request, CancellationToken cancellationToken)
@@ -37,6 +36,6 @@ public class CreateAppealCommandHandler(
         await appealRepository.AddAsync(appeal);
 
         logger.Information($"Було створенно нова заява, id={appeal.Id}.");
-        return mapper.Map<AppealResponse>(appeal);
+        return appeal.Adapt<AppealResponse>();
     }
 }

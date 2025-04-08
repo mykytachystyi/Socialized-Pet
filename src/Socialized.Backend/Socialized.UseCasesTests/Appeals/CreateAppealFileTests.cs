@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Core.FileControl.CurrentFileSystem;
+﻿using Core.FileControl.CurrentFileSystem;
 using Domain.Appeals;
-using Domain.Users;
 using Infrastructure.Repositories;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -16,7 +14,6 @@ namespace UseCasesTests.Appeals
     public class CreateAppealFileTests
     {
         private int messageId = 1;
-        private IMapper mapper = Substitute.For<IMapper>();
         private ILogger logger = Substitute.For<ILogger>();
         private IFileManager fileManager = Substitute.For<IFileManager>();
         private IRepository<AppealFile> appealFileRepository = Substitute.For<IRepository<AppealFile>>();
@@ -39,7 +36,7 @@ namespace UseCasesTests.Appeals
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .Returns(new AppealMessage());
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
-                appealFileRepository, mapper);
+                appealFileRepository);
             var command = new CreateAppealMessageFileCommand
             {
                 MessageId = messageId,
@@ -59,9 +56,8 @@ namespace UseCasesTests.Appeals
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .Returns(new AppealMessage());
             var appealFile = new AppealFileResponse { Id = 1, MessageId = 1, RelativePath = "" };
-            mapper.Map<IEnumerable<AppealFileResponse>>(null).ReturnsForAnyArgs(new List<AppealFileResponse> { appealFile });
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
-                appealFileRepository, mapper);
+                appealFileRepository);
             var command = new CreateAppealMessageFileCommand
             {
                 MessageId = messageId,
@@ -81,7 +77,7 @@ namespace UseCasesTests.Appeals
             messageRepository.FirstOrDefaultAsync(Arg.Any<Expression<Func<AppealMessage, bool>>?>())
                 .ReturnsNull();
             var handler = new CreateAppealMessageFileCommandHandler(fileManager, logger, messageRepository,
-                appealFileRepository, mapper);
+                appealFileRepository);
 
             var command = new CreateAppealMessageFileCommand
             {
