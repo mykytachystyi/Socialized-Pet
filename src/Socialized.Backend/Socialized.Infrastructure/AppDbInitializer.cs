@@ -16,6 +16,8 @@ namespace Infrastructure
             {
                 var context = services.GetRequiredService<AppDbContext>();
 
+                context.Database.EnsureCreated();
+
                 var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
 
                 if (pendingMigrations.Any())

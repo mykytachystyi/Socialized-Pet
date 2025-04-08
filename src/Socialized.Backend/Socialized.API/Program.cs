@@ -139,15 +139,6 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-using (var scopeDatabase  = app.Services.CreateScope())
-{
-    var dbContext = scopeDatabase.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    dbContext.Database.EnsureCreated();
-
-    Log.Logger.Information("Database created");
-}
-
 app.MapSwagger().RequireAuthorization();
 
 // Configure the HTTP request pipeline.System.ArgumentException: 'Couldn't set user Arg_ParamName_Name
