@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config';
+
 const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -34,13 +35,11 @@ const Profile = () => {
 
     try {
       const token = localStorage.getItem('token');
-      console.log('Delete account token:', token);
       if (!token) {
         navigate('/login');
         return;
       }
       
-      console.log(token);
       const response = await fetch(API_ENDPOINTS.users.delete, {
         method: 'DELETE',
         headers: {
@@ -73,10 +72,11 @@ const Profile = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box
         sx={{
           marginTop: 8,
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -87,12 +87,13 @@ const Profile = () => {
           sx={{ 
             padding: 4, 
             width: '100%',
+            maxWidth: '500px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center'
           }}
         >
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" gutterBottom>
             Профіль користувача
           </Typography>
           {error && (
@@ -105,13 +106,13 @@ const Profile = () => {
               {success}
             </Alert>
           )}
-          <Box sx={{ mt: 1, width: '100%' }}>
+          <Box sx={{ mt: 3, width: '100%' }}>
             <Button
               fullWidth
               variant="contained"
               component={Link}
               to="/create-appeal"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mb: 2 }}
             >
               Створити звернення
             </Button>
@@ -120,7 +121,7 @@ const Profile = () => {
               variant="contained"
               component={Link}
               to="/my-appeals"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mb: 2 }}
             >
               Мої звернення
             </Button>
@@ -129,7 +130,7 @@ const Profile = () => {
               variant="contained"
               color="error"
               onClick={() => setShowDeleteDialog(true)}
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mb: 2 }}
             >
               Видалити акаунт
             </Button>

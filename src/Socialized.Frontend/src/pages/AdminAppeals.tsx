@@ -116,11 +116,11 @@ const AdminAppeals = () => {
   const getStatusColor = (state: number) => {
     switch (state) {
       case 0:
-        return 'warning';
+        return 'all';
       case 1:
-        return 'info';
+        return 'pending';
       case 2:
-        return 'success';
+        return 'in progress';
       default:
         return 'default';
     }

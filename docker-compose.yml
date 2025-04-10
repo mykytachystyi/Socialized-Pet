@@ -13,8 +13,8 @@ services:
     volumes:
       - socialized_db_data:/var/lib/postgresql/data
     
-  backend_socalized:
-    container_name: backend_socalized
+  backend_socialized:
+    container_name: backend_socialized
     build:
       context: ./src/Socialized.Backend/
       dockerfile: Dockerfile
@@ -23,10 +23,10 @@ services:
         - "8080:8080"
     restart: on-failure
     environment:
-      - ConnectionStrings__DefaultConnection=host=postgres_container;port=5432;database=socialized;username=mykyta;password=Pass1234!;Pooling=true;
+      - ConnectionStrings__DefaultConnection=host=socialized-db-server.postgres.database.azure.com;Port=5432;Database=socialized;Username=mykyta;Password=Pass1234!;Pooling=true;
 
-  frontend_socalized:
-    container_name: frontend_socalized
+  frontend_socialized:
+    container_name: frontend_socialized
     build:
       context: ./src/Socialized.Frontend/
       dockerfile: Dockerfile
@@ -37,7 +37,7 @@ services:
     environment:
       - REACT_APP_API_URL=http://localhost:8080
     depends_on:
-      - backend_socalized
+      - backend_socialized
   
 volumes:
   socialized_db_data:

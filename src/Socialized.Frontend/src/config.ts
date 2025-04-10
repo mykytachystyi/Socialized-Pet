@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:8080/';
+export const API_URL = 'http://localhost:5217/';
 export const API_VERSION = '1.0';
 export const API_BASE_URL = API_URL + API_VERSION;
 

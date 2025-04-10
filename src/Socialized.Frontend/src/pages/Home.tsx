@@ -4,7 +4,7 @@ import { Pets, Support, Security, Speed } from '@mui/icons-material';
 
 const Home = () => {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {/* Hero Section */}
       <Box
         sx={{
@@ -14,10 +14,11 @@ const Home = () => {
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
+          width: '100%',
         }}
       >
         <Typography variant="h2" component="h1" gutterBottom>
-          Ласкаво просимо до Socialized Pet
+          Ласкаво просимо до Socialized
         </Typography>
         <Typography variant="h5" color="text.secondary" paragraph>
           Ваша платформа для аналізу та прокачки ваших Instagram аккаунтів
@@ -45,7 +46,7 @@ const Home = () => {
       </Box>
 
       {/* Features Section */}
-      <Grid container spacing={4} sx={{ mb: 8 }}>
+      <Grid container spacing={4} sx={{ width: '100%', justifyContent: 'center' }}>
         <Grid item xs={12} md={3}>
           <Paper
             elevation={3}
@@ -60,10 +61,10 @@ const Home = () => {
           >
             <Pets sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
             <Typography variant="h6" gutterBottom>
-              Домашні улюбленці
+              Instagram аккаунти
             </Typography>
             <Typography color="text.secondary">
-              Створюйте звернення та отримуйте підтримку для ваших улюбленців
+              Звертайтеся до підтримки
             </Typography>
           </Paper>
         </Grid>
@@ -141,6 +142,7 @@ const Home = () => {
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
+          width: '100%',
         }}
       >
         <Paper
@@ -156,7 +158,7 @@ const Home = () => {
             Готові почати?
           </Typography>
           <Typography variant="h6" paragraph>
-            Приєднуйтесь до нашої спільноти та отримуйте підтримку для ваших улюбленців
+            Приєднуйтесь до нашої спільноти та отримуйте підтримку для ваших Instagram аккаунтів
           </Typography>
           <Button
             component={Link}

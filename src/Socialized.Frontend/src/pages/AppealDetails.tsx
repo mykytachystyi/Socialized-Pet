@@ -189,132 +189,143 @@ const AppealDetails = () => {
           marginTop: 4,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
+          height: 'calc(100vh - 100px)',
         }}
       >
         <Paper 
           elevation={3} 
           sx={{ 
-            padding: 4, 
+            padding: 2,
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center'
+            height: '100%',
+            position: 'relative'
           }}
         >
-          <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', mb: 3 }}>
+          <Box sx={{ 
+            width: '100%', 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: 2,
+            borderBottom: 1,
+            borderColor: 'divider',
+            pb: 2
+          }}>
             <IconButton onClick={() => navigate('/my-appeals')} sx={{ mr: 2 }}>
               <ArrowBack />
             </IconButton>
-            <Typography variant="h5" component="h1">
-              Звернення #{appeal.id}
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h4" gutterBottom>
-              Деталі звернення #{id}
-            </Typography>
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => navigate(`/appeal/${id}/messages`)}
-            >
-              Переглянути повідомлення
-            </Button>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h6" component="h1">
+                Звернення #{appeal.id}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {appeal.subject}
+              </Typography>
+            </Box>
+            <Chip 
+              label={appeal.state} 
+              color={getStatusColor(appeal.state)}
+              size="small"
+            />
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
+          
           {success && (
-            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+            <Alert severity="success" sx={{ mb: 2 }}>
               {success}
             </Alert>
           )}
-          
-          <Grid container spacing={3} sx={{ width: '100%', mb: 3 }}>
-            <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>
-                Тема: {appeal.subject}
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
-                <Chip 
-                  label={appeal.state} 
-                  color={getStatusColor(appeal.state)}
-                  size="small"
-                />
-                <Typography variant="body2" color="text.secondary">
-                  Створено: {formatDate(appeal.createdAt)}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Оновлено: {formatDate(appeal.updatedAt)}
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
 
-          <Divider sx={{ width: '100%', my: 3 }} />
-
-          <Typography variant="h6" gutterBottom sx={{ alignSelf: 'flex-start' }}>
-            Повідомлення
-          </Typography>
-          <List sx={{ width: '100%' }}>
+          <Box sx={{ 
+            flex: 1, 
+            overflowY: 'auto',
+            mb: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}>
             {messages.map((message) => (
-              <ListItem 
-                key={message.id} 
-                divider
+              <Box
+                key={message.id}
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  py: 2
+                  alignItems: message.userId === 1 ? 'flex-end' : 'flex-start',
+                  maxWidth: '70%',
+                  alignSelf: message.userId === 1 ? 'flex-end' : 'flex-start',
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Avatar sx={{ mr: 1, bgcolor: 'primary.main' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    mb: 0.5,
+                    gap: 1
+                  }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      width: 24, 
+                      height: 24,
+                      bgcolor: message.userId === 1 ? 'primary.main' : 'secondary.main'
+                    }}
+                  >
                     {message.userId}
                   </Avatar>
-                  <Box>
-                    <Typography variant="subtitle2" component="div">
-                      {message.userId}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(message.createdAt)}
-                    </Typography>
-                  </Box>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatDate(message.createdAt)}
+                  </Typography>
                 </Box>
-                <Typography variant="body1" sx={{ mt: 1, ml: 7 }}>
-                  {message.message}
-                </Typography>
-                {message.files && message.files.length > 0 && (
-                  <Box sx={{ mt: 1, ml: 7, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {message.files.map((file) => (
-                      <Chip
-                        key={file.id}
-                        icon={<AttachFile />}
-                        label={file.relativePath.split('/').pop()}
-                        size="small"
-                        variant="outlined"
-                        sx={{ borderRadius: 1 }}
-                      />
-                    ))}
-                  </Box>
-                )}
-              </ListItem>
+                <Paper
+                  elevation={1}
+                  sx={{
+                    p: 2,
+                    bgcolor: message.userId === 1 ? 'primary.light' : 'grey.100',
+                    color: message.userId === 1 ? 'primary.contrastText' : 'text.primary',
+                    borderRadius: 2
+                  }}
+                >
+                  <Typography variant="body1">
+                    {message.message}
+                  </Typography>
+                  {message.files && message.files.length > 0 && (
+                    <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {message.files.map((file) => (
+                        <Chip
+                          key={file.id}
+                          icon={<AttachFile />}
+                          label={file.relativePath.split('/').pop()}
+                          size="small"
+                          variant="outlined"
+                          sx={{ 
+                            borderRadius: 1,
+                            bgcolor: 'background.paper'
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                </Paper>
+              </Box>
             ))}
-          </List>
+          </Box>
 
-          <Box 
-            component="form" 
-            onSubmit={handleSubmitMessage} 
-            sx={{ 
-              width: '100%', 
-              mt: 3,
+          <Box
+            component="form"
+            onSubmit={handleSubmitMessage}
+            sx={{
+              width: '100%',
               display: 'flex',
-              gap: 2
+              gap: 1,
+              borderTop: 1,
+              borderColor: 'divider',
+              pt: 2
             }}
           >
             <TextField
@@ -325,9 +336,14 @@ const AppealDetails = () => {
               placeholder="Введіть ваше повідомлення..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2
+                }
+              }}
             />
-            <IconButton 
-              type="submit" 
+            <IconButton
+              type="submit"
               color="primary"
               disabled={!message.trim()}
               sx={{ alignSelf: 'flex-end' }}

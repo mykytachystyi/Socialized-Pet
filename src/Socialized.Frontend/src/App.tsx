@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline, Box, Container } from '@mui/material';
 import theme from './theme';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,6 +22,8 @@ import AppealDetails from './pages/AppealDetails';
 import AppealMessages from './pages/AppealMessages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,85 +36,29 @@ function App() {
     setIsAdmin(!!adminToken);
   }, []);
 
+  const handleLogout = () => {
+    if (isAdmin) {
+      localStorage.removeItem('adminToken');
+      setIsAdmin(false);
+    } else {
+      localStorage.removeItem('token');
+      setIsAuthenticated(false);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <AppBar position="static" color="primary" elevation={0}>
-            <Toolbar>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Socialized Pet
-              </Typography>
-              {isAdmin ? (
-                <Box>
-                  <Button color="inherit" component={Link} to="/admin/dashboard">
-                    Панель адміністратора
-                  </Button>
-                  <Button color="inherit" component={Link} to="/admin/users">
-                    Користувачі
-                  </Button>
-                  <Button color="inherit" component={Link} to="/admin/admins">
-                    Адміністратори
-                  </Button>
-                  <Button color="inherit" component={Link} to="/admin/appeals">
-                    Звернення
-                  </Button>
-                  <Button color="inherit" component={Link} to="/admin/create">
-                    Створити адміністратора
-                  </Button>
-                  <Button color="inherit" component={Link} to="/admin/change-password">
-                    Змінити пароль
-                  </Button>
-                  <Button 
-                    color="inherit" 
-                    component={Link} 
-                    to="/admin/login"
-                    onClick={() => {
-                      localStorage.removeItem('adminToken');
-                      setIsAdmin(false);
-                    }}
-                  >
-                    Вийти
-                  </Button>
-                </Box>
-              ) : isAuthenticated ? (
-                <Box>
-                  <Button color="inherit" component={Link} to="/profile">
-                    Профіль
-                  </Button>
-                  <Button color="inherit" component={Link} to="/">
-                    Головна
-                  </Button>
-                  <Button 
-                    color="inherit" 
-                    component={Link} 
-                    to="/login"
-                    onClick={() => {
-                      localStorage.removeItem('token');
-                      setIsAuthenticated(false);
-                    }}
-                  >
-                    Вийти
-                  </Button>
-                </Box>
-              ) : (
-                <Box>
-                  <Button color="inherit" component={Link} to="/login">
-                    Увійти
-                  </Button>
-                  <Button color="inherit" component={Link} to="/register">
-                    Зареєструватися
-                  </Button>
-                  <Button color="inherit" component={Link} to="/">
-                    Головна
-                  </Button>
-                </Box>
-              )}
-            </Toolbar>
-          </AppBar>
-          <Box 
+          <Header 
+            isAuthenticated={isAuthenticated}
+            isAdmin={isAdmin}
+            onLogout={handleLogout}
+          />
+          <Container 
             component="main" 
+            maxWidth="lg"
             sx={{ 
               flexGrow: 1,
               width: '100%',
@@ -147,7 +93,8 @@ function App() {
               <Route path="/appeal/:id/messages" element={<ProtectedRoute><AppealMessages /></ProtectedRoute>} />
               <Route path="/admin/appeals" element={<AdminAppeals />} />
             </Routes>
-          </Box>
+          </Container>
+          <Footer />
         </Box>
       </Router>
     </ThemeProvider>

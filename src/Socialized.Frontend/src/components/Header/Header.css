@@ -1,0 +1,29 @@
+.header {
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+}
+
+.logo {
+  font-weight: 600;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .nav-buttons {
+    gap: 4px;
+  }
+  
+  .nav-buttons button {
+    padding: 4px 8px;
+    font-size: 0.875rem;
+  }
+} 
