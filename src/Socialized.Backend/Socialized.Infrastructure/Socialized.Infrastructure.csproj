@@ -23,12 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Socialized.Core\Socialized.Core.csproj" />
-    <ProjectReference Include="..\Socialized.Domain\Socialized.Domain.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\Socialized.Core\Socialized.Core.csproj" />
+    <ProjectReference Include="..\Socialized.Domain\Socialized.Domain.csproj" />
   </ItemGroup>
 
 </Project>

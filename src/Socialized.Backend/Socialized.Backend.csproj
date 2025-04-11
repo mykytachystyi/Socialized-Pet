@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7067a86a-8315-47cb-8644-f5a26dadc87a</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Socialized.API.IntegrationTests\**" />
+    <Compile Remove="Socialized.Core\**" />
+    <Compile Remove="Socialized.Domain\**" />
+    <Compile Remove="Socialized.Infrastructure\**" />
+    <Compile Remove="Socialized.UseCasesTests\**" />
+    <Compile Remove="Socialized.UseCases\**" />
+    <Content Remove="Socialized.API.IntegrationTests\**" />
+    <Content Remove="Socialized.Core\**" />
+    <Content Remove="Socialized.Domain\**" />
+    <Content Remove="Socialized.Infrastructure\**" />
+    <Content Remove="Socialized.UseCasesTests\**" />
+    <Content Remove="Socialized.UseCases\**" />
+    <EmbeddedResource Remove="Socialized.API.IntegrationTests\**" />
+    <EmbeddedResource Remove="Socialized.Core\**" />
+    <EmbeddedResource Remove="Socialized.Domain\**" />
+    <EmbeddedResource Remove="Socialized.Infrastructure\**" />
+    <EmbeddedResource Remove="Socialized.UseCasesTests\**" />
+    <EmbeddedResource Remove="Socialized.UseCases\**" />
+    <None Remove="Socialized.API.IntegrationTests\**" />
+    <None Remove="Socialized.Core\**" />
+    <None Remove="Socialized.Domain\**" />
+    <None Remove="Socialized.Infrastructure\**" />
+    <None Remove="Socialized.UseCasesTests\**" />
+    <None Remove="Socialized.UseCases\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.8.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Socialized.UseCases\Socialized.UseCases.csproj" />
+  </ItemGroup>
+
+</Project>

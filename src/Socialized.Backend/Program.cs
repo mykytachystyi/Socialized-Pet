@@ -29,9 +29,7 @@ using Mapster;
 var builder = WebApplication.CreateBuilder(args);
 
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateLogger();
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 // Add services to the container.
 builder.Services.AddSerilog();
 builder.Services.AddSingleton(Log.Logger);
