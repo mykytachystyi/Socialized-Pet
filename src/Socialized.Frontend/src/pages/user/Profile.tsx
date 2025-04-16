@@ -13,7 +13,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 
 const Profile = () => {
   const navigate = useNavigate();

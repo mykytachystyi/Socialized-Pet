@@ -13,7 +13,7 @@ import {
   IconButton
 } from '@mui/material';
 import { ArrowBack, Send, AttachFile } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 
 interface Message {
   id: number;

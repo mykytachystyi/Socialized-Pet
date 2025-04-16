@@ -22,7 +22,7 @@ import {
   useTheme
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon, Send as SendIcon, CloudUpload as CloudUploadIcon, AttachFile as AttachFileIcon, ArrowBack } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 
 interface FileInfo {
   id: number;

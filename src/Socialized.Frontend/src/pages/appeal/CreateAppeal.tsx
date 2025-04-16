@@ -9,7 +9,7 @@ import {
   Button,
   Alert
 } from '@mui/material';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 
 export default function CreateAppeal() {
   const navigate = useNavigate();

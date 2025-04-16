@@ -21,7 +21,7 @@ import {
   Grid
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 
 interface Appeal {
   id: string;

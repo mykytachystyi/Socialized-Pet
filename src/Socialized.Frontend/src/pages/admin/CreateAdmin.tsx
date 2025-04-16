@@ -11,7 +11,7 @@ import {
   Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../ApiEndPoints';
+import { API_ENDPOINTS } from '../../ApiEndPoints';
 const CreateAdmin = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
