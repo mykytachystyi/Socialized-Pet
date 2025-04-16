@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Alert, Paper } from '@mui/material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 const AdminRecoveryPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

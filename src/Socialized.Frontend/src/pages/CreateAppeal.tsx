@@ -9,13 +9,12 @@ import {
   Button,
   Alert
 } from '@mui/material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 export default function CreateAppeal() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -14,7 +14,7 @@ import {
   Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 interface User {
   id: string;
   email: string;

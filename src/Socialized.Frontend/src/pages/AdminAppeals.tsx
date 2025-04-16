@@ -13,7 +13,6 @@ import {
   TableHead,
   TableRow,
   CircularProgress,
-  Chip,
   IconButton,
   Select,
   MenuItem,
@@ -22,7 +21,7 @@ import {
   Grid
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 interface Appeal {
   id: string;
@@ -39,7 +38,6 @@ const AdminAppeals = () => {
   const [appeals, setAppeals] = useState<Appeal[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState(0);
 
   useEffect(() => {
     const fetchAppeals = async () => {
@@ -77,38 +75,6 @@ const AdminAppeals = () => {
     fetchAppeals();
   }, [navigate]);
 
-  const handleStatusChange = async (appealId: string, state: number) => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) return;
-
-    try {
-      const response = await fetch(`http://localhost:5217/1.0/Appeals/UpdateStatus/${appealId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: state })
-      });
-
-      if (response.ok) {
-        setAppeals(prevAppeals =>
-          prevAppeals.map(appeal =>
-            appeal.id === appealId
-              ? { ...appeal, state: state }
-              : appeal
-          )
-        );
-      } else {
-        const data = await response.json();
-        setError(data.message || 'Помилка при оновленні статусу');
-      }
-    } catch (err) {
-      console.error('Помилка при оновленні статусу:', err);
-      setError('Помилка сервера');
-    }
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('uk-UA');
   };
@@ -126,9 +92,7 @@ const AdminAppeals = () => {
     }
   };
 
-  const filteredAppeals = statusFilter === 0
-    ? appeals
-    : appeals.filter(appeal => appeal.state === statusFilter);
+  const filteredAppeals = appeals;
 
   if (isLoading) {
     return (
@@ -172,9 +136,7 @@ const AdminAppeals = () => {
               <FormControl fullWidth>
                 <InputLabel>Фільтр за статусом</InputLabel>
                 <Select
-                  value={statusFilter}
                   label="Фільтр за статусом"
-                  onChange={(e) => setStatusFilter(0)}
                 >
                   <MenuItem value="all">Всі</MenuItem>
                   <MenuItem value="pending">В очікуванні</MenuItem>
@@ -208,7 +170,6 @@ const AdminAppeals = () => {
                       <FormControl size="small" sx={{ minWidth: 120 }}>
                         <Select
                           value={appeal.state}
-                          onChange={(e) => handleStatusChange(appeal.id, appeal.state)}
                           sx={{
                             '& .MuiSelect-select': {
                               color: getStatusColor(appeal.state),

@@ -13,14 +13,14 @@ import {
   CircularProgress
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [success, setSuccess] = useState('');
+  const [success] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');

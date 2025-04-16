@@ -17,7 +17,7 @@ import {
   DialogActions,
   Alert
 } from '@mui/material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 interface Admin {
   id: number;

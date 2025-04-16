@@ -5,7 +5,7 @@ import {
   StepLabel 
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 const VerifyAndReset = () => {
   const navigate = useNavigate();
   const location = useLocation();

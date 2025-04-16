@@ -1,25 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Alert,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  CircularProgress,
-  Chip,
-  IconButton,
-  Fab
-} from '@mui/material';
+import { Container, Box, Paper, Typography, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Chip, IconButton, Fab } from '@mui/material';
 import { Add, Visibility } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 interface Appeal {
   id: string;
   subject: string;
@@ -49,13 +32,18 @@ const UserAppeals = () => {
           }
         });
 
-        if (response.ok) {
+        if (response.ok)   
+        {
           const data = await response.json();
           setAppeals(data);
-        } else if (response.status === 401) {
+        } 
+        else if (response.status === 401) 
+        {
           localStorage.removeItem('token');
           navigate('/login');
-        } else {
+        } 
+        else 
+        {
           const data = await response.json();
           setError(data.message || 'Помилка при отриманні звернень');
         }

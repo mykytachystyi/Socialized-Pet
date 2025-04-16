@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 const AdminChangePassword = () => {
   const navigate = useNavigate();

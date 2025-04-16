@@ -5,21 +5,15 @@ import {
   Box,
   Paper,
   Typography,
-  Button,
   Alert,
   TextField,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
   CircularProgress,
   Chip,
   Avatar,
-  Grid,
   IconButton
 } from '@mui/material';
 import { ArrowBack, Send, AttachFile } from '@mui/icons-material';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 interface Message {
   id: number;
@@ -125,27 +119,6 @@ const AppealDetails = () => {
       setSuccess('Повідомлення відправлено');
     } catch (err) {
       setError('Помилка при відправці повідомлення');
-    }
-  };
-
-  const handleDeleteAppeal = async () => {
-    if (!id) return;
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(API_ENDPOINTS.appeals.messages.delete(Number(id)), {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Помилка видалення звернення');
-      }
-
-      navigate('/appeals');
-    } catch (err) {
-      setError('Помилка при видаленні звернення');
     }
   };
 

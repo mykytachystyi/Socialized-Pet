@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const Header = ({ isAuthenticated, isAdmin, onLogout }: HeaderProps) => {
   return (
-    <AppBar position="static" color="primary" elevation={0} className="header">
+    <AppBar color="primary" elevation={0} className="header">
       <Container maxWidth="lg">
         <Toolbar className="toolbar">
           <Typography variant="h6" component="div" className="logo">

@@ -1,22 +1,8 @@
 import { useState } from 'react';
-import { 
-  Container, 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
-  Paper,
-  Grid,
-  Link as MuiLink,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress
+import { Container, Box, TextField, Button, Typography, Paper, Grid, Link as MuiLink, Alert, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

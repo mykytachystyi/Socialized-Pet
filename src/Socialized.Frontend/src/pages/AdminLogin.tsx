@@ -10,7 +10,7 @@ import {
   Alert
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../config';
+import { API_ENDPOINTS } from '../ApiEndPoints';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
