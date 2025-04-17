@@ -1,52 +1,35 @@
-﻿using Microsoft.Extensions.Options;
-using Serilog;
+﻿using Serilog;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
 
-namespace Core.SmtpMailing
+namespace Core.SmtpMailing;
+
+public class SmtpSender(ILogger logger, IOptions<MailSettings> mailSettings) : ISmtpSender
 {
-    public class SmtpSender : ISmtpSender
+    private readonly MailSettings Settings = mailSettings.Value;
+    private readonly ILogger Logger = logger;
+    
+    public void SendEmail(string email, string subject, string text)
     {
-        private readonly MailSettings Settings;
-        private readonly ILogger Logger;
-        private readonly MailAddress From;
-        private readonly SmtpClient Smtp;
-
-        public SmtpSender(ILogger logger, IOptions<MailSettings> mailSettings)
+        var message = new MailMessage(Settings.MailAddress, email, subject, text);
+        var client = new SmtpClient(Settings.Server, Settings.SmtpPort); 
+        client.EnableSsl = Settings.SslOrTls;
+        client.Credentials = new NetworkCredential(Settings.SmtpAddress, Settings.MailPassword);
+        try
         {
-            Logger = logger;
-            Settings = mailSettings.Value;
-            Smtp = new SmtpClient(Settings.SmtpAddress, Settings.SmtpPort)
+            if (Settings.EnableWorking)
             {
-                Credentials = new NetworkCredential(Settings.MailAddress, Settings.MailPassword)
-            };
-            From = new MailAddress(Settings.MailAddress, Settings.Domen);
-            Smtp.EnableSsl = true;
-            Smtp.UseDefaultCredentials = true;
+                client.Send(message);
+            }
+            Logger.Information($"Був відправиленний лист на адресу={email}.");
         }
-        public void SendEmail(string email, string subject, string text)
+        catch (Exception ex)
         {
-            var to = new MailAddress(email);
-            var message = new MailMessage(From, to)
-            {
-                Subject = subject,
-                Body = text,
-                IsBodyHtml = true
-            };
-            try
-            {
-                if (Settings.Enable)
-                {
-                    Smtp.Send(message);
-                }
-                Logger.Information($"Був відправиленний лист на адресу={email}.");
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Сервер не може відправити листа по адресі={email}");
-                Logger.Error($"Виключення={e.Message}");
-                Logger.Error($"Внутрішне виключення={e.InnerException?.Message}");
-            }
+
+            Logger.Error($"Сервер не може відправити листа по адресі={email}");
+            Logger.Error($"Виключення={ex.Message}");
+            Logger.Error($"Внутрішне виключення={ex.InnerException?.Message}");
         }
     }
 }

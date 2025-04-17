@@ -54,7 +54,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IJwtTokenManager, JwtTokenManager>();
 builder.Services.AddScoped<IAdminEmailManager, AdminEmailManager>();
-builder.Services.AddScoped<ISmtpSender, SmtpOauthSender>(); 
+builder.Services.AddScoped<ISmtpSender, SmtpSender>(); 
 
 builder.Services.Configure<AwsSettings>(builder.Configuration.GetSection("AwsSettings"));
 

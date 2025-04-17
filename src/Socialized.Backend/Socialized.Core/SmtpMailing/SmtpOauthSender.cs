@@ -19,15 +19,15 @@ namespace Core.SmtpMailing
 
         public void SendEmail(string email, string subject, string text)
         {
+            var secureSocketOptions = Settings.SslOrTls ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(Settings.MailAddress, Settings.Domen));
+            message.From.Add(new MailboxAddress(Settings.SmtpAddress, Settings.MailAddress));
             message.To.Add(new MailboxAddress("", email));
             message.Subject = subject;
             message.Body = new TextPart("html") { Text = text };
-
             using (var client = new SmtpClient())
             {
-                client.ConnectAsync(Settings.SmtpAddress, Settings.SmtpPort, true);
+                client.ConnectAsync(Settings.SmtpAddress, Settings.SmtpPort, secureSocketOptions);
 
                 var oauth2 = new SaslMechanismOAuth2(Settings.MailAddress, "");
                 client.AuthenticateAsync(oauth2);
